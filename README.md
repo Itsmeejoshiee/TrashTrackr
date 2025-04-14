@@ -5,20 +5,22 @@ This document outlines our Git workflow, including branching strategy and commit
 
 ---
 
-* 1. [📚 Table of Contents](#TableofContents)
-* 2. [📁 Branching Strategy](#BranchingStrategy)
-	* 2.1. [🔹 `main`](#main)
-	* 2.2. [🔹 `staging`](#staging)
-	* 2.3. [🔹 `features/<feature-name>`](#featuresfeature-name)
-	* 2.4. [🔹 `fix/<feature-name>`](#fixfeature-name)
-* 3. [🛠️ Creating a New Branch](#CreatingaNewBranch)
-* 4. [✍️ Commit Message Guidelines](#CommitMessageGuidelines)
-	* 4.1. [✅ `Add:`](#Add:)
-	* 4.2. [🐛 `Fix:`](#Fix:)
-	* 4.3. [♻️ `Update:`](#Update:)
-	* 4.4. [🗑️ `Delete:`](#Delete:)
-* 5. [🔑 Commit Message Tips](#CommitMessageTips)
-* 6. [📑 Pull Request Process](#PullRequestProcess)
+
+* [📚 Table of Contents](#TableofContents)
+* [📁 Branching Strategy](#BranchingStrategy)
+    1. [🔹 `main`](#main)
+    2. [🔹 `staging`](#staging)
+    3. [🔹 `features/<feature-name>`](#featuresfeature-name)
+    4. [🔹 `fix/<feature-name>`](#fixfeature-name)
+* [🛠️ Creating a New Branch](#CreatingaNewBranch)
+* [✍️ Commit Message Guidelines](#CommitMessageGuidelines)
+    1. [✅ `Add:`](#Add)
+    2. [🐛 `Fix:`](#Fix)
+    3. [♻️ `Update:`](#Update)
+    4. [🗑️ `Delete:`](#Delete)
+* [🔑 Commit Message Tips](#CommitMessageTips)
+* [📑 Pull Request Process](#PullRequestProcess)
+
 
 ---
 
@@ -136,8 +138,6 @@ Once your feature branch (`features/<feature-name>`) is fully developed and read
     git push origin --delete features/<feature-name>
     ```
 
----
 
-Feel free to reach out if you have questions about the workflow, or suggest improvements!
 
 
