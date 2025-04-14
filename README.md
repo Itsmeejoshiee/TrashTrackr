@@ -1,47 +1,51 @@
+
 # Solutions Challenge Git Workflow Guide
 
 This document outlines our Git workflow, including branching strategy and commit message conventions, to ensure consistency and collaboration across the team.
 
 ---
 
-## 📚 Table of Contents
-
-- [Branching Strategy](#branching-strategy)
-- [Creating a New Branch](#creating-a-new-branch)
-- [Commit Message Guidelines](#commit-message-guidelines)
-  - [Add](#add)
-  - [Fix](#fix)
-  - [Update](#update)
-  - [Delete](#delete)
-- [Commit Message Tips](#commit-message-tips)
-- [Pull Request Process](#pull-request-process)
+* 1. [📚 Table of Contents](#TableofContents)
+* 2. [📁 Branching Strategy](#BranchingStrategy)
+	* 2.1. [🔹 `main`](#main)
+	* 2.2. [🔹 `staging`](#staging)
+	* 2.3. [🔹 `features/<feature-name>`](#featuresfeature-name)
+	* 2.4. [🔹 `fix/<feature-name>`](#fixfeature-name)
+* 3. [🛠️ Creating a New Branch](#CreatingaNewBranch)
+* 4. [✍️ Commit Message Guidelines](#CommitMessageGuidelines)
+	* 4.1. [✅ `Add:`](#Add:)
+	* 4.2. [🐛 `Fix:`](#Fix:)
+	* 4.3. [♻️ `Update:`](#Update:)
+	* 4.4. [🗑️ `Delete:`](#Delete:)
+* 5. [🔑 Commit Message Tips](#CommitMessageTips)
+* 6. [📑 Pull Request Process](#PullRequestProcess)
 
 ---
 
-## 📁 Branching Strategy
+##  2. <a name='BranchingStrategy'></a>📁 Branching Strategy
 
 We follow a structured Git branching model to keep development organized and production-ready.
 
-### 🔹 `main`
+###  2.1. <a name='main'></a>🔹 `main`
 - **Production branch**
 - Contains the final, stable, and deployable version of the code.
 
-### 🔹 `staging`
+###  2.2. <a name='staging'></a>🔹 `staging`
 - **Staging branch**
 - Used for integration and testing before merging into `main`.
 
-### 🔹 `features/<feature-name>`
+###  2.3. <a name='featuresfeature-name'></a>🔹 `features/<feature-name>`
 - **Feature branches**
 - Used to develop new features in isolation.
 - Keeps the codebase modular and reduces the risk of conflicts.
 
-### 🔹 `fix/<feature-name>`
+###  2.4. <a name='fixfeature-name'></a>🔹 `fix/<feature-name>`
 - **Fix branches**
 - Used to develop bug fixes or patches for specific features.
 
 ---
 
-## 🛠️ Creating a New Branch
+##  3. <a name='CreatingaNewBranch'></a>🛠️ Creating a New Branch
 
 To create a new **feature** branch:
 
@@ -59,32 +63,32 @@ Replace `<feature-name>` with a clear, concise name that reflects the purpose of
 
 ---
 
-## ✍️ Commit Message Guidelines
+##  4. <a name='CommitMessageGuidelines'></a>✍️ Commit Message Guidelines
 
 We use a consistent commit message format to keep history clear and meaningful. Use the following prefixes:
 
-### ✅ `Add:`
+###  4.1. <a name='Add:'></a>✅ `Add:`
 Use when adding new features, files, or components.  
 **Example:**
 ```
 Add: user authentication middleware
 ```
 
-### 🐛 `Fix:`
+###  4.2. <a name='Fix:'></a>🐛 `Fix:`
 Use when fixing bugs or correcting code behavior.  
 **Example:**
 ```
 Fix: incorrect login validation on the frontend
 ```
 
-### ♻️ `Update:`
+###  4.3. <a name='Update:'></a>♻️ `Update:`
 Use when improving existing code (e.g. refactoring or performance tweaks) without changing its core functionality.  
 **Example:**
 ```
 Update: optimized API response handling
 ```
 
-### 🗑️ `Delete:`
+###  4.4. <a name='Delete:'></a>🗑️ `Delete:`
 Use when removing code, files, or outdated components.  
 **Example:**
 ```
@@ -93,7 +97,7 @@ Delete: removed deprecated user model
 
 ---
 
-## 🔑 Commit Message Tips
+##  5. <a name='CommitMessageTips'></a>🔑 Commit Message Tips
 
 - Use the **imperative mood** (e.g., "Add", not "Added").
 - Keep messages **short but descriptive**.
@@ -102,7 +106,7 @@ Delete: removed deprecated user model
 
 ---
 
-## 📑 Pull Request Process
+##  6. <a name='PullRequestProcess'></a>📑 Pull Request Process
 
 Once your feature branch (`features/<feature-name>`) is fully developed and ready for integration:
 
