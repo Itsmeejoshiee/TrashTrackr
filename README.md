@@ -1,4 +1,4 @@
-# Project Git Workflow Guide
+# Solutions Challenge Git Workflow Guide
 
 This document outlines our Git workflow, including branching strategy and commit message conventions, to ensure consistency and collaboration across the team.
 
@@ -6,15 +6,15 @@ This document outlines our Git workflow, including branching strategy and commit
 
 ## 📚 Table of Contents
 
-- [Branching Strategy](#-branching-strategy)
-- [Creating a New Branch](#-creating-a-new-branch)
-- [Commit Message Guidelines](#-commit-message-guidelines)
-  - [Add](#-add)
-  - [Fix](#-fix)
-  - [Update](#-update)
-  - [Delete](#-delete)
-- [Commit Message Tips](#-commit-message-tips)
-- [Pull Request Process](#-pull-request-process)
+- [Branching Strategy](#branching-strategy)
+- [Creating a New Branch](#creating-a-new-branch)
+- [Commit Message Guidelines](#commit-message-guidelines)
+  - [Add](#add)
+  - [Fix](#fix)
+  - [Update](#update)
+  - [Delete](#delete)
+- [Commit Message Tips](#commit-message-tips)
+- [Pull Request Process](#pull-request-process)
 
 ---
 
@@ -131,5 +131,9 @@ Once your feature branch (`features/<feature-name>`) is fully developed and read
     git branch -d features/<feature-name>
     git push origin --delete features/<feature-name>
     ```
+
+---
+
+Feel free to reach out if you have questions about the workflow, or suggest improvements!
 
 
