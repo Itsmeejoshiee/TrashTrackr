@@ -3,24 +3,24 @@ import 'package:camera/camera.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class CameraModule {
-  /// Requests permission, finds a camera, initializes it, or throws.
+  //Initializes the camera controller with the given resolution preset and camera index.
   Future<CameraController> initializeController({
     ResolutionPreset preset = ResolutionPreset.high,
-    int cameraIndex = 0,
+    int cameraIndex = 0, //Back CAMERA is 0, Front Camera is 1
   }) async {
-    // 1. Ask for permission
+    // Asks for permission
     final status = await Permission.camera.request();
     if (!status.isGranted) {
       throw CameraException('PERMISSION_DENIED', 'Camera permission denied');
     }
 
-    // 2. Get available cameras
+    // Get available cameras
     final cameras = await availableCameras();
     if (cameras.isEmpty) {
       throw CameraException('NO_CAMERA', 'No camera found on device');
     }
 
-    // 3. Create & initialize
+    // Create & initialize
     final controller = CameraController(cameras[cameraIndex], preset);
     await controller.initialize();
     return controller;
