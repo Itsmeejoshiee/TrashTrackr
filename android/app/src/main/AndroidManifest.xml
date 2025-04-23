@@ -7,6 +7,8 @@
         android:maxSdkVersion="29"
         tools:replace="android:maxSdkVersion"
          />
+        <!-- CAMERA permission -->
+    <uses-permission android:name="android.permission.CAMERA" />
     <application
         android:label="trashtrackr"
         android:name="${applicationName}"
