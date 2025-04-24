@@ -52,7 +52,7 @@ const TextStyle kHeadlineSmall = TextStyle(
 );
 
 const TextStyle kTitleLarge = TextStyle(
-  fontSize: 22,
+  fontSize: 20,
   fontWeight: FontWeight.w500,
   letterSpacing: 0,
   fontFamily: 'Urbanist',
