@@ -3,6 +3,7 @@ import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/auth/frontend/splash_screen.dart';
 import 'package:trashtrackr/features/auth/frontend/welcome_screen.dart';
 import 'package:trashtrackr/features/camera_module/backend/camera_module.dart';
+import 'package:trashtrackr/features/intro/frontend/intro_screen.dart';
 
 void main() {
   runApp(const TrashTrackr());
@@ -14,8 +15,8 @@ class TrashTrackr extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: WelcomeScreen(),
-      theme: ThemeData(primaryColor: kAppleGreen),
+      home: IntroScreen(),
+      theme: ThemeData(primaryColor: kAvocado),
     );
   }
 }
