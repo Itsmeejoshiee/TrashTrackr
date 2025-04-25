@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/features/waste_scanner/backend/camera_module.dart';
@@ -53,7 +54,13 @@ class _WasteScannerPageState extends State<WasteScannerPage> {
                 icon: const Icon(Icons.camera_alt, size: 50),
                 onPressed: () async {
                   try {
-                    await controller.takePicture();
+                    //file conversion to image > bytes > base64
+                    final XFile picture = await controller.takePicture();
+                    final bytes = await picture.readAsBytes();
+                    final base64Image = base64Encode(bytes);
+
+                    //send to gemini_service
+                    //final response = await WasteClassifier(base64Image);
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Error taking picture: $e')),

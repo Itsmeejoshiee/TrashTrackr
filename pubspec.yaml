@@ -17,6 +17,8 @@ dependencies:
   gal: ^2.3.1
   #handles app permission for cameras and storage
   permission_handler: ^12.0.0+1
+  card_swiper: ^3.0.1
+  rflutter_alert: ^2.0.7
   
 
 dev_dependencies:
@@ -27,3 +29,10 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+  assets:
+   - assets/images/
+
+  fonts:
+    - family: Urbanist
+      fonts:
+        - asset: assets/fonts/Urbanist-Regular.ttf

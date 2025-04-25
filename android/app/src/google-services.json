@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "687421805254",
+    "project_id": "trashtrackr-d42fe",
+    "storage_bucket": "trashtrackr-d42fe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687421805254:android:32272619d99c76c1ab3dc7",
+        "android_client_info": {
+          "package_name": "com.example.trashtrackr"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQNUZBMoUZBeTx0z-oPSsJw2dnm-F7Mhw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

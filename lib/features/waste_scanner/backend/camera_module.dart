@@ -1,4 +1,3 @@
-// camera_service.dart
 import 'package:camera/camera.dart';
 import 'package:permission_handler/permission_handler.dart';
 
