@@ -19,6 +19,8 @@ dependencies:
   permission_handler: ^12.0.0+1
   card_swiper: ^3.0.1
   rflutter_alert: ^2.0.7
+  #loads configuration from .env file
+  flutter_dotenv: ^5.2.1
   
 
 dev_dependencies:
@@ -30,7 +32,8 @@ flutter:
   uses-material-design: true
 
   assets:
-   - assets/images/
+    - .env
+    - assets/images/
 
   fonts:
     - family: Urbanist

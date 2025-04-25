@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/features/waste_scanner/backend/camera_module.dart';
+import 'package:trashtrackr/features/waste_scanner/backend/gemini_service.dart';
 
 class WasteScannerPage extends StatefulWidget {
   const WasteScannerPage({Key? key}) : super(key: key);
@@ -57,10 +58,24 @@ class _WasteScannerPageState extends State<WasteScannerPage> {
                     //file conversion to image > bytes > base64
                     final XFile picture = await controller.takePicture();
                     final bytes = await picture.readAsBytes();
-                    final base64Image = base64Encode(bytes);
 
-                    //send to gemini_service
-                    //final response = await WasteClassifier(base64Image);
+                    //Call the Gemini API to classify the waste
+                    final response = await GeminiService().classifyWaste(bytes);
+                    //Temporary UI to show the response
+                    showDialog(
+                      context: context,
+                      builder:
+                          (_) => AlertDialog(
+                            title: const Text('Waste Classification'),
+                            content: Text(response),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          ),
+                    );
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Error taking picture: $e')),
