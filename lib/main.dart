@@ -1,22 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:trashtrackr/core/utils/constants.dart';
-import 'package:trashtrackr/features/auth/frontend/splash_screen.dart';
-import 'package:trashtrackr/features/auth/frontend/welcome_screen.dart';
-import 'package:trashtrackr/features/camera_module/backend/camera_module.dart';
-import 'package:trashtrackr/features/intro/frontend/intro_screen.dart';
+import 'package:trashtrackr/frontend/camera_module.dart';
 
 void main() {
-  runApp(const TrashTrackr());
+  runApp(const MainApp());
 }
 
-class TrashTrackr extends StatelessWidget {
-  const TrashTrackr({super.key});
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: IntroScreen(),
-      theme: ThemeData(primaryColor: kAvocado),
-    );
+    return const MaterialApp(home: Placeholder());
   }
 }
