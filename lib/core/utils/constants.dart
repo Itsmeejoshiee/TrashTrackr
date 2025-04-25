@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-// API URl
-const String kGeminiApiUrl = 'https://api.gemini.com/v1/';
 // COLORS
 const Color kAvocado = Color(0xFF628307);
 const Color kAppleGreen = Color(0xFF819D39);
