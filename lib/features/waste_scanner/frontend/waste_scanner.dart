@@ -1,6 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:trashtrackr/features/camera_module/backend/camera_module.dart';
+import 'package:trashtrackr/features/waste_scanner/backend/camera_module.dart';
 
 class WasteScannerPage extends StatefulWidget {
   const WasteScannerPage({Key? key}) : super(key: key);

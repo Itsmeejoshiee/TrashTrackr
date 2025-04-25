@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trashtrackr/features/camera_module/frontend/waste_scanner.dart';
+import 'package:trashtrackr/features/waste_scanner/frontend/waste_scanner.dart';
 
 void main() {
   runApp(const MainApp());
