@@ -55,7 +55,7 @@ class _WasteScannerPageState extends State<WasteScannerPage> {
                 icon: const Icon(Icons.camera_alt, size: 50),
                 onPressed: () async {
                   try {
-                    //file conversion to image > bytes > base64
+                    //file conversion to image > bytes
                     final XFile picture = await controller.takePicture();
                     final bytes = await picture.readAsBytes();
 
