@@ -26,7 +26,7 @@ class AuthButton extends StatelessWidget {
         child: Text(
           title,
           style: kTitleLarge.copyWith(
-            color: kAppleGreen,
+            color: kAvocado,
             fontWeight: FontWeight.bold,
           ),
         ),
