@@ -13,97 +13,111 @@ const Color kRed = Color(0xFFEA4A57);
 
 // TEXT STYLES
 
-TextStyle kUrbanistDisplayLarge = GoogleFonts.urbanist(
+//Default Text Font is Urbanist
+
+TextStyle kDisplayLarge = GoogleFonts.urbanist(
   fontSize: 57,
   fontWeight: FontWeight.normal,
   letterSpacing: 0,
 );
 
-TextStyle kUrbanistDisplayMedium = GoogleFonts.urbanist(
+TextStyle kDisplayMedium = GoogleFonts.urbanist(
   fontSize: 45,
   fontWeight: FontWeight.normal,
   letterSpacing: 0,
 );
 
-TextStyle kUrbanistDisplaySmall = GoogleFonts.urbanist(
+TextStyle kDisplaySmall = GoogleFonts.urbanist(
   fontSize: 36,
   fontWeight: FontWeight.normal,
   letterSpacing: 0,
 );
 
-TextStyle kUrbanistHeadlineLarge = GoogleFonts.urbanist(
+TextStyle kHeadlineLarge = GoogleFonts.urbanist(
   fontSize: 32,
   fontWeight: FontWeight.normal,
   letterSpacing: 0,
 );
 
-TextStyle kUrbanistHeadlineMedium = GoogleFonts.urbanist(
+TextStyle kHeadlineMedium = GoogleFonts.urbanist(
   fontSize: 28,
   fontWeight: FontWeight.normal,
   letterSpacing: 0,
 );
 
-TextStyle kUrbanistHeadlineSmall = GoogleFonts.urbanist(
+TextStyle kHeadlineSmall = GoogleFonts.urbanist(
   fontSize: 24,
   fontWeight: FontWeight.normal,
   letterSpacing: 0,
 );
 
-TextStyle kUrbanistTitleLarge = GoogleFonts.urbanist(
+TextStyle kTitleLarge = GoogleFonts.urbanist(
   fontSize: 20,
   fontWeight: FontWeight.w500,
   letterSpacing: 0,
 );
 
-TextStyle kUrbanistTitleMedium = GoogleFonts.urbanist(
+TextStyle kTitleMedium = GoogleFonts.urbanist(
   fontSize: 16,
   fontWeight: FontWeight.w500,
   letterSpacing: 0.15,
 );
 
-TextStyle kUrbanistTitleSmall = GoogleFonts.urbanist(
+TextStyle kTitleSmall = GoogleFonts.urbanist(
   fontSize: 14,
   fontWeight: FontWeight.w500,
   letterSpacing: 0.1,
 );
 
-TextStyle kUrbanistLabelLarge = GoogleFonts.urbanist(
+TextStyle kLabelLarge = GoogleFonts.urbanist(
   fontSize: 14,
   fontWeight: FontWeight.w500,
   letterSpacing: 0.1,
 );
 
-TextStyle kUrbanistLabelMedium = GoogleFonts.urbanist(
+TextStyle kLabelMedium = GoogleFonts.urbanist(
   fontSize: 12,
   fontWeight: FontWeight.w500,
   letterSpacing: 0.5,
 );
 
-TextStyle kUrbanistLabelSmall = GoogleFonts.urbanist(
+TextStyle kLabelSmall = GoogleFonts.urbanist(
   fontSize: 11,
   fontWeight: FontWeight.w500,
   letterSpacing: 0.5,
 );
 
-TextStyle kUrbanistBodyLarge = GoogleFonts.urbanist(
+TextStyle kBodyLarge = GoogleFonts.urbanist(
   fontSize: 16,
   fontWeight: FontWeight.normal,
   letterSpacing: 0.5,
 );
 
-TextStyle kUrbanistBodyMedium = GoogleFonts.urbanist(
+TextStyle kBodyMedium = GoogleFonts.urbanist(
   fontSize: 14,
   fontWeight: FontWeight.normal,
   letterSpacing: 0.25,
 );
 
-TextStyle kUrbanistBodySmall = GoogleFonts.urbanist(
+TextStyle kBodySmall = GoogleFonts.urbanist(
   fontSize: 12,
   fontWeight: FontWeight.normal,
   letterSpacing: 0.4,
 );
 
 // Poppins
+
+TextStyle kPoppinsDisplayMedium = GoogleFonts.poppins(
+  fontSize: 45,
+  fontWeight: FontWeight.normal,
+  letterSpacing: 0,
+);
+
+TextStyle kPoppinsDisplaySmall = GoogleFonts.poppins(
+  fontSize: 36,
+  fontWeight: FontWeight.normal,
+  letterSpacing: 0,
+);
 
 TextStyle kPoppinsBodyLarge = GoogleFonts.poppins(
   fontSize: 16,
@@ -113,18 +127,6 @@ TextStyle kPoppinsBodyLarge = GoogleFonts.poppins(
 
 TextStyle kPoppinsBodyMedium = GoogleFonts.poppins(
   fontSize: 14,
-  fontWeight: FontWeight.normal,
-  letterSpacing: 0,
-);
-
-TextStyle kPoppinsDisplayRegular = GoogleFonts.poppins(
-  fontSize: 36,
-  fontWeight: FontWeight.normal,
-  letterSpacing: 0,
-);
-
-TextStyle kPoppinsDisplaySmall = GoogleFonts.poppins(
-  fontSize: 32,
   fontWeight: FontWeight.normal,
   letterSpacing: 0,
 );
