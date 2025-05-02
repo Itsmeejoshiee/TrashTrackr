@@ -21,7 +21,8 @@ dependencies:
   rflutter_alert: ^2.0.7
   #loads configuration from .env file
   flutter_dotenv: ^5.2.1
-  
+  #google fonts
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
