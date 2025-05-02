@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 
 class NeoBox extends StatelessWidget {
-  const NeoBox({super.key, this.child});
+  const NeoBox({super.key, this.child, this.margin, this.padding});
 
   final Widget? child;
+  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? margin;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(20),
-      margin: EdgeInsets.symmetric(vertical: 10),
+      padding: padding,
+      margin: margin,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment(0.00, 0.00),
