@@ -7,17 +7,21 @@ class ProfileTextField extends StatelessWidget {
     required this.controller,
     this.hintText,
     this.iconData = Icons.person,
+    this.obscureText = false,
+    this.margin,
   });
 
   final TextEditingController controller;
   final String? hintText;
   final IconData iconData;
+  final bool obscureText;
+  final EdgeInsets? margin;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.only(bottom: 30),
+      margin: margin ?? EdgeInsets.symmetric(vertical: 15),
       decoration: ShapeDecoration(
         gradient: LinearGradient(
           begin: Alignment(0.00, 0.00),
@@ -59,7 +63,12 @@ class ProfileTextField extends StatelessWidget {
           ),
           contentPadding: EdgeInsets.only(top: 11),
           hintText: hintText,
+          hintStyle: kTitleMedium.copyWith(
+            color: kDarkTeal.withOpacity(0.2),
+            fontWeight: FontWeight.bold,
+          ),
         ),
+        obscureText: obscureText,
       ),
     );
   }
