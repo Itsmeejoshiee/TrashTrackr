@@ -7,99 +7,113 @@ class WastelogWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        NeoBox(
-          width: 109,
-          height: 109,
-          child: Column(
-            children: [
-              Image.asset('assets/images/recycling.png', width: 20, height: 20),
-              Text(
-                '32',
-                style: kPoppinsDisplaySmall.copyWith(
-                  fontSize: 39.53,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                'Recyclable',
-                style: kBodySmall.copyWith(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+    final double screenWidth = MediaQuery.of(context).size.width;
 
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.keyboard_arrow_down),
-              ),
-            ],
+    return Center(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          NeoBox(
+            height: 216,
+            width: screenWidth * 0.25,
+            child: Column(
+              children: [
+                Image.asset(
+                  'assets/images/recycling.png',
+                  width: 20,
+                  height: 20,
+                ),
+                Text(
+                  '32',
+                  style: kPoppinsDisplaySmall.copyWith(
+                    fontSize: 39.53,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'Recyclable',
+                  style: kBodySmall.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Spacer(),
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.keyboard_arrow_down),
+                ),
+              ],
+            ),
           ),
-        ),
-        SizedBox(width: 10),
-        NeoBox(
-          width: 109,
-          height: 109,
-          child: Column(
-            children: [
-              Image.asset(
-                'assets/images/leaf_brown.png',
-                width: 18,
-                height: 18,
-              ),
-              Text(
-                '80',
-                style: kPoppinsDisplaySmall.copyWith(
-                  fontSize: 39.53,
-                  fontWeight: FontWeight.bold,
+          SizedBox(width: 10),
+          NeoBox(
+            height: 216,
+            width: screenWidth * 0.25,
+            child: Column(
+              children: [
+                Image.asset(
+                  'assets/images/leaf_brown.png',
+                  width: 18,
+                  height: 18,
                 ),
-              ),
-              Text(
-                'Biodegradable',
-                style: kBodySmall.copyWith(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
+                Text(
+                  '80',
+                  style: kPoppinsDisplaySmall.copyWith(
+                    fontSize: 39.53,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.keyboard_arrow_down),
-              ),
-            ],
+                Text(
+                  'Biodegradable',
+                  style: kBodySmall.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Spacer(),
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.keyboard_arrow_down),
+                ),
+              ],
+            ),
           ),
-        ),
-        SizedBox(width: 10),
-        NeoBox(
-          width: 109,
-          height: 109,
-          child: Column(
-            children: [
-              Image.asset('assets/images/trashcan.png', width: 20, height: 20),
-              Text(
-                '12',
-                style: kPoppinsDisplaySmall.copyWith(
-                  fontSize: 39.53,
-                  fontWeight: FontWeight.bold,
+          SizedBox(width: 10),
+          NeoBox(
+            height: 216,
+            width: screenWidth * 0.25,
+            child: Column(
+              children: [
+                Image.asset(
+                  'assets/images/trashcan.png',
+                  width: 20,
+                  height: 20,
                 ),
-              ),
-              Text(
-                'Non-Biodegradable',
-                style: kBodySmall.copyWith(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
+                Text(
+                  '12',
+                  style: kPoppinsDisplaySmall.copyWith(
+                    fontSize: 39.53,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.keyboard_arrow_down),
-              ),
-            ],
+                Text(
+                  'Non-Biodegradable',
+                  style: kBodySmall.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Spacer(),
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.keyboard_arrow_down),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
