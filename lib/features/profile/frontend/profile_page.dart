@@ -9,6 +9,8 @@ import 'package:trashtrackr/core/widgets/list_tiles/faq_tile.dart';
 import 'package:trashtrackr/core/widgets/profile/user_badges_widget.dart';
 import 'package:trashtrackr/core/widgets/profile/wastelog_widget.dart';
 
+enum ProfileSection { posts, wasteLog, cleanup }
+
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -17,6 +19,19 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  ProfileSection _selectedSection = ProfileSection.posts;
+
+  Widget getSectionWidget() {
+    switch (_selectedSection) {
+      case ProfileSection.posts:
+        return PostWidget(key: ValueKey('posts'));
+      case ProfileSection.wasteLog:
+        return WastelogWidget(key: ValueKey('wastelog'));
+      case ProfileSection.cleanup:
+        return CleanupWidget(key: ValueKey('cleanup'));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
@@ -72,10 +87,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                     ),
-
-                    // Offset
                     SizedBox(height: 15),
-
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -96,7 +108,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ],
                         ),
-                        //Image
                         CircleAvatar(
                           foregroundImage: NetworkImage(
                             'https://s.yimg.com/ny/api/res/1.2/xezrRzHlbJxiqI0S_Z15UA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTk2MDtoPTQ3NQ--/https://media.zenfs.com/en/buzzfeed_articles_778/2fef0be25b6343c5dbf349561ab37a3c',
@@ -151,45 +162,75 @@ class _ProfilePageState extends State<ProfilePage> {
                     SizedBox(height: 13),
                     UserBadgesWidget(),
                     SizedBox(height: 33),
+
+                    /// SECTION SWITCH BUTTONS
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              setState(() {
+                                _selectedSection = ProfileSection.posts;
+                              });
+                            },
                             child: Text(
                               'Posts',
                               style: kTitleSmall.copyWith(
-                                color: kGray.withOpacity(0.3),
+                                color:
+                                    _selectedSection == ProfileSection.posts
+                                        ? kAvocado
+                                        : kGray.withOpacity(0.3),
                               ),
                             ),
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              setState(() {
+                                _selectedSection = ProfileSection.wasteLog;
+                              });
+                            },
                             child: Text(
                               'Waste Log',
                               style: kTitleSmall.copyWith(
-                                color: kGray.withOpacity(0.3),
+                                color:
+                                    _selectedSection == ProfileSection.wasteLog
+                                        ? kAvocado
+                                        : kGray.withOpacity(0.3),
                               ),
                             ),
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              setState(() {
+                                _selectedSection = ProfileSection.cleanup;
+                              });
+                            },
                             child: Text(
                               'Clean-up',
+
                               style: kTitleSmall.copyWith(
-                                color: kGray.withOpacity(0.3),
+                                color:
+                                    _selectedSection == ProfileSection.cleanup
+                                        ? kAvocado
+                                        : kGray.withOpacity(0.3),
                               ),
                             ),
                           ),
                         ],
                       ),
                     ),
+
                     SizedBox(height: 18),
-                    PostWidget(),
-                    WastelogWidget(),
-                    CleanupWidget(),
+                    AnimatedSwitcher(
+                      duration: Duration(milliseconds: 300),
+                      transitionBuilder:
+                          (child, animation) =>
+                              FadeTransition(opacity: animation, child: child),
+                      child: getSectionWidget(),
+                    ),
+                    SizedBox(height: 40),
                   ],
                 ),
               ),
