@@ -23,6 +23,8 @@ dependencies:
   flutter_dotenv: ^5.2.1
   #google fonts
   google_fonts: ^6.2.1
+  #streak widget
+  streakify: ^0.0.2
 
 dev_dependencies:
   flutter_test:
