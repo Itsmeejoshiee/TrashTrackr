@@ -29,7 +29,7 @@ class _SignupFormState extends State<SignupForm> {
     print(formHeight);
     return Container(
       width: double.infinity,
-      height: (formHeight < 600) ? formHeight + 200 : formHeight,
+      height: (formHeight < 600) ? formHeight + 200 : formHeight + 20,
       padding: EdgeInsets.symmetric(horizontal: 32),
       decoration: BoxDecoration(
         color: Colors.white,

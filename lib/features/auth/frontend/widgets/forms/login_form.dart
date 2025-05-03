@@ -23,7 +23,7 @@ class _LoginFormState extends State<LoginForm> {
     final double formHeight = screenHeight * 0.80;
     return Container(
       width: double.infinity,
-      height: formHeight,
+      height: formHeight + 20,
       padding: EdgeInsets.symmetric(horizontal: 32),
       decoration: BoxDecoration(
         color: Colors.white,
