@@ -16,11 +16,13 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   final ScrollController _scrollController = ScrollController();
   double _scrollLockThreshold = 400;
+  bool _lockScroll = false;
 
   AuthState _authState = AuthState.waiting;
 
+  // Locks scrolling past the scroll lock threshold
   void _scrollListener() {
-    if (_scrollController.offset < _scrollLockThreshold) {
+    if (_lockScroll && _scrollController.offset < _scrollLockThreshold) {
       _scrollController.jumpTo(_scrollLockThreshold);
     }
   }
@@ -33,109 +35,123 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Dynamically resize scrollLockThreshold to screen height
     final double screenHeight = MediaQuery.of(context).size.height;
     _scrollLockThreshold = screenHeight * 0.60;
-    return Container(
-      color: Colors.white,
-      child: Scaffold(
-        backgroundColor: Theme.of(context).primaryColor,
-        body: SingleChildScrollView(
-          controller: _scrollController,
-          // physics:
-          //     (_authState == AuthState.waiting)
-          //         ? ClampingScrollPhysics()
-          //         : NeverScrollableScrollPhysics(),
-          physics: ClampingScrollPhysics(),
-          child: Column(
-            children: [
-              // Leaf Wall Image
-              LeafWall(height: screenHeight),
+    return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
+      body: SingleChildScrollView(
+        controller: _scrollController,
+        physics:
+            (_authState != AuthState.waiting)
+                ? ClampingScrollPhysics()
+                : NeverScrollableScrollPhysics(),
+        // physics: ClampingScrollPhysics(),
+        child: Column(
+          children: [
+            // Leaf Wall Image
+            LeafWall(height: screenHeight),
 
-              // Welcome Message
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      'Hello!',
-                      style: kDisplaySmall.copyWith(color: Colors.white),
-                    ),
+            // Welcome Message
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Hello!',
+                    style: kDisplaySmall.copyWith(color: Colors.white),
+                  ),
 
-                    RichText(
-                      text: TextSpan(
-                        style: kTitleLarge.copyWith(
-                          color: Colors.white,
-                          fontStyle: FontStyle.italic,
-                        ),
-                        children: [
-                          TextSpan(text: 'Welcome to '),
-                          TextSpan(
-                            text: 'TrashTrackr',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ],
+                  RichText(
+                    text: TextSpan(
+                      style: kTitleLarge.copyWith(
+                        color: Colors.white,
+                        fontStyle: FontStyle.italic,
                       ),
-                    ),
-                  ],
-                ),
-              ),
-
-              SizedBox(height: 40),
-
-              // Login & Signup Button
-              (_authState == AuthState.waiting)
-                  ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32),
-                    child: Column(
                       children: [
-                        AuthButton(
-                          title: 'Login',
-                          onPressed: () {
-                            setState(() => _authState = AuthState.login);
-                            _scrollController.animateTo(
-                              800,
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.easeIn,
-                            );
-                          },
+                        TextSpan(text: 'Welcome to '),
+                        TextSpan(
+                          text: 'TrashTrackr',
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-
-                        // Offset
-                        const SizedBox(height: 10),
-
-                        AuthButton(
-                          title: 'Sign up',
-                          onPressed: () {
-                            setState(() => _authState = AuthState.signup);
-                            _scrollController.animateTo(
-                              800,
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.easeIn,
-                            );
-                          },
-                        ),
-
-                        // Dynamic Offset
-                        SizedBox(height: 30),
                       ],
                     ),
-                  )
-                  : (_authState == AuthState.login)
-                  ? LoginForm(
-                    onToggle: () {
-                      setState(() => _authState = AuthState.signup);
-                    },
-                  )
-                  : SignupForm(
-                    onToggle: () {
-                      setState(() => _authState = AuthState.login);
-                    },
                   ),
-            ],
-          ),
+                ],
+              ),
+            ),
+
+            SizedBox(height: 40),
+
+            // Login & Signup Button
+            (_authState == AuthState.waiting)
+                ? Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Column(
+                    children: [
+                      AuthButton(
+                        title: 'Login',
+                        onPressed: () async {
+                          setState(() => _authState = AuthState.login);
+                          await _scrollController.animateTo(
+                            screenHeight * 0.60,
+                            duration: Duration(milliseconds: 800),
+                            curve: Curves.easeInOut,
+                          );
+                          _lockScroll = true;
+                        },
+                      ),
+
+                      // Offset
+                      const SizedBox(height: 10),
+
+                      AuthButton(
+                        title: 'Sign up',
+                        onPressed: () async {
+                          setState(() => _authState = AuthState.signup);
+                          await _scrollController.animateTo(
+                            screenHeight * 0.60,
+                            duration: Duration(milliseconds: 800),
+                            curve: Curves.easeInOut,
+                          );
+                          _lockScroll = true;
+                        },
+                      ),
+
+                      // Dynamic Offset
+                      SizedBox(height: 30),
+                    ],
+                  ),
+                )
+                : (_authState == AuthState.login)
+                ? LoginForm(
+                  onToggle: () {
+                    setState(() => _authState = AuthState.signup);
+                  },
+                )
+                : SignupForm(
+                  onToggle: () {
+                    setState(() => _authState = AuthState.login);
+                  },
+                ),
+          ],
         ),
       ),
+
+      // Make bottom safe area white
+      bottomNavigationBar: Builder(
+        builder: (context) {
+          final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
+          return bottomPadding > 0
+              ? Container(
+            height: bottomPadding,
+            color: (_authState != AuthState.waiting) ? Colors.white : Theme.of(context).primaryColor,
+          )
+              : SizedBox.shrink();
+        },
+      ),
+
     );
   }
 }
