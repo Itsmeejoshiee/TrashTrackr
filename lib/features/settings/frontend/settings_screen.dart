@@ -21,6 +21,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Alert(
       context: context,
       style: AlertStyle(
+        animationType: AnimationType.grow,
         isCloseButton: false,
         titleStyle: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
         descStyle: kTitleMedium,
@@ -57,6 +58,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Alert(
       context: context,
       style: AlertStyle(
+        animationType: AnimationType.grow,
         isCloseButton: false,
         titleStyle: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
         descStyle: kTitleMedium,
