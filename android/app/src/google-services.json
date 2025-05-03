@@ -12,7 +12,20 @@
           "package_name": "com.example.trashtrackr"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "687421805254-qrm1l3k6e03rmpa12uhrd5opgavjs7ju.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.trashtrackr",
+            "certificate_hash": "0c759cf7124c0198fbafdc85d3c01b3b8f717b64"
+          }
+        },
+        {
+          "client_id": "687421805254-ri1gimp0atkuasjmvku6fmn7ej5ccdne.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAQNUZBMoUZBeTx0z-oPSsJw2dnm-F7Mhw"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "687421805254-ri1gimp0atkuasjmvku6fmn7ej5ccdne.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
