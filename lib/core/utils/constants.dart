@@ -7,10 +7,12 @@ const Color kAppleGreen = Color(0xFF819D39);
 const Color kLightGreen = Color(0xFFE6E6B0);
 const Color kEerieBlack = Color(0xFF1D1D1D);
 const Color kLightGray = Color(0xFFF6F6F6);
+const Color kGray = Color(0xFF000000); // used with withOpacity(0.3)
 const Color kDarkTeal = Color(0xFF003333);
 const Color kTeal = Color(0xFF339999);
 const Color kRed = Color(0xFFEA4A57);
 
+const Color kDisabledGreen = Color(0xFFD9D9D9);
 // TEXT STYLES
 
 //Default Text Font is Urbanist
@@ -127,6 +129,12 @@ TextStyle kPoppinsBodyLarge = GoogleFonts.poppins(
 
 TextStyle kPoppinsBodyMedium = GoogleFonts.poppins(
   fontSize: 14,
+  fontWeight: FontWeight.normal,
+  letterSpacing: 0,
+);
+
+TextStyle kPoppinsBodySmall = GoogleFonts.poppins(
+  fontSize: 10,
   fontWeight: FontWeight.normal,
   letterSpacing: 0,
 );
