@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
-import 'package:trashtrackr/core/widgets/buttons/edit_profile_picture_button.dart';
+import 'package:trashtrackr/features/settings/frontend/widgets/buttons/edit_profile_picture_button.dart';
 import 'package:trashtrackr/core/widgets/text_fields/profile_text_field.dart';
 import 'package:trashtrackr/core/widgets/buttons/rounded_rectangle_button.dart';
 

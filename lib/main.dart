@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:trashtrackr/features/profile/frontend/profile_page.dart';
-
 import 'package:trashtrackr/features/waste_scanner/frontend/waste_scanner.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/auth/frontend/splash_screen.dart';

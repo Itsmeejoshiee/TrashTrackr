@@ -56,6 +56,8 @@ class AboutScreen extends StatelessWidget {
                     ),
                 
                     NeoBox(
+                      padding: EdgeInsets.all(20),
+                      margin: EdgeInsets.symmetric(vertical: 10),
                       child: Text(
                         "TrashTrackr is your smart, eco-companion, designed to make waste disposal easy, educational, and empowering. Whether you're snapping a photo to identify how to dispose of an item or tracking your personal environmental impact, TrashTrackr helps you reduce waste, build green habits, and join a movement that’s changing the world—one item at a time.\n\nWith intelligent waste classification, interactive challenges, and a supportive community, TrashTrackr turns everyday actions into real, trackable change for the planet.",
                         style: kBodySmall,
@@ -84,6 +86,8 @@ class AboutScreen extends StatelessWidget {
                     ),
                 
                     NeoBox(
+                      padding: EdgeInsets.all(20),
+                      margin: EdgeInsets.symmetric(vertical: 10),
                       child: Text(
                         "To simplify sustainable living and help everyone become more mindful of their daily waste through fun, tech-powered tools that educate, encourage, and inspire.",
                         style: kBodySmall,

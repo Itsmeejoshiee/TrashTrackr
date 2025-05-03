@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 const Color kAvocado = Color(0xFF628307);
 const Color kAppleGreen = Color(0xFF819D39);
 const Color kLightGreen = Color(0xFFE6E6B0);
+const Color kLightKiwi = Color(0x267FDD53);
 const Color kEerieBlack = Color(0xFF1D1D1D);
 const Color kLightGray = Color(0xFFF6F6F6);
 const Color kGray = Color(0xFF000000); // used with withOpacity(0.3)
