@@ -9,7 +9,9 @@ class WastelogWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        NeoBoxSmall(
+        NeoBox(
+          width: 109,
+          height: 109,
           child: Column(
             children: [
               Image.asset('assets/images/recycling.png', width: 20, height: 20),
@@ -36,7 +38,9 @@ class WastelogWidget extends StatelessWidget {
           ),
         ),
         SizedBox(width: 10),
-        NeoBoxSmall(
+        NeoBox(
+          width: 109,
+          height: 109,
           child: Column(
             children: [
               Image.asset(
@@ -67,7 +71,9 @@ class WastelogWidget extends StatelessWidget {
           ),
         ),
         SizedBox(width: 10),
-        NeoBoxSmall(
+        NeoBox(
+          width: 109,
+          height: 109,
           child: Column(
             children: [
               Image.asset('assets/images/trashcan.png', width: 20, height: 20),

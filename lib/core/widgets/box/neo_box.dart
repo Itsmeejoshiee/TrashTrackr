@@ -60,6 +60,7 @@ class NeoBoxSmall extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 109,
+      height: 199,
       padding: EdgeInsets.all(20),
       margin: EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(

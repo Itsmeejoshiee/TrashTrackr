@@ -162,8 +162,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     SizedBox(height: 13),
                     UserBadgesWidget(),
                     SizedBox(height: 33),
-
-                    /// SECTION SWITCH BUTTONS
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: Row(
