@@ -20,15 +20,16 @@ class CleanupWidget extends StatelessWidget {
               SizedBox(width: 10),
               Text(
                 'Eco Walk: Clean & Connect',
-                style: kTitleMedium.copyWith(fontWeight: FontWeight.w600),
+                style: kLabelSmall.copyWith(fontWeight: FontWeight.w700),
               ),
               Spacer(),
               IconButton(onPressed: () {}, icon: Icon(Icons.more_horiz)),
             ],
           ),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: 10),
               Text(
                 'Saturday, May 4, 2025 UTC 9:00 AM - 12:00 PM',
                 style: kPoppinsBodySmall.copyWith(
