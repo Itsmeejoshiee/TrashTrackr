@@ -188,6 +188,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     SizedBox(height: 18),
                     PostWidget(),
+                    WastelogWidget(),
                     CleanupWidget(),
                   ],
                 ),

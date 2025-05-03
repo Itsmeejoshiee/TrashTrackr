@@ -7,13 +7,9 @@ class WastelogWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      shrinkWrap: true,
-      mainAxisSpacing: 10,
-      crossAxisCount: 3,
-      childAspectRatio: 0.9,
+    return Row(
       children: [
-        NeoBox(
+        NeoBoxSmall(
           child: Column(
             children: [
               Image.asset('assets/images/recycling.png', width: 20, height: 20),
@@ -39,7 +35,8 @@ class WastelogWidget extends StatelessWidget {
             ],
           ),
         ),
-        NeoBox(
+        SizedBox(width: 10),
+        NeoBoxSmall(
           child: Column(
             children: [
               Image.asset(
@@ -69,7 +66,8 @@ class WastelogWidget extends StatelessWidget {
             ],
           ),
         ),
-        NeoBox(
+        SizedBox(width: 10),
+        NeoBoxSmall(
           child: Column(
             children: [
               Image.asset('assets/images/trashcan.png', width: 20, height: 20),

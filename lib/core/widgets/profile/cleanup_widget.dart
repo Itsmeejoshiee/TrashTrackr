@@ -37,9 +37,7 @@ class CleanupWidget extends StatelessWidget {
               ),
               Text(
                 'Central Riversize Park,EcoZone Area B',
-                style: kPoppinsBodySmall.copyWith(
-                  color: kGray.withOpacity(0.5),
-                ),
+                style: kPoppinsBodySmall.copyWith(color: kAvocado),
               ),
             ],
           ),
