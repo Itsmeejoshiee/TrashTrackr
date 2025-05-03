@@ -7,21 +7,26 @@ class SettingTile extends StatelessWidget {
     required this.title,
     required this.iconData,
     required this.onTap,
+    this.color,
   });
 
   final String title;
   final IconData iconData;
   final VoidCallback onTap;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       onTap: onTap,
-      leading: Icon(iconData, color: kAvocado),
-      title: Text(title, style: kBodyLarge),
+      leading: Icon(iconData, color: color ?? kAvocado),
+      title: Text(
+        title,
+        style: kBodyLarge.copyWith(color: color ?? Colors.black),
+      ),
       trailing: Icon(
         Icons.arrow_forward_ios_outlined,
-        color: kAvocado,
+        color: color ?? kAvocado,
       ),
     );
   }
