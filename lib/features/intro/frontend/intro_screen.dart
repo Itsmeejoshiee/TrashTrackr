@@ -155,13 +155,13 @@ class _IntroScreenState extends State<IntroScreen> {
                           ),
 
                           // Offset
-                          SizedBox(height: 20),
+                          SizedBox(height: 15),
 
                           // Offset
-                          SizedBox(height: 20),
+                          SizedBox(height: 15),
 
                           // Offset
-                          SizedBox(height: 20),
+                          SizedBox(height: 15),
                         ],
                       ),
                     );
