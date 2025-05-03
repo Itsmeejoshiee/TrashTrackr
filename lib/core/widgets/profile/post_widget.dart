@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
-import 'package:trashtrackr/core/widgets/box/neo_box.dart';
+import 'package:trashtrackr/core/utils/widgets/box/neo_box.dart';
 
 class PostWidget extends StatelessWidget {
   const PostWidget({super.key});
