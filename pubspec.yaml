@@ -25,6 +25,8 @@ dependencies:
   google_fonts: ^6.2.1
   #indicates percentage
   percent_indicator: ^4.2.5
+  #streak widget
+  streakify: ^0.0.2
 
 dev_dependencies:
   flutter_test:
