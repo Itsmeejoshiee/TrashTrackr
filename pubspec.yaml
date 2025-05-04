@@ -23,6 +23,8 @@ dependencies:
   flutter_dotenv: ^5.2.1
   #google fonts
   google_fonts: ^6.2.1
+  #indicates percentage
+  percent_indicator: ^4.2.5
   #streak widget
   streakify: ^0.0.2
 
@@ -37,6 +39,9 @@ flutter:
   assets:
     - .env
     - assets/images/
+    - assets/images/badges/
+    - assets/images/badges/colored/
+    - assets/images/badges/gray/
 
   fonts:
     - family: Urbanist
