@@ -35,7 +35,7 @@ class TrashTrackr extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: WelcomeScreen(),
+      home: WasteScannerPage(),
       theme: ThemeData(primaryColor: kAvocado),
     );
   }
