@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/text_fields/profile_text_field.dart';
 import 'package:trashtrackr/core/widgets/buttons/rounded_rectangle_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/auth_provider_button.dart';
+import 'package:trashtrackr/features/auth/backend/auth_bloc.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key, required this.onToggle});
@@ -16,6 +18,7 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  String? _errorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +54,14 @@ class _LoginFormState extends State<LoginForm> {
 
           // Offset
           SizedBox(height: 10),
-
+          if (_errorMessage != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 10, bottom: 10),
+              child: Text(
+                _errorMessage!,
+                style: kLabelLarge.copyWith(color: Colors.red),
+              ),
+            ),
           ProfileTextField(
             controller: _emailController,
             iconData: Icons.email,
@@ -74,7 +84,31 @@ class _LoginFormState extends State<LoginForm> {
 
           Flexible(child: SizedBox(height: 80)),
 
-          RoundedRectangleButton(title: 'Login', onPressed: () {}),
+          RoundedRectangleButton(
+            title: 'Login',
+            onPressed: () async {
+              final authViewModel = Provider.of<AuthBloc>(
+                context,
+                listen: false,
+              );
+              //reset error message
+              setState(() {
+                _errorMessage = null;
+              });
+              try {
+                await authViewModel.signIn(
+                  _emailController.text.trim(),
+                  _passwordController.text.trim(),
+                );
+
+                //add navigation to home screen here
+              } catch (e) {
+                setState(() {
+                  _errorMessage = e.toString();
+                });
+              }
+            },
+          ),
 
           Flexible(child: SizedBox(height: 60)),
 
@@ -119,7 +153,13 @@ class _LoginFormState extends State<LoginForm> {
             children: [
               AuthProviderButton(
                 padding: EdgeInsets.all(14),
-                onPressed: () {},
+                onPressed: () async {
+                  final authViewModel = Provider.of<AuthBloc>(
+                    context,
+                    listen: false,
+                  );
+                  await authViewModel.signInWithGoogle();
+                },
                 child: Image.asset('assets/images/google_green.png'),
               ),
 

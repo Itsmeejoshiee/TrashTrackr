@@ -11,6 +11,18 @@ dependencies:
     sdk: flutter
   #unlock camera features
   camera: ^0.11.1
+  #firebase core
+  firebase_core: ^3.13.0
+  #firebase auth
+  firebase_auth: ^5.5.3
+  #google sign in
+  google_sign_in: ^6.3.0
+  #firebase storage
+  firebase_storage: ^12.4.5
+  #firestore storage
+  cloud_firestore: ^5.6.7
+  #state management
+  provider: ^6.1.5
   #unlocks gemini features
   google_generative_ai: ^0.4.7
   #gal is a dart3 plugin for saving images to gallery
@@ -25,8 +37,7 @@ dependencies:
   google_fonts: ^6.2.1
   #indicates percentage
   percent_indicator: ^4.2.5
-  #streak widget
-  streakify: ^0.0.2
+
 
 dev_dependencies:
   flutter_test:
