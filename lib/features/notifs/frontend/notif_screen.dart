@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'widgets/notif_switch_tile.dart';
+import '../../../core/widgets/list_tiles/view_switch_tile.dart';
 import 'widgets/notif_card.dart';
 import 'views/updates_view.dart';
 import 'views/bookmarks_view.dart';
@@ -36,12 +36,14 @@ class _NotifScreenState extends State<NotifScreen> {
             SizedBox(height: 8),
 
             // Notif Switch Tile
-            NotifSwitchTile(
+            ViewSwitchTile(
               value: _updateView,
-              onUpdates: () {
+              firstViewTitle: 'Updates',
+              secondViewTitle: 'Bookmarks',
+              onFirstView: () {
                 setState(() => _updateView = true);
               },
-              onBookmarks: () {
+              onSecondView: () {
                 setState(() => _updateView = false);
               },
             ),

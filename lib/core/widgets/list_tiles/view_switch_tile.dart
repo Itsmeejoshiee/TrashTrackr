@@ -2,17 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/box/neo_box.dart';
 
-class NotifSwitchTile extends StatelessWidget {
-  const NotifSwitchTile({
+class ViewSwitchTile extends StatelessWidget {
+  const ViewSwitchTile({
     super.key,
     required this.value,
-    required this.onUpdates,
-    required this.onBookmarks,
+    required this.firstViewTitle,
+    required this.secondViewTitle,
+    required this.onFirstView,
+    required this.onSecondView,
   });
 
   final bool value;
-  final VoidCallback onUpdates;
-  final VoidCallback onBookmarks;
+  final String firstViewTitle;
+  final String secondViewTitle;
+  final VoidCallback onFirstView;
+  final VoidCallback onSecondView;
 
   @override
   Widget build(BuildContext context) {
@@ -22,18 +26,18 @@ class NotifSwitchTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           GestureDetector(
-            onTap: onUpdates,
+            onTap: onFirstView,
             child: Text(
-              'Updates',
+              firstViewTitle,
               style:
               (value) ? kBodyLarge.copyWith(color: kAvocado) : kBodyLarge,
             ),
           ),
           SizedBox(),
           GestureDetector(
-            onTap: onBookmarks,
+            onTap: onSecondView,
             child: Text(
-              'Bookmarks',
+              secondViewTitle,
               style:
               (!value) ? kBodyLarge.copyWith(color: kAvocado) : kBodyLarge,
             ),
