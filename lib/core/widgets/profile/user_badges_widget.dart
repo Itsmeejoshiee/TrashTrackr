@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:trashtrackr/core/utils/widgets/box/neo_box.dart';
-import 'package:trashtrackr/core/utils/widgets/profile/badge_widget.dart';
+import 'package:trashtrackr/core/widgets/box/neo_box.dart';
+import 'package:trashtrackr/core/widgets/profile/badge_widget.dart';
 
 class UserBadgesWidget extends StatelessWidget {
   const UserBadgesWidget({super.key});
