@@ -1,8 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:trashtrackr/core/models/user_model.dart';
+import 'package:trashtrackr/core/providers/user_provider.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/text_fields/profile_text_field.dart';
 import 'package:trashtrackr/core/widgets/buttons/rounded_rectangle_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/auth_provider_button.dart';
+import 'package:trashtrackr/features/auth/backend/auth_bloc.dart';
 
 class SignupForm extends StatefulWidget {
   const SignupForm({super.key, required this.onToggle});
@@ -20,7 +26,8 @@ class _SignupFormState extends State<SignupForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
-  TextEditingController();
+      TextEditingController();
+  String? _errorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +64,14 @@ class _SignupFormState extends State<SignupForm> {
 
           // Offset
           SizedBox(height: 25),
+          if (_errorMessage != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 10, bottom: 10),
+              child: Text(
+                _errorMessage!,
+                style: kLabelLarge.copyWith(color: Colors.red),
+              ),
+            ),
 
           ProfileTextField(
             margin: EdgeInsets.only(bottom: 15),
@@ -98,7 +113,65 @@ class _SignupFormState extends State<SignupForm> {
           // Dynamic Offset
           Flexible(child: SizedBox(height: 80)),
 
-          RoundedRectangleButton(title: 'Sign up', onPressed: () {}),
+          RoundedRectangleButton(
+            title: 'Sign up',
+            onPressed: () async {
+              setState(() {
+                // Clear any previous error
+                _errorMessage = null;
+              });
+              try {
+                if (_passwordController.text.trim() !=
+                    _confirmPasswordController.text.trim()) {
+                  setState(() {
+                    _errorMessage = 'Passwords do not match.';
+                  });
+                  return;
+                }
+                final authViewModel = Provider.of<AuthBloc>(
+                  context,
+                  listen: false,
+                );
+
+                await authViewModel.signUp(
+                  _emailController.text.trim(),
+                  _passwordController.text.trim(),
+                );
+
+                final newUser = UserModel(
+                  uid: authViewModel.user!.uid,
+                  email: _emailController.text.trim(),
+                  username: _usernameController.text.trim(),
+                  firstName: _firstNameController.text.trim(),
+                  lastName: _lastNameController.text.trim(),
+                );
+
+                await FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(newUser.uid)
+                    .set(newUser.toMap());
+
+                final userProvider = Provider.of<UserProvider>(
+                  context,
+                  listen: false,
+                );
+                userProvider.setUser(newUser);
+
+                //is this correct???
+                widget.onToggle();
+              } catch (e) {
+                setState(() {
+                  if (e is FirebaseAuthException) {
+                    _errorMessage =
+                        e.message ?? 'An authentication error occurred.';
+                  } else {
+                    _errorMessage =
+                        'An unexpected error occurred: ${e.toString()}';
+                  }
+                });
+              }
+            },
+          ),
 
           // Dynamic Offset
           Flexible(child: SizedBox(height: 40)),
@@ -168,8 +241,7 @@ class _SignupFormState extends State<SignupForm> {
           Flexible(child: SizedBox(height: 40)),
 
           // Offset
-          SizedBox(height: 20)
-
+          SizedBox(height: 20),
         ],
       ),
     );

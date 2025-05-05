@@ -15,6 +15,12 @@ dependencies:
   firebase_core: ^3.13.0
   #firebase auth
   firebase_auth: ^5.5.3
+  #google sign in
+  google_sign_in: ^6.3.0
+  #firebase storage
+  firebase_storage: ^12.4.5
+  #firestore storage
+  cloud_firestore: ^5.6.7
   #state management
   provider: ^6.1.5
   #unlocks gemini features
