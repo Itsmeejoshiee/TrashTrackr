@@ -53,6 +53,7 @@ flutter:
     - assets/images/badges/
     - assets/images/badges/colored/
     - assets/images/badges/gray/
+    - assets/images/icons/
 
   fonts:
     - family: Urbanist
