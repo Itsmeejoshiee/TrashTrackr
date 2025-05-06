@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
-import 'package:trashtrackr/features/profile/backend/user_badge_data.dart';
+import 'package:trashtrackr/core/models/eco_badge.dart';
 
-class EcoBadge extends StatelessWidget {
-  const EcoBadge({super.key});
+class BadgeTile extends StatelessWidget {
+  const BadgeTile({
+    super.key,
+    required this.badge,
+  });
+
+  final EcoBadge badge;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Image.asset('assets/images/sample_badge.png', width: 53, height: 61.38),
+        Image.asset('assets/images/badges/colored/${badge.imagePath}', width: 53, height: 61.38),
         SizedBox(height: 5),
         Text(
-          UserBadgeData().userBadges[0].badgeName,
+          badge.title,
           style: kLabelSmall.copyWith(fontSize: 10),
         ),
       ],
