@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'dart:math' as math;
 
+import '../../../features/post/frontend/post_screen.dart';
+
 class MultiActionFab extends StatefulWidget {
   const MultiActionFab({super.key});
 
@@ -11,6 +13,22 @@ class MultiActionFab extends StatefulWidget {
 
 class _MultiActionFabState extends State<MultiActionFab>
     with SingleTickerProviderStateMixin {
+
+  // for Create Post bottom sheet
+  void _openPostScreen(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      builder: (context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.9,
+          child: PostScreen(),
+        );
+      },
+    );
+  }
+
   bool _isDialOpen = false;
   late AnimationController _controller;
 
@@ -45,9 +63,10 @@ class _MultiActionFabState extends State<MultiActionFab>
       SpeedDialItemData(
         icon: Icons.edit_note_outlined,
         color: Colors.green,
-        onTap: () => print('Edit button pressed'),
+        onTap: () {print('Create post button pressed'); _openPostScreen(context);},
         position: 0,
       ),
+
       SpeedDialItemData(
         icon: Icons.crop_free,
         color: Colors.green,
