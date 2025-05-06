@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
-import 'package:trashtrackr/core/utils/eco_badge.dart';
+import 'package:trashtrackr/core/models/eco_badge.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:trashtrackr/core/widgets/box/neo_box.dart';
@@ -19,7 +19,7 @@ class BadgeBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String imagePath = 'assets/images/badges/${(isEarned) ? 'colored' : 'gray'}/${badgePath[badge]}';
+    String imagePath = 'assets/images/badges/${(isEarned) ? 'colored' : 'gray'}/${badge.imagePath}';
     return GestureDetector(
       onTap: () {
         Alert(
@@ -31,7 +31,7 @@ class BadgeBox extends StatelessWidget {
             descStyle: kTitleMedium.copyWith(color: Color(0xFF4A4A4A)),
             descPadding: EdgeInsets.symmetric(horizontal: 60),
           ),
-          desc: badgeDesc[badge],
+          desc: badge.desc,
           image: Padding(
             padding: const EdgeInsets.symmetric(vertical: 30),
             child: CircularPercentIndicator(
@@ -49,7 +49,7 @@ class BadgeBox extends StatelessWidget {
                     width: 100,
                   ),
                   Text(
-                    badgeTitle[badge]!,
+                    badge.title,
                     style: TextStyle(
                       color: Color(0xFF4A4A4A),
                       fontFamily: 'Urbanist',
@@ -73,7 +73,7 @@ class BadgeBox extends StatelessWidget {
               width: 65,
             ),
             Text(
-              badgeTitle[badge]!,
+              badge.title,
               style: TextStyle(
                 color: Color(0xFF4A4A4A),
                 fontFamily: 'Urbanist',
