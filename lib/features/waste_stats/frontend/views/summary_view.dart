@@ -54,25 +54,27 @@ class SummaryView extends StatelessWidget {
           ),
           Row(
             children: [
-              NeoBox(
-                width: screenWidth / 3,
-                height: screenHeight / 4,
-                child: Column(
-                  children: [
-                    Image.asset("assets/images/waste_stats_icon.png", width: imageSize),
-                    SizedBox(height: 15),
-                    Text(
-                      "$wasteCount",
-                      style: kDisplayLarge.copyWith(fontWeight: FontWeight.w700),
-                    ),
-                    SizedBox(height: 15),
-                    Text(
-                      "times",
-                      style: kTitleMedium.copyWith(fontSize: 19),
-                    ),
-                  ],
+              Flexible(
+                child: NeoBox(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset("assets/images/waste_stats_icon.png", width: imageSize),
+                      SizedBox(height: 15),
+                      Text(
+                        "$wasteCount",
+                        style: kDisplayLarge.copyWith(fontSize: screenWidth / 10, fontWeight: FontWeight.w700),
+                      ),
+                      SizedBox(height: 15),
+                      Text(
+                        "times",
+                        style: kTitleMedium.copyWith(fontSize: screenWidth / 30),
+                      ),
+                    ],
+                  ),
                 ),
               ),
+
               Flexible(
                 child: PieChart(
                   dataMap: dataMap,
