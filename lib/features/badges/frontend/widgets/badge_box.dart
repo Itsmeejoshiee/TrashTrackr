@@ -64,6 +64,7 @@ class BadgeBox extends StatelessWidget {
       },
       child: NeoBox(
         margin: EdgeInsets.all(10),
+        padding: EdgeInsets.all(0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
