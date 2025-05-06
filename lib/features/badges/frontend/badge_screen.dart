@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trashtrackr/core/utils/eco_badge.dart';
+import 'package:trashtrackr/core/models/eco_badge.dart';
 import 'package:trashtrackr/core/widgets/buttons/multi_action_fab.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
 import 'widgets/badge_box.dart';
@@ -18,6 +18,16 @@ class _BadgeScreenState extends State<BadgeScreen> {
     setState(() {
       _selectedRoute = route;
     });
+  }
+
+  List<Widget> _badgeBoxBuilder() {
+    List<Widget> badgeBoxes = [];
+    for (int id = 1; id <= 14; id++) {
+      // TODO: Check if badge is earned by referencing user badges in database
+      final EcoBadge currentBadge = EcoBadge(id: id);
+      badgeBoxes.add(BadgeBox(badge: currentBadge));
+    }
+    return badgeBoxes;
   }
 
   @override
@@ -39,22 +49,7 @@ class _BadgeScreenState extends State<BadgeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 32),
               child: GridView.count(
                 crossAxisCount: 3,
-                children: [
-                  BadgeBox(badge: EcoBadge.greenStreaker),
-                  BadgeBox(badge: EcoBadge.ecoChampion),
-                  BadgeBox(badge: EcoBadge.greenStreaker),
-                  BadgeBox(badge: EcoBadge.dailyDiligent),
-                  BadgeBox(badge: EcoBadge.weekendWarrior),
-                  BadgeBox(badge: EcoBadge.scannerRookie),
-                  BadgeBox(badge: EcoBadge.sortingExpert),
-                  BadgeBox(badge: EcoBadge.plasticBuster),
-                  BadgeBox(badge: EcoBadge.barcodeSleuth),
-                  BadgeBox(badge: EcoBadge.zeroWasteHero),
-                  BadgeBox(badge: EcoBadge.ecoInfluencer),
-                  BadgeBox(badge: EcoBadge.cleanupCaptain),
-                  BadgeBox(badge: EcoBadge.trashTrackrOg),
-                  BadgeBox(badge: EcoBadge.quizMaster),
-                ],
+                children: _badgeBoxBuilder(),
               ),
             ),
           ),
