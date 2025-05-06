@@ -37,8 +37,11 @@ dependencies:
   google_fonts: ^6.2.1
   #indicates percentage
   percent_indicator: ^4.2.5
+  #for pie chart
   pie_chart: ^5.4.0
+  #for line chart
   fl_chart: ^0.71.0
+  #date/time
   intl: ^0.20.2
 
 
