@@ -13,6 +13,9 @@ const Color kDarkTeal = Color(0xFF003333);
 const Color kTeal = Color(0xFF339999);
 const Color kRed = Color(0xFFEA4A57);
 
+const Color kForestGreen =Color(0xFF3F5C00);
+const Color kDarkGrey =Color.fromRGBO(134, 134, 134, 1);
+
 const Color kDisabledGreen = Color(0xFFD9D9D9);
 // TEXT STYLES
 

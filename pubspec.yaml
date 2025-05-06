@@ -37,6 +37,8 @@ dependencies:
   google_fonts: ^6.2.1
   #indicates percentage
   percent_indicator: ^4.2.5
+  #Date/Time and Number Formatting
+  intl: ^0.20.2
 
 
 dev_dependencies:
@@ -53,6 +55,7 @@ flutter:
     - assets/images/badges/
     - assets/images/badges/colored/
     - assets/images/badges/gray/
+    - assets/images/titles/log_disposal.png
 
   fonts:
     - family: Urbanist
