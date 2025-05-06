@@ -37,6 +37,12 @@ dependencies:
   google_fonts: ^6.2.1
   #indicates percentage
   percent_indicator: ^4.2.5
+  #google maps
+  google_maps_flutter: ^2.12.1
+  #location services
+  location: ^8.0.0
+  #for http requests in google maps
+  http: ^1.4.0
 
 
 dev_dependencies:
@@ -49,6 +55,7 @@ flutter:
 
   assets:
     - .env
+    - assets/map/
     - assets/images/
     - assets/images/badges/
     - assets/images/badges/colored/
