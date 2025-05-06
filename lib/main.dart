@@ -6,6 +6,7 @@ import 'package:trashtrackr/core/providers/user_provider.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:trashtrackr/features/auth/backend/auth_bloc.dart';
 import 'package:trashtrackr/features/profile/frontend/profile_page.dart';
+import 'package:trashtrackr/features/waste_scanner/frontend/scan_result_screen.dart';
 import 'package:trashtrackr/features/waste_scanner/frontend/waste_scanner.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/auth/frontend/splash_screen.dart';
@@ -35,8 +36,8 @@ class TrashTrackr extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: WelcomeScreen(),
-      theme: ThemeData(primaryColor: kAvocado),
+      home: ScanResultScreen(),
+      theme: ThemeData(primaryColor: kAvocado, scaffoldBackgroundColor: kLightGray),
     );
   }
 }
