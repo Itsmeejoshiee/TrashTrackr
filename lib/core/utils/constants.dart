@@ -12,8 +12,10 @@ const Color kGray = Color(0xFF000000); // used with withOpacity(0.3)
 const Color kDarkTeal = Color(0xFF003333);
 const Color kTeal = Color(0xFF339999);
 const Color kRed = Color(0xFFEA4A57);
-
+const Color kLightOrange = Color(0xFFFAF1DC);
+const Color kDarkOrange = Color(0xFFEDB552);
 const Color kDisabledGreen = Color(0xFFD9D9D9);
+
 // TEXT STYLES
 
 //Default Text Font is Urbanist
