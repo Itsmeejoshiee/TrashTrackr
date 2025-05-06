@@ -14,6 +14,8 @@ import 'package:trashtrackr/features/auth/frontend/welcome_screen.dart';
 import 'package:trashtrackr/features/waste_scanner/backend/camera_module.dart';
 import 'package:trashtrackr/features/intro/frontend/intro_screen.dart';
 
+import 'features/waste_stats/frontend/waste_stats_screen.dart';
+
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
