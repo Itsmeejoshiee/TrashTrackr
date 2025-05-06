@@ -55,25 +55,25 @@ class FaqScreen extends StatelessWidget {
                   FaqTile(
                     title: 'How does the waste classification work?',
                     description:
-                    'TrashTrackr is your smart, eco-friendly companion that helps you classify waste, build sustainable habits, and engage in a community that cares for the planet. Snap photos to sort your trash, take quizzes, track your eco-streaks, and join clean-up events—all in one app!',
+                    "Simply take a photo of an item, and TrashTrackr’s AI-powered system will tell you if it’s biodegradable, non-biodegradable, or recyclable. You can also scan barcodes or manually enter the item!",
                   ),
               
                   FaqTile(
                     title: 'What are badges, and how do I earn them?',
                     description:
-                    'TrashTrackr is your smart, eco-friendly companion that helps you classify waste, build sustainable habits, and engage in a community that cares for the planet. Snap photos to sort your trash, take quizzes, track your eco-streaks, and join clean-up events—all in one app!',
+                    "Badges are fun achievements you earn by completing eco-friendly actions in TrashTrackr. They celebrate your progress and help keep you motivated as you build better waste habits.",
                   ),
               
                   FaqTile(
                     title: 'How do I find nearby disposal or recycling centers?',
                     description:
-                    'TrashTrackr is your smart, eco-friendly companion that helps you classify waste, build sustainable habits, and engage in a community that cares for the planet. Snap photos to sort your trash, take quizzes, track your eco-streaks, and join clean-up events—all in one app!',
+                    "uses your location (with permission) to show nearby disposal facilities or special recycling drop-off points so you always know where to go for responsible waste handling.",
                   ),
               
                   FaqTile(
                     title: 'Is my data private?',
                     description:
-                    'TrashTrackr is your smart, eco-friendly companion that helps you classify waste, build sustainable habits, and engage in a community that cares for the planet. Snap photos to sort your trash, take quizzes, track your eco-streaks, and join clean-up events—all in one app!',
+                    "Yes! TrashTrackr values your privacy. Your personal waste log, location, and interactions are secure and never shared without your consent.",
                   ),
                 ],
               ),
