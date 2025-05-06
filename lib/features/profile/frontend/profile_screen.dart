@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/profile/profile_header.dart';
-import 'package:trashtrackr/core/widgets/profile/profile_section_label.dart';
 import 'package:trashtrackr/core/widgets/profile/profile_switch_tile.dart';
 import 'package:trashtrackr/core/widgets/profile/post_view.dart';
 import 'package:trashtrackr/core/widgets/profile/post_card.dart';
@@ -149,9 +148,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SizedBox(height: 31),
 
                     // Badges
-                    ProfileSectionLabel(label: 'Badges'),
-                    SizedBox(height: 13),
-                    BadgeGrid(),
+                    BadgeGrid(badgeIdList: [1, 2, 3, 4, 5, 6, 7, 8],),
 
                     SizedBox(height: 33),
 
