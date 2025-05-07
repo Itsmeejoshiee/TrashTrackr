@@ -5,9 +5,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class PlacesService {
   final String apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+
+  // Fetch nearby waste disposal locations using Google Places API
   Future<Set<Marker>> getNearbyWasteDisposal(double lat, double lng) async {
     final url = Uri.parse(
-      'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$lng&radius=3000&keyword=waste%20disposal&key=AIzaSyBLNd10Pv_i-aSSOPEFGsCDUmhhte4tim0',
+      'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$lng&&radius=3000&keyword=recycling%20center&key=$apiKey',
     );
 
     final response = await http.get(url);
