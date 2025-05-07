@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:trashtrackr/core/providers/user_provider.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:trashtrackr/features/auth/backend/auth_bloc.dart';
+import 'package:trashtrackr/features/auth/backend/auth_manager.dart';
 import 'package:trashtrackr/features/badges/frontend/badge_screen.dart';
 import 'package:trashtrackr/features/dashboard/frontend/dashboard_screen.dart';
 import 'package:trashtrackr/features/feed/frontend/feed_screen.dart';
@@ -39,7 +40,7 @@ class TrashTrackr extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: DashboardScreen(),
+      home: AuthManager(),
       theme: ThemeData(primaryColor: kAvocado, scaffoldBackgroundColor: kLightGray),
     );
   }
