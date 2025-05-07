@@ -11,11 +11,19 @@ class BadgeBox extends StatelessWidget {
     required this.badge,
     this.percent = 0,
     this.isEarned = true,
+    this.width,
+    this.height,
+    this.padding,
+    this.margin,
   });
 
   final EcoBadge badge;
   final double percent;
   final bool isEarned;
+  final double? width;
+  final double? height;
+  final EdgeInsets? padding;
+  final EdgeInsets? margin;
 
   @override
   Widget build(BuildContext context) {
@@ -63,8 +71,10 @@ class BadgeBox extends StatelessWidget {
         ).show();
       },
       child: NeoBox(
-        margin: EdgeInsets.all(10),
-        padding: EdgeInsets.all(0),
+        width: width,
+        height: height,
+        margin: padding ?? EdgeInsets.all(10),
+        padding: margin ?? EdgeInsets.all(0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
