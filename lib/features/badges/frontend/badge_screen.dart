@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/models/eco_badge.dart';
 import 'package:trashtrackr/core/widgets/buttons/multi_action_fab.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
-import 'widgets/badge_box.dart';
+import 'package:trashtrackr/core/widgets/box/badge_box.dart';
 
 class BadgeScreen extends StatefulWidget {
   const BadgeScreen({super.key});
