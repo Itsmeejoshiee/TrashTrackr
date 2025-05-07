@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
+import 'package:trashtrackr/core/widgets/buttons/disposal_location_button.dart';
 import 'widgets/properties_tile.dart';
 import 'widgets/disposal_guide.dart';
 import 'widgets/scan_result_field.dart';
@@ -101,16 +102,10 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                 style: kBodyLarge.copyWith(fontWeight: FontWeight.bold),
               ),
 
-              Container(
-                width: double.infinity,
-                height: 180,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/covers/map.png'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
+              SizedBox(height: 10),
+
+              DisposalLocationButton(
+                onPressed: () {},
               ),
 
               SizedBox(height: 23),
