@@ -122,12 +122,10 @@ class _MultiActionFabState extends State<MultiActionFab>
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        Positioned(
-          bottom: 25, // Position relative to bottom of screen
-          left: 0,
-          right: 0,
-          child: Align(
-            alignment: Alignment.bottomCenter,
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Transform.translate(
+            offset: Offset(0, -20),
             child: FloatingActionButton(
               elevation: 6,
               backgroundColor: kAvocado,
