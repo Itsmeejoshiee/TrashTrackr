@@ -26,8 +26,6 @@ import 'package:trashtrackr/features/waste_scanner/backend/camera_module.dart';
 import 'package:trashtrackr/features/intro/frontend/intro_screen.dart';
 import 'package:trashtrackr/features/waste_stats/frontend/waste_stats_screen.dart';
 
-
-
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,9 +48,11 @@ class TrashTrackr extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: WasteStatsScreen(),
-      theme: ThemeData(primaryColor: kAvocado, scaffoldBackgroundColor: kLightGray),
-
+      home: WelcomeScreen(),
+      theme: ThemeData(
+        primaryColor: kAvocado,
+        scaffoldBackgroundColor: kLightGray,
+      ),
     );
   }
 }
