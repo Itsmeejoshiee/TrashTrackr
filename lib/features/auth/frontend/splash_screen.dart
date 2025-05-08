@@ -22,7 +22,7 @@ class SplashScreen extends StatelessWidget {
               child: Transform.rotate(
                 angle: 2.8,
                 child: Image.asset(
-                  'assets/images/plant_multicolor.png',
+                  'assets/images/components/plant_multicolor.png',
                   height: plantHeight,
                 ),
               ),
@@ -35,14 +35,14 @@ class SplashScreen extends StatelessWidget {
               child: Transform.rotate(
                 angle: -0.4,
                 child: Image.asset(
-                  'assets/images/plant_multicolor.png',
+                  'assets/images/components/plant_multicolor.png',
                   height: plantHeight,
                 ),
               ),
             ),
           ),
           Center(
-            child: Image.asset('assets/images/logo_white.png', height: logoHeight),
+            child: Image.asset('assets/images/logo/logo_white.png', height: logoHeight),
           ),
         ],
       ),

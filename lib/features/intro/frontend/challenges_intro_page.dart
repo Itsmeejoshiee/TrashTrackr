@@ -32,7 +32,7 @@ class ChallengesIntroPage extends StatelessWidget {
                 child: Transform.rotate(
                   angle: 2.25,
                   child: Image.asset(
-                    'assets/images/plant.png',
+                    'assets/images/components/plant.png',
                     width: plantWidth,
                   ),
                 ),
@@ -48,7 +48,7 @@ class ChallengesIntroPage extends StatelessWidget {
                 child: Transform.rotate(
                   angle: -0.8,
                   child: Image.asset(
-                    'assets/images/plant.png',
+                    'assets/images/components/plant.png',
                     width: plantWidth,
                   ),
                 ),
@@ -60,7 +60,7 @@ class ChallengesIntroPage extends StatelessWidget {
             child: Transform.translate(
               offset: Offset((screenWidth * 0.22), -10),
               child: Image.asset(
-                'assets/images/pear_tilt.png',
+                'assets/images/logo/pear_tilt.png',
                 width: boxWidth,
               ),
             ),

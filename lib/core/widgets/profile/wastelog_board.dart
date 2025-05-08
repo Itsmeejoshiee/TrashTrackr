@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/box/neo_box.dart';
 
-class WastelogWidget extends StatelessWidget {
-  const WastelogWidget({super.key});
+class WastelogBoard extends StatelessWidget {
+  const WastelogBoard({super.key, this.recylable = 0, this.biodegradable = 0, this.nonbiodegradable = 0});
+
+  final int recylable;
+  final int biodegradable;
+  final int nonbiodegradable;
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +24,12 @@ class WastelogWidget extends StatelessWidget {
             child: Column(
               children: [
                 Image.asset(
-                  'assets/images/recycling.png',
+                  'assets/images/icons/recycling.png',
                   width: 20,
                   height: 20,
                 ),
                 Text(
-                  '32',
+                  '$recylable',
                   style: kPoppinsDisplaySmall.copyWith(
                     fontSize: 39.53,
                     fontWeight: FontWeight.bold,
@@ -53,12 +57,12 @@ class WastelogWidget extends StatelessWidget {
             child: Column(
               children: [
                 Image.asset(
-                  'assets/images/leaf_brown.png',
+                  'assets/images/icons/leaf_brown.png',
                   width: 18,
                   height: 18,
                 ),
                 Text(
-                  '80',
+                  '$biodegradable',
                   style: kPoppinsDisplaySmall.copyWith(
                     fontSize: 39.53,
                     fontWeight: FontWeight.bold,
@@ -86,12 +90,12 @@ class WastelogWidget extends StatelessWidget {
             child: Column(
               children: [
                 Image.asset(
-                  'assets/images/trashcan.png',
+                  'assets/images/icons/trashcan.png',
                   width: 20,
                   height: 20,
                 ),
                 Text(
-                  '12',
+                  '$nonbiodegradable',
                   style: kPoppinsDisplaySmall.copyWith(
                     fontSize: 39.53,
                     fontWeight: FontWeight.bold,

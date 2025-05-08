@@ -25,8 +25,9 @@ class _StreakCalendarState extends State<StreakCalendar> {
           ),
           SizedBox(height: 12),
           GridView.builder(
-            itemCount: DateUtilsHelper().getNumberOfDaysInCurrentMonth(),
             shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: DateUtilsHelper().getNumberOfDaysInCurrentMonth(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 7,
               crossAxisSpacing: 24,

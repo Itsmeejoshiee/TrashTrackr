@@ -37,6 +37,21 @@ dependencies:
   google_fonts: ^6.2.1
   #indicates percentage
   percent_indicator: ^4.2.5
+  #for pie chart
+  pie_chart: ^5.4.0
+  #for line chart
+  fl_chart: ^0.71.0
+  #date/time
+  intl: ^0.20.2
+  #google maps
+  google_maps_flutter: ^2.12.1
+  custom_info_window: ^1.0.1
+  #location services
+  location: ^8.0.0
+  #for http requests in google maps
+  http: ^1.4.0
+  url_launcher: ^6.3.1
+
 
 
 dev_dependencies:
@@ -49,12 +64,18 @@ flutter:
 
   assets:
     - .env
+    - assets/map/
     - assets/images/
     - assets/images/badges/
     - assets/images/badges/colored/
     - assets/images/badges/gray/
-    - assets/images/icons/
+    - assets/images/components/
     - assets/images/covers/
+    - assets/images/icons/
+    - assets/images/intro/
+    - assets/images/logo/
+    - assets/images/recycling_guide/
+    - assets/images/titles/
 
   fonts:
     - family: Urbanist

@@ -22,7 +22,7 @@ class LeafWall extends StatelessWidget {
             left: -80, // Overflow to left by 20px
             right: -80, // Overflow to right by 20px
             child: Image.asset(
-              'assets/images/leaf_wall.png',
+              'assets/images/components/leaf_wall.png',
               fit: BoxFit.cover,
             ),
           ),

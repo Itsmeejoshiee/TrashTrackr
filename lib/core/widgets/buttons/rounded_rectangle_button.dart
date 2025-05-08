@@ -7,10 +7,14 @@ class RoundedRectangleButton extends StatelessWidget {
     required this.title,
     required this.onPressed,
     this.backgroundColor = kAvocado,
+    this.width,
+    this.height,
   });
 
   final String title;
   final VoidCallback onPressed;
+  final double? width;
+  final double? height;
   final Color backgroundColor;
 
   @override
@@ -18,8 +22,8 @@ class RoundedRectangleButton extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        width: double.infinity,
-        height: 50,
+        width: width ?? double.infinity,
+        height: height ?? 50,
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(11),
@@ -39,7 +43,7 @@ class RoundedRectangleButton extends StatelessWidget {
         child: Center(
           child: Text(
             title,
-            style: kTitleLarge.copyWith(
+            style: kTitleSmall.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
