@@ -36,14 +36,27 @@ class AuthBloc extends ChangeNotifier {
   }
 
   Future<void> signIn(String email, String password) async {
-    await _authService.signIn(email, password);
+    try {
+      await _authService.signIn(email, password);
+      _authState = AuthState.authenticated;
+      notifyListeners();
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> signUp(String email, String password) async {
-    await _authService.createAccount(email, password);
-    _user = _authService.currentUser;
-    _authState =
-        _user != null ? AuthState.authenticated : AuthState.unauthenticated;
+    try {
+      await _authService.createAccount(email, password);
+      _authState = AuthState.authenticated;
+      notifyListeners();
+    } catch (e) {
+      print(e);
+    }
+
+    // _user = _authService.currentUser;
+    // _authState =
+    //     _user != null ? AuthState.authenticated : AuthState.unauthenticated;
   }
 
   Future<void> signInWithGoogle() async {

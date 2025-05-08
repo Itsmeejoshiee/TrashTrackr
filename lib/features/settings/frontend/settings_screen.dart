@@ -30,7 +30,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       desc: "Don't worry, we'll keep everything saved for when you return.",
       image: Padding(
         padding: const EdgeInsets.symmetric(vertical: 15),
-        child: Image.asset("assets/images/red_logout_icon.png", width: 90),
+        child: Image.asset("assets/images/icons/red_logout_icon.png", width: 90),
       ),
       buttons: [
         DialogButton(
@@ -66,7 +66,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       title: "Are you sure you want\nto delete your account?",
       desc:
           "We're sad to see you leave! Deleting your TrashTrackr account will permanently erase your data, including your streaks, badges, posts, and waste log.",
-      image: Image.asset("assets/images/red_delete_icon.png", width: 110),
+      image: Image.asset("assets/images/icons/red_delete_icon.png", width: 110),
       buttons: [
         DialogButton(
           margin: EdgeInsets.symmetric(horizontal: 20),

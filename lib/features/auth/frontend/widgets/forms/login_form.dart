@@ -160,19 +160,19 @@ class _LoginFormState extends State<LoginForm> {
                   );
                   await authViewModel.signInWithGoogle();
                 },
-                child: Image.asset('assets/images/google_green.png'),
+                child: Image.asset('assets/images/icons/google_green.png'),
               ),
 
               AuthProviderButton(
                 padding: EdgeInsets.all(12),
                 onPressed: () {},
-                child: Image.asset('assets/images/facebook_green.png'),
+                child: Image.asset('assets/images/icons/facebook_green.png'),
               ),
 
               AuthProviderButton(
                 padding: EdgeInsets.all(10),
                 onPressed: () {},
-                child: Image.asset('assets/images/apple_green.png'),
+                child: Image.asset('assets/images/icons/apple_green.png'),
               ),
             ],
           ),

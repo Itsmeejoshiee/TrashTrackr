@@ -4,7 +4,7 @@ import 'package:trashtrackr/core/utils/auth_state.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/auth/backend/auth_bloc.dart';
 import 'package:trashtrackr/features/auth/frontend/welcome_screen.dart';
-import 'package:trashtrackr/features/profile/frontend/profile_page.dart';
+import 'package:trashtrackr/features/profile/frontend/profile_screen.dart';
 
 class AuthManager extends StatelessWidget {
   const AuthManager({super.key});
@@ -24,7 +24,7 @@ class AuthManager extends StatelessWidget {
         //idk what to do here
         return WelcomeScreen();
       case AuthState.authenticated:
-        return ProfilePage();
+        return ProfileScreen();
       case AuthState.unauthenticated:
         return WelcomeScreen();
     }

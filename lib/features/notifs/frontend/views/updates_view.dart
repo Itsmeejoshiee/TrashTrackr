@@ -33,7 +33,7 @@ class UpdatesView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/no_notifs.png', width: imageSize),
+            Image.asset('assets/images/components/no_notifs.png', width: imageSize),
             Text(
               "You're all caught up!",
               style: kDisplaySmall.copyWith(fontWeight: FontWeight.bold),

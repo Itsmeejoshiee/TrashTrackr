@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/widgets/list_tiles/view_switch_tile.dart';
+import 'package:trashtrackr/core/widgets/list_tiles/view_switch_tile.dart';
 import 'widgets/notif_card.dart';
 import 'views/updates_view.dart';
 import 'views/bookmarks_view.dart';
@@ -30,7 +30,7 @@ class _NotifScreenState extends State<NotifScreen> {
             SizedBox(height: notifTitleOffset),
 
             // Notif Title
-            Image.asset('assets/images/notifs_title.png', width: imageSize),
+            Image.asset('assets/images/titles/notifs_title.png', width: imageSize),
 
             // Offset
             SizedBox(height: 8),

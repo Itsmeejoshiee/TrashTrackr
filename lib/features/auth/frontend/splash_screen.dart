@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 
@@ -6,6 +8,9 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double plantHeight = screenHeight * 0.55;
+    final double logoHeight = screenHeight * 0.2;
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       body: Stack(
@@ -16,7 +21,10 @@ class SplashScreen extends StatelessWidget {
               offset: Offset(-70, -70),
               child: Transform.rotate(
                 angle: 2.8,
-                child: Image.asset('assets/images/plant_multicolor.png'),
+                child: Image.asset(
+                  'assets/images/components/plant_multicolor.png',
+                  height: plantHeight,
+                ),
               ),
             ),
           ),
@@ -26,21 +34,15 @@ class SplashScreen extends StatelessWidget {
               offset: Offset(70, 70),
               child: Transform.rotate(
                 angle: -0.4,
-                child: Image.asset('assets/images/plant_multicolor.png'),
+                child: Image.asset(
+                  'assets/images/components/plant_multicolor.png',
+                  height: plantHeight,
+                ),
               ),
             ),
           ),
           Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset('assets/images/pear_white.png'),
-                Text(
-                  'TrashTrackr',
-                  style: kDisplaySmall.copyWith(color: Colors.white),
-                ),
-              ],
-            ),
+            child: Image.asset('assets/images/logo/logo_white.png', height: logoHeight),
           ),
         ],
       ),
