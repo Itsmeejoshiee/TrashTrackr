@@ -24,7 +24,7 @@ class WastelogBoard extends StatelessWidget {
             child: Column(
               children: [
                 Image.asset(
-                  'assets/images/recycling.png',
+                  'assets/images/icons/recycling.png',
                   width: 20,
                   height: 20,
                 ),
@@ -57,7 +57,7 @@ class WastelogBoard extends StatelessWidget {
             child: Column(
               children: [
                 Image.asset(
-                  'assets/images/leaf_brown.png',
+                  'assets/images/icons/leaf_brown.png',
                   width: 18,
                   height: 18,
                 ),
@@ -90,7 +90,7 @@ class WastelogBoard extends StatelessWidget {
             child: Column(
               children: [
                 Image.asset(
-                  'assets/images/trashcan.png',
+                  'assets/images/icons/trashcan.png',
                   width: 20,
                   height: 20,
                 ),

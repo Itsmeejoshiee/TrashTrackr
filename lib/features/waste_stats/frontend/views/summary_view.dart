@@ -59,7 +59,7 @@ class SummaryView extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset("assets/images/waste_stats_icon.png", width: imageSize),
+                      Image.asset("assets/images/icons/waste_stats_icon.png", width: imageSize),
                       SizedBox(height: 15),
                       Text(
                         "$wasteCount",

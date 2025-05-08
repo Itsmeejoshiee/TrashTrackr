@@ -21,9 +21,9 @@ class LogCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> typeIconMap = {
-      'Recycle': 'assets/images/recycling.png',
-      'Biodegradable': 'assets/images/leaf_brown.png',
-      'Non-Biodegradable': 'assets/images/trashcan.png',
+      'Recycle': 'assets/images/icons/recycling.png',
+      'Biodegradable': 'assets/images/icons/leaf_brown.png',
+      'Non-Biodegradable': 'assets/images/icons/trashcan.png',
     };
 
     final String? iconPath = typeIconMap[type];

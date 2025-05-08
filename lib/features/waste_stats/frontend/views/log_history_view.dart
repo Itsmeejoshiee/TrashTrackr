@@ -52,19 +52,19 @@ class LogHistoryView extends StatelessWidget {
 
           // Today Log Cards
           LogCard(
-            itemImage: Image.asset("assets/images/log_image.png"),
+            itemImage: Image.asset("assets/images/covers/log_image.png"),
             name: "Coca-cola Glass 100 ml",
             dateTime: DateTime(2025, 5, 6, 0, 01), // Format => Year, Month, Day, Hour (24-hour), minutes
             type: "Non-Biodegradable",
           ),
           LogCard(
-            itemImage: Image.asset("assets/images/log_image.png"),
+            itemImage: Image.asset("assets/images/covers/log_image.png"),
             name: "Coca-cola Glass 100 ml",
             dateTime: DateTime(2025, 5, 6, 0, 01), // Format => Year, Month, Day, Hour (24-hour), minutes
             type: "Recycle",
           ),
           LogCard(
-            itemImage: Image.asset("assets/images/log_image.png"),
+            itemImage: Image.asset("assets/images/covers/log_image.png"),
             name: "Coca-cola Glass 100 ml",
             dateTime: DateTime(2025, 5, 6, 0, 01), // Format => Year, Month, Day, Hour (24-hour), minutes
             type: "Biodegradable",
@@ -91,13 +91,13 @@ class LogHistoryView extends StatelessWidget {
 
           // Yesterday Log Cards
           LogCard(
-            itemImage: Image.asset("assets/images/log_image.png"),
+            itemImage: Image.asset("assets/images/covers/log_image.png"),
             name: "Coca-cola Glass 100 ml",
             dateTime: DateTime(2025, 5, 5, 0, 01), // Format => Year, Month, Day, Hour (24-hour), minutes
             type: "Recycle",
           ),
           LogCard(
-            itemImage: Image.asset("assets/images/log_image.png"),
+            itemImage: Image.asset("assets/images/covers/log_image.png"),
             name: "Coca-cola Glass 100 ml",
             dateTime: DateTime(2025, 5, 5, 0, 01), // Format => Year, Month, Day, Hour (24-hour), minutes
             type: "Biodegradable",
@@ -124,13 +124,13 @@ class LogHistoryView extends StatelessWidget {
 
           // Earlier Log Cards
           LogCard(
-            itemImage: Image.asset("assets/images/log_image.png"),
+            itemImage: Image.asset("assets/images/covers/log_image.png"),
             name: "Coca-cola Glass 100 ml",
             dateTime: DateTime(2025, 5, 2, 0, 01), // Format => Year, Month, Day, Hour (24-hour), minutes
             type: "Recycle",
           ),
           LogCard(
-            itemImage: Image.asset("assets/images/log_image.png"),
+            itemImage: Image.asset("assets/images/covers/log_image.png"),
             name: "Coca-cola Glass 100 ml",
             dateTime: DateTime(2025, 5, 1, 0, 01), // Format => Year, Month, Day, Hour (24-hour), minutes
             type: "Biodegradable",

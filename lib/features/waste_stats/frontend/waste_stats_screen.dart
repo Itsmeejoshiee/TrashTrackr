@@ -45,7 +45,7 @@ class _WasteStatsScreenState extends State<WasteStatsScreen> {
 
             // Waste Stats Title
             Center(
-              child: Image.asset('assets/images/waste-stats_title.png', width: imageSize),
+              child: Image.asset('assets/images/titles/waste_stats_title.png', width: imageSize),
             ),
 
             // Offset

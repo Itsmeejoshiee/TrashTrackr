@@ -16,7 +16,7 @@ class BookmarksView extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset('assets/images/no_bookmarks.png', width: imageSize),
+          Image.asset('assets/images/components/no_bookmarks.png', width: imageSize),
           Text(
             "No bookmarks yet!",
             style: kDisplaySmall.copyWith(fontWeight: FontWeight.bold),

@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
@@ -43,7 +41,7 @@ class _FeedScreenState extends State<FeedScreen> {
         timestamp: 'Today @ 10:42 am',
         desc:
             'Logged 5 disposals today! Finally getting the hang of sorting my waste without checking the label every time 😅\nToday’s highlight: discovering my shampoo bottle is recyclable. Score! ♻️🧴',
-        image: AssetImage('assets/images/intro0.png'),
+        image: AssetImage('assets/images/intro/intro0.png'),
       ),
     ];
     return posts;

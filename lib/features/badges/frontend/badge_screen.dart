@@ -25,7 +25,14 @@ class _BadgeScreenState extends State<BadgeScreen> {
     for (int id = 1; id <= 14; id++) {
       // TODO: Check if badge is earned by referencing user badges in database
       final EcoBadge currentBadge = EcoBadge(id: id);
-      badgeBoxes.add(BadgeBox(badge: currentBadge));
+      badgeBoxes.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: BadgeBox(
+            badge: currentBadge,
+          ),
+        ),
+      );
     }
     return badgeBoxes;
   }
@@ -34,7 +41,8 @@ class _BadgeScreenState extends State<BadgeScreen> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double badgeTitleOffset = screenHeight / ((screenHeight < 800) ? 40 : 20);
+    final double badgeTitleOffset =
+        screenHeight / ((screenHeight < 800) ? 40 : 20);
     final double imageSize = (screenWidth / 2.5) + 60;
     return Scaffold(
       body: Column(
@@ -46,7 +54,7 @@ class _BadgeScreenState extends State<BadgeScreen> {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: GridView.count(
                 crossAxisCount: 3,
                 children: _badgeBoxBuilder(),
