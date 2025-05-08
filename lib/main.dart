@@ -18,6 +18,7 @@ import 'package:trashtrackr/features/settings/frontend/privacy_screen.dart';
 import 'package:trashtrackr/features/settings/frontend/settings_screen.dart';
 import 'package:trashtrackr/features/waste_scanner/frontend/scan_result_screen.dart';
 import 'package:trashtrackr/features/waste_scanner/frontend/waste_scanner_screen.dart';
+import 'package:trashtrackr/features/maps/frontend/map_screen.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/auth/frontend/splash_screen.dart';
 import 'package:trashtrackr/features/auth/frontend/welcome_screen.dart';
@@ -51,6 +52,7 @@ class TrashTrackr extends StatelessWidget {
     return MaterialApp(
       home: WasteStatsScreen(),
       theme: ThemeData(primaryColor: kAvocado, scaffoldBackgroundColor: kLightGray),
+
     );
   }
 }
