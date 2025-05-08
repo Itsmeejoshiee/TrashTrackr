@@ -85,7 +85,7 @@ class _IntroScreenState extends State<IntroScreen> {
                             image: DecorationImage(
                               scale: 1.2,
                               image: AssetImage(
-                                'assets/images/intro$cardIndex.png',
+                                'assets/images/intro/intro$cardIndex.png',
                               ),
                               fit: BoxFit.cover,
                             ),

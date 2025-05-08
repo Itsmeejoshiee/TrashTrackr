@@ -29,7 +29,7 @@ class DateButton extends StatelessWidget {
           
           SizedBox(width: 8),
           
-          Image.asset("assets/images/date_arrow.png", width: 15)
+          Image.asset("assets/images/icons/date_arrow.png", width: 15)
         ],
       ),
     );

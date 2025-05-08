@@ -38,7 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               timestamp: 'Today @ 10:42 am',
               desc:
               "Logged 5 disposals today! Finally getting the hang of sorting my waste without checking the label every time 😅 \n\n Today’s highlight: discovering my shampoo bottle is recyclable. Score! ♻️🧴",
-              image: AssetImage('assets/images/intro0.png'),
+              image: AssetImage('assets/images/intro/intro0.png'),
             ),
           ],
         );
@@ -64,7 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               username: 'Makyismynickname',
               profilePath: 'assets/images/placeholder_profile.jpg',
               timestamp: 'Today @ 10:42 am',
-              image: AssetImage('assets/images/intro0.png'),
+              image: AssetImage('assets/images/intro/intro0.png'),
               title: 'Eco Walk: Clean & Collect',
               scheduledDate: 'Saturday, May 4, 2025 UTC',
               scheduledTime: '9:00 AM - 12:00 PM',

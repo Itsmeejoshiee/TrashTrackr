@@ -7,14 +7,14 @@ import 'package:trashtrackr/core/widgets/buttons/multi_action_fab.dart';
 import 'package:trashtrackr/features/waste_scanner/backend/camera_module.dart';
 import 'package:trashtrackr/features/waste_scanner/backend/gemini_service.dart';
 
-class WasteScannerPage extends StatefulWidget {
-  const WasteScannerPage({Key? key}) : super(key: key);
+class WasteScannerScreen extends StatefulWidget {
+  const WasteScannerScreen({Key? key}) : super(key: key);
 
   @override
-  _WasteScannerPageState createState() => _WasteScannerPageState();
+  _WasteScannerScreenState createState() => _WasteScannerScreenState();
 }
 
-class _WasteScannerPageState extends State<WasteScannerPage> {
+class _WasteScannerScreenState extends State<WasteScannerScreen> {
   late final Future<CameraController> _controllerFuture;
   final _service = CameraModule();
 
@@ -69,7 +69,7 @@ class _WasteScannerPageState extends State<WasteScannerPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Image.asset(
-                    'assets/images/classify_title.png',
+                    'assets/images/titles/classify_title.png',
                     width: 182.27,
                     height: 95.77,
                   ),
@@ -87,7 +87,7 @@ class _WasteScannerPageState extends State<WasteScannerPage> {
                   SizedBox(height: 10),
                   IconButton(
                     icon: Image.asset(
-                      'assets/images/capture.png',
+                      'assets/images/icons/capture.png',
                       width: 55,
                       height: 55,
                     ),

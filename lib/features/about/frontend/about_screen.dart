@@ -71,7 +71,7 @@ class AboutScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(13),
                         image: DecorationImage(
-                          image: AssetImage('assets/images/about-photo.png'),
+                          image: AssetImage('assets/images/covers/about_photo.png'),
                           fit: BoxFit.cover,
                         ),
                       ),
