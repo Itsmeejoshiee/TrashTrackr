@@ -50,9 +50,9 @@ class TrashTrackr extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: WasteStatsScreen(),
+      title: 'TrashTrackr',
+      home: SplashScreen(),
       theme: ThemeData(primaryColor: kAvocado, scaffoldBackgroundColor: kLightGray),
-
     );
   }
 }
