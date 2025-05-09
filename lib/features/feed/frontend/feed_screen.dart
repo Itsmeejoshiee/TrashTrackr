@@ -3,7 +3,7 @@ import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
 import 'package:trashtrackr/core/widgets/buttons/multi_action_fab.dart';
 import 'package:trashtrackr/core/widgets/text_fields/dashboard_search_bar.dart';
-import 'package:trashtrackr/features/dashboard/frontend/widgets/section_label.dart';
+import 'package:trashtrackr/features/home/frontend/widgets/section_label.dart';
 import 'package:trashtrackr/features/feed/frontend/widgets/recycling_guide_card.dart';
 import 'package:trashtrackr/features/feed/frontend/widgets/recycling_guide_carousel.dart';
 import 'package:trashtrackr/core/widgets/profile/post_card.dart';
@@ -106,14 +106,6 @@ class _FeedScreenState extends State<FeedScreen> {
           ],
         ),
       ),
-
-      bottomNavigationBar: MainNavigationBar(
-        activeRoute: _selectedRoute,
-        onSelect: _selectRoute,
-      ),
-
-      floatingActionButton: MultiActionFab(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

@@ -3,7 +3,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
-import 'package:trashtrackr/core/widgets/buttons/multi_action_fab.dart';
 import 'package:trashtrackr/features/waste_scanner/backend/camera_module.dart';
 import 'package:trashtrackr/features/waste_scanner/backend/gemini_service.dart';
 
@@ -128,14 +127,6 @@ class _WasteScannerScreenState extends State<WasteScannerScreen> {
               ),
             ),
           ),
-          bottomNavigationBar: MainNavigationBar(
-            activeRoute: _selectedRoute,
-            onSelect: _selectRoute,
-          ),
-
-          floatingActionButton: MultiActionFab(),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
         );
       },
     );
