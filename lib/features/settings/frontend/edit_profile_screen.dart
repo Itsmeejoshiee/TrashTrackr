@@ -12,12 +12,10 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lasttNameController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +23,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       backgroundColor: kLightGray,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        leading: IconButton(onPressed: () {}, icon: Icon(Icons.arrow_back_ios)),
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back_ios),
+        ),
         title: Text(
           'Settings',
           style: kTitleMedium.copyWith(fontWeight: FontWeight.bold),
@@ -47,13 +48,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
               Flexible(child: SizedBox(height: 72)),
 
-              ProfileTextField(
-                controller: _firstNameController,
-              ),
+              ProfileTextField(controller: _firstNameController),
 
-              ProfileTextField(
-                controller: _lasttNameController,
-              ),
+              ProfileTextField(controller: _lasttNameController),
 
               ProfileTextField(
                 controller: _usernameController,
