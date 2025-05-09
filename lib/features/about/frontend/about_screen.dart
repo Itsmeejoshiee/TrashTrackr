@@ -32,7 +32,7 @@ class AboutScreen extends StatelessWidget {
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             leading: IconButton(
-              onPressed: () {},
+              onPressed: () => Navigator.pop(context),
               icon: Icon(Icons.arrow_back_ios),
             ),
             title: Text(
