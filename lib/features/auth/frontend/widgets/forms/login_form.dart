@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/text_fields/profile_text_field.dart';
 import 'package:trashtrackr/core/widgets/buttons/rounded_rectangle_button.dart';
@@ -87,26 +88,16 @@ class _LoginFormState extends State<LoginForm> {
           RoundedRectangleButton(
             title: 'Login',
             onPressed: () async {
-              final authViewModel = Provider.of<AuthBloc>(
-                context,
-                listen: false,
+              final UserService userService = UserService(context);
+              await userService.loginUserAccount(
+                emailController: _emailController,
+                passwordController: _passwordController,
+                setErrorMessage: (message) {
+                  setState(() {
+                    _errorMessage = message;
+                  });
+                },
               );
-              //reset error message
-              setState(() {
-                _errorMessage = null;
-              });
-              try {
-                await authViewModel.signIn(
-                  _emailController.text.trim(),
-                  _passwordController.text.trim(),
-                );
-
-                //add navigation to home screen here
-              } catch (e) {
-                setState(() {
-                  _errorMessage = e.toString();
-                });
-              }
             },
           ),
 
@@ -151,6 +142,7 @@ class _LoginFormState extends State<LoginForm> {
             mainAxisAlignment: MainAxisAlignment.center,
             spacing: 20,
             children: [
+              //Google Sign In Button
               AuthProviderButton(
                 padding: EdgeInsets.all(14),
                 onPressed: () async {

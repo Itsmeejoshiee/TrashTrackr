@@ -10,7 +10,7 @@ class UserService {
   final BuildContext context;
   UserService(this.context);
 
-  Future<void> signUpAndSaveUser({
+  Future<void> createUserAccount({
     required TextEditingController emailController,
     required TextEditingController passwordController,
     required TextEditingController confirmPasswordController,
@@ -63,7 +63,8 @@ class UserService {
     }
   }
 
-  Future<void> signInGoogleAndSaveUser() async {
+  // Function to create a user account using Google Sign-In
+  Future<void> createUserGoogleAccount() async {
     final authViewModel = Provider.of<AuthBloc>(context, listen: false);
     await authViewModel.signInWithGoogle();
 
@@ -86,5 +87,35 @@ class UserService {
         .collection('users')
         .doc(newUser.uid)
         .set(newUser.toMap());
+  }
+
+  // Function to login user account
+  Future<void> loginUserAccount({
+    required TextEditingController emailController,
+    required TextEditingController passwordController,
+    required Function(String?) setErrorMessage,
+  }) async {
+    // Clear any previous error
+    setErrorMessage(null);
+
+    try {
+      // Access the AuthBloc for signing in
+      final authViewModel = Provider.of<AuthBloc>(context, listen: false);
+
+      // Sign in the user
+      await authViewModel.signIn(
+        emailController.text.trim(),
+        passwordController.text.trim(),
+      );
+
+      // Fetch the user from Firestore
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      await userProvider.loadUserFromFirestore(
+        AuthService().currentUser?.uid ?? '',
+      );
+    } catch (e) {
+      setErrorMessage('An error occurred. Please try again.');
+      print('Error: $e');
+    }
   }
 }

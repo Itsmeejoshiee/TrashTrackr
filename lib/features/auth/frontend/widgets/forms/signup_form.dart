@@ -119,7 +119,7 @@ class _SignupFormState extends State<SignupForm> {
             title: 'Sign up',
             onPressed: () async {
               final userService = UserService(context);
-              await userService.signUpAndSaveUser(
+              await userService.createUserAccount(
                 emailController: _emailController,
                 passwordController: _passwordController,
                 confirmPasswordController: _confirmPasswordController,
@@ -184,7 +184,7 @@ class _SignupFormState extends State<SignupForm> {
                 padding: EdgeInsets.all(14),
                 onPressed: () async {
                   final userService = UserService(context);
-                  await userService.signInGoogleAndSaveUser();
+                  await userService.createUserGoogleAccount();
                 },
                 child: Image.asset('assets/images/icons/google_green.png'),
               ),
