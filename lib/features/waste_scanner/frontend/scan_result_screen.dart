@@ -8,6 +8,7 @@ import 'widgets/scan_result_field.dart';
 import 'widgets/log_button.dart';
 import 'package:trashtrackr/core/models/scan_result_model.dart';
 
+
 class ScanResultScreen extends StatefulWidget {
   final ScanResult scanResult;
 
