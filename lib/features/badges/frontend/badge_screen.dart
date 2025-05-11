@@ -63,14 +63,6 @@ class _BadgeScreenState extends State<BadgeScreen> {
           ),
         ],
       ),
-
-      bottomNavigationBar: MainNavigationBar(
-        activeRoute: _selectedRoute,
-        onSelect: _selectRoute,
-      ),
-
-      floatingActionButton: MultiActionFab(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

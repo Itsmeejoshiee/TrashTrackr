@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
-import 'package:trashtrackr/core/utils/auth_state.dart';
+import 'package:trashtrackr/core/utils/auth_form_view.dart';
 import 'widgets/leaf_wall.dart';
 import 'package:trashtrackr/core/widgets/buttons/auth_button.dart';
 import 'widgets/forms/signup_form.dart';
@@ -18,7 +18,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   double _scrollLockThreshold = 400;
   bool _lockScroll = false;
 
-  AuthState _authState = AuthState.waiting;
+  AuthFormView _authFormView = AuthFormView.waiting;
 
   // Locks scrolling past the scroll lock threshold
   void _scrollListener() {
@@ -43,7 +43,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       body: SingleChildScrollView(
         controller: _scrollController,
         physics:
-            (_authState != AuthState.waiting)
+            (_authFormView != AuthFormView.waiting)
                 ? ClampingScrollPhysics()
                 : NeverScrollableScrollPhysics(),
         // physics: ClampingScrollPhysics(),
@@ -85,7 +85,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             SizedBox(height: 40),
 
             // Login & Signup Button
-            (_authState == AuthState.waiting)
+            (_authFormView == AuthFormView.waiting)
                 ? Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32),
                   child: Column(
@@ -93,7 +93,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       AuthButton(
                         title: 'Login',
                         onPressed: () async {
-                          setState(() => _authState = AuthState.login);
+                          setState(() => _authFormView = AuthFormView.login);
                           await _scrollController.animateTo(
                             screenHeight * 0.60,
                             duration: Duration(milliseconds: 800),
@@ -109,7 +109,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       AuthButton(
                         title: 'Sign up',
                         onPressed: () async {
-                          setState(() => _authState = AuthState.signup);
+                          setState(() => _authFormView = AuthFormView.signup);
                           await _scrollController.animateTo(
                             screenHeight * 0.60,
                             duration: Duration(milliseconds: 800),
@@ -124,15 +124,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ],
                   ),
                 )
-                : (_authState == AuthState.login)
+                : (_authFormView == AuthFormView.login)
                 ? LoginForm(
                   onToggle: () {
-                    setState(() => _authState = AuthState.signup);
+                    setState(() => _authFormView = AuthFormView.signup);
                   },
                 )
                 : SignupForm(
                   onToggle: () {
-                    setState(() => _authState = AuthState.login);
+                    setState(() => _authFormView = AuthFormView.login);
                   },
                 ),
           ],
@@ -146,7 +146,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           return bottomPadding > 0
               ? Container(
             height: bottomPadding,
-            color: (_authState != AuthState.waiting) ? Colors.white : Theme.of(context).primaryColor,
+            color: (_authFormView != AuthFormView.waiting) ? Colors.white : Theme.of(context).primaryColor,
           )
               : SizedBox.shrink();
         },

@@ -24,7 +24,10 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
       backgroundColor: kLightGray,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        leading: IconButton(onPressed: () {}, icon: Icon(Icons.arrow_back_ios)),
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back_ios),
+        ),
         title: Text(
           'Settings',
           style: kTitleMedium.copyWith(fontWeight: FontWeight.bold),
@@ -74,7 +77,6 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
 
               SettingTileGroup(
                 children: [
-
                   SwitchSettingTile(
                     title: 'Save Disposal History',
                     subtitle: "Keeps track of what items you've disposed of.",
@@ -89,7 +91,8 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
 
                   SwitchSettingTile(
                     title: 'Share App Activity',
-                    subtitle: 'Helps improve accuracy and features. No personal data is shared externally.',
+                    subtitle:
+                        'Helps improve accuracy and features. No personal data is shared externally.',
                     iconData: Icons.monitor_heart_rounded,
                     value: _shareAppActivity,
                     onChanged: (value) {
@@ -108,7 +111,6 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
 
               SettingTileGroup(
                 children: [
-
                   SwitchSettingTile(
                     title: 'Account Visibility',
                     iconData: Icons.person,
@@ -130,7 +132,6 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                       });
                     },
                   ),
-
                 ],
               ),
             ],

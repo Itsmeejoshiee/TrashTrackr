@@ -5,7 +5,7 @@ import 'package:trashtrackr/core/utils/auth_state.dart';
 
 class AuthBloc extends ChangeNotifier {
   final AuthService _authService = AuthService();
-  AuthState _authState = AuthState.waiting;
+  AuthState _authState = AuthState.welcome;
   User? _user;
 
   AuthBloc() {
@@ -20,18 +20,8 @@ class AuthBloc extends ChangeNotifier {
     if (_user != null) {
       _authState = AuthState.authenticated;
     } else {
-      _authState = AuthState.login;
+      _authState = AuthState.welcome;
     }
-    notifyListeners();
-  }
-
-  Future<void> showLogin() async {
-    _authState = AuthState.login;
-    notifyListeners();
-  }
-
-  Future<void> showSignup() async {
-    _authState = AuthState.signup;
     notifyListeners();
   }
 
@@ -65,7 +55,7 @@ class AuthBloc extends ChangeNotifier {
 
   Future<void> signOut() async {
     await _authService.signOut();
-    _authState = AuthState.login;
+    _authState = AuthState.welcome;
     _user = null;
     notifyListeners();
   }
