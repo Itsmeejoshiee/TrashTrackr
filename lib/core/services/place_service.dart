@@ -1,9 +1,7 @@
 import 'dart:convert';
-import 'package:custom_info_window/custom_info_window.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:trashtrackr/features/maps/frontend/widgets/place_cards.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PlacesService {
