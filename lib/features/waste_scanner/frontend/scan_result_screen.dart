@@ -1,3 +1,4 @@
+// screens/scan_result_screen.dart
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/buttons/disposal_location_button.dart';
@@ -5,9 +6,12 @@ import 'widgets/properties_tile.dart';
 import 'widgets/disposal_guide.dart';
 import 'widgets/scan_result_field.dart';
 import 'widgets/log_button.dart';
+import 'package:trashtrackr/core/models/scan_result.dart';
 
 class ScanResultScreen extends StatefulWidget {
-  const ScanResultScreen({super.key});
+  final ScanResult scanResult;
+
+  const ScanResultScreen({super.key, required this.scanResult});
 
   @override
   State<ScanResultScreen> createState() => _ScanResultScreenState();
@@ -19,10 +23,14 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final result = widget.scanResult;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        leading: IconButton(onPressed: () {}, icon: Icon(Icons.arrow_back_ios)),
+        leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: Icon(Icons.arrow_back_ios)),
         title: Text(
           'Waste Scanner',
           style: kTitleMedium.copyWith(fontWeight: FontWeight.bold),
@@ -38,35 +46,27 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
 
               // Product Title
               Row(
-                spacing: 18,
                 children: [
                   Text(
-                    'Purple Soda Can',
+                    result.productName,
                     style: kTitleLarge.copyWith(
                       color: kAvocado,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Image.asset('assets/images/icons/bio.png', height: 18),
+                  SizedBox(width: 8),
+                  Image.asset(
+                    result.classification == 'biodegradable'
+                        ? 'assets/images/icons/bio.png'
+                        : 'assets/images/icons/nonbio.png',
+                    height: 18,
+                  ),
                 ],
               ),
 
-              // Product Properties
               PropertiesTile(
-                material: 'Metal Can',
-                savedEmissions: '10g',
-              ),
-
-              SizedBox(height: 10),
-
-              // Product Info
-              Text(
-                'Product Info',
-                style: kBodyLarge.copyWith(fontWeight: FontWeight.bold),
-              ),
-              Text(
-                'Lorem ipsum dolor sit amet consectetur. Sodales purus diam dolor dolor. Sit a nisl viverra vitae facilisis mauris.',
-                style: kTitleSmall.copyWith(color: Colors.black54),
+                materials: result.materials,
+                classification: result.classification,
               ),
 
               SizedBox(height: 10),
@@ -79,20 +79,10 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
               SizedBox(height: 10),
 
               DisposalGuide(
-                material: 'Glass Bottles',
-                guide: "Glass bottles are 100% recyclable — but only if disposed of properly. Here's how to do it right:",
-                toDo: [
-                  'Rinse the bottle',
-                  'Rome caps or corks',
-                  'Sort by color if needed',
-                  'Use recycling bins or bottle banks',
-                  'Reuse for crafts or storage',
-                ],
-                notToDo: [
-                  "Don't recycle broken glass",
-                  'No ceramics, mirrors, or bulbs',
-                ],
-                proTip: 'Glass is endlessly recyclable without loss in quality. So every time you recycle a bottle, you help reduce raw material use and energy!',
+                material: result.productName,
+                toDo: result.toDo,
+                notToDo: result.notToDo,
+                proTip: result.proTip,
               ),
 
               SizedBox(height: 23),
@@ -104,9 +94,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
 
               SizedBox(height: 10),
 
-              DisposalLocationButton(
-                onPressed: () {},
-              ),
+              DisposalLocationButton(onPressed: () {}),
 
               SizedBox(height: 23),
 
@@ -128,19 +116,16 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
 
               SizedBox(height: 10),
 
-              ScanResultField(controller: _quantityController, width: 80,),
+              ScanResultField(controller: _quantityController, width: 80),
 
               SizedBox(height: 40),
 
               Align(
                 alignment: Alignment.centerRight,
-                child: LogButton(
-                  onPressed: () {},
-                ),
+                child: LogButton(onPressed: () {}),
               ),
 
               SizedBox(height: 50),
-
             ],
           ),
         ),
@@ -148,4 +133,3 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
     );
   }
 }
-

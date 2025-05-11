@@ -5,12 +5,26 @@ import 'package:trashtrackr/core/widgets/box/neo_box.dart';
 class PropertiesTile extends StatelessWidget {
   const PropertiesTile({
     super.key,
-    required this.material,
-    required this.savedEmissions,
+    required this.materials,
+    required this.classification,
   });
 
-  final String material;
-  final String savedEmissions;
+  final List<String> materials;
+  final String classification;
+
+  List<Widget> _listBuilder(List<String> list) {
+    List<Widget> listItems = [];
+    for (String item in list) {
+      String textContent = '$item';
+      listItems.add(Text(textContent, 
+        style: kTitleMedium.copyWith(
+          color: kAvocado,
+          fontWeight: FontWeight.bold,
+        ),
+      ));
+    }
+    return listItems;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +42,7 @@ class PropertiesTile extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text(
-                material,
-                style: kTitleLarge.copyWith(
-                  color: kAvocado,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              ..._listBuilder(materials)
             ],
           ),
 
@@ -43,15 +51,15 @@ class PropertiesTile extends StatelessWidget {
           Column(
             children: [
               Text(
-                'Saved CO2',
+                'Classification',
                 style: kPoppinsBodyMedium.copyWith(
                   color: Colors.black54,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
-                savedEmissions,
-                style: kTitleLarge.copyWith(
+                classification,
+                style: kTitleMedium.copyWith(
                   color: kAvocado,
                   fontWeight: FontWeight.bold,
                 ),

@@ -5,6 +5,9 @@ import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
 import 'package:trashtrackr/features/waste_scanner/backend/camera_module.dart';
 import 'package:trashtrackr/features/waste_scanner/backend/gemini_service.dart';
+import 'package:trashtrackr/features/waste_scanner/frontend/scan_result_screen.dart';
+import 'package:trashtrackr/core/models/scan_result.dart';
+import 'scan_result_screen.dart';
 
 class WasteScannerScreen extends StatefulWidget {
   const WasteScannerScreen({Key? key}) : super(key: key);
@@ -16,7 +19,6 @@ class WasteScannerScreen extends StatefulWidget {
 class _WasteScannerScreenState extends State<WasteScannerScreen> {
   late final Future<CameraController> _controllerFuture;
   final _service = CameraModule();
-
   NavRoute _selectedRoute = NavRoute.badge;
 
   void _selectRoute(NavRoute route) {
@@ -33,7 +35,6 @@ class _WasteScannerScreenState extends State<WasteScannerScreen> {
 
   @override
   void dispose() {
-    // dispose once the Future completes
     _controllerFuture.then((c) => c.dispose());
     super.dispose();
   }
@@ -92,29 +93,18 @@ class _WasteScannerScreenState extends State<WasteScannerScreen> {
                     ),
                     onPressed: () async {
                       try {
-                        //file conversion to image > bytes
                         final XFile picture = await controller.takePicture();
                         final bytes = await picture.readAsBytes();
 
-                        //Call the Gemini API to classify the waste
-                        final response = await GeminiService().classifyWaste(
-                          bytes,
-                        );
-                        //Temporary UI to show the response
-                        showDialog(
-                          context: context,
-                          builder:
-                              (_) => AlertDialog(
-                                title: const Text('Waste Classification'),
-                                content: Text(response),
-                                actions: [
-                                  TextButton(
-                                    onPressed:
-                                        () => Navigator.of(context).pop(),
-                                    child: const Text('OK'),
-                                  ),
-                                ],
-                              ),
+                        final result =
+                        await GeminiService().classifyWaste(bytes);
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ScanResultScreen(scanResult: result),
+                          ),
                         );
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
