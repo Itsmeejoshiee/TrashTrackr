@@ -118,4 +118,16 @@ class UserService {
       print('Error: $e');
     }
   }
+
+  Future<void> createPost(String body, String? imageUrl) async {
+    //to be updated
+    await FirebaseFirestore.instance.collection('posts').add({
+      'uid': AuthService().currentUser?.uid,
+      'username': AuthService().currentUser?.displayName,
+      'date': DateTime.now(),
+      'body': body,
+      'image_url': imageUrl, //change to imageUrl of firebase storage
+      //add user profile picture
+    });
+  }
 }
