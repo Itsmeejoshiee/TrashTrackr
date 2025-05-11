@@ -15,9 +15,8 @@ class ScanResult {
     required this.proTip,
   });
 
-  // pares from Gemini's raw text response
+  // from Gemini response
   factory ScanResult.fromResponse(String responseText) {
-
     String extractField(String label, String text) {
       final regex = RegExp('$label\\s*:\\s*(.*)', caseSensitive: false);
       return regex.firstMatch(text)?.group(1)?.trim() ?? 'Unknown';
@@ -43,6 +42,31 @@ class ScanResult {
       toDo: extractList('To Do', responseText),
       notToDo: extractList('Not To Do', responseText),
       proTip: extractField('Pro Tip', responseText),
+    );
+  }
+
+  // TODO: remove unnecessary comment block (timestamp)
+  // for Firestore
+  Map<String, dynamic> toMap() {
+    return {
+      'productName': productName,
+      'materials': materials,
+      'classification': classification,
+      'toDo': toDo,
+      'notToDo': notToDo,
+      'proTip': proTip,
+      'timestamp': DateTime.now(),
+    };
+  }
+
+  factory ScanResult.fromMap(Map<String, dynamic> map) {
+    return ScanResult(
+      productName: map['productName'] ?? '',
+      materials: List<String>.from(map['materials'] ?? []),
+      classification: map['classification'] ?? '',
+      toDo: List<String>.from(map['toDo'] ?? []),
+      notToDo: List<String>.from(map['notToDo'] ?? []),
+      proTip: map['proTip'] ?? '',
     );
   }
 }

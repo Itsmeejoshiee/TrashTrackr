@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:trashtrackr/core/models/scan_result.dart';
+import 'package:trashtrackr/core/models/scan_result_model.dart';
 
 class GeminiService {
   final geminiModel = GenerativeModel(

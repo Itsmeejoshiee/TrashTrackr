@@ -6,7 +6,7 @@ import 'widgets/properties_tile.dart';
 import 'widgets/disposal_guide.dart';
 import 'widgets/scan_result_field.dart';
 import 'widgets/log_button.dart';
-import 'package:trashtrackr/core/models/scan_result.dart';
+import 'package:trashtrackr/core/models/scan_result_model.dart';
 
 class ScanResultScreen extends StatefulWidget {
   final ScanResult scanResult;

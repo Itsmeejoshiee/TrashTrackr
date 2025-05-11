@@ -6,7 +6,7 @@ import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
 import 'package:trashtrackr/features/waste_scanner/backend/camera_module.dart';
 import 'package:trashtrackr/features/waste_scanner/backend/gemini_service.dart';
 import 'package:trashtrackr/features/waste_scanner/frontend/scan_result_screen.dart';
-import 'package:trashtrackr/core/models/scan_result.dart';
+import 'package:trashtrackr/core/models/scan_result_model.dart';
 import 'scan_result_screen.dart';
 
 class WasteScannerScreen extends StatefulWidget {
