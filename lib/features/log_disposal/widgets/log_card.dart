@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:trashtrackr/features/log_disposal/models/log_entry.dart';
-import 'package:trashtrackr/features/log_disposal/screens/log_disposal_screen.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 
 /// A widget that displays a single log entry as a card.
