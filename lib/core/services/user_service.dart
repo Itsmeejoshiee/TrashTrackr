@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trashtrackr/core/models/user_model.dart';
@@ -129,5 +133,22 @@ class UserService {
       'image_url': imageUrl, //change to imageUrl of file
       //add user profile picture
     });
+  }
+
+  Future uploadImage(XFile? image) async {
+    if (image == null) return;
+
+    // Upload the image to Firebase Storage
+    final storageRef = FirebaseStorage.instance.ref();
+    final imageRef = storageRef.child('posts/${image.name}');
+
+    try {
+      await imageRef.putFile(File(image.path));
+      final downloadUrl = await imageRef.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      print('Error uploading image: $e');
+      return null;
+    }
   }
 }
