@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/buttons/disposal_location_button.dart';
 import 'widgets/properties_tile.dart';
@@ -22,6 +23,48 @@ class ScanResultScreen extends StatefulWidget {
 class _ScanResultScreenState extends State<ScanResultScreen> {
   final TextEditingController _noteController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
+
+
+  // for logging disposal
+  void _logDisposal() {
+    Alert(
+      context: context,
+      style: AlertStyle(
+        animationType: AnimationType.grow,
+        isCloseButton: false,
+        titleStyle: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
+        descStyle: kTitleMedium,
+      ),
+      title: "Log Successful",
+      desc: "Congrats! You've successfully logged your waste. 🌿👏",
+      image: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        child: Image.asset(
+          "assets/images/icons/logDisposal.png",
+          width: 90,
+        ),
+      ),
+      buttons: [
+        DialogButton(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          color: Color(0xFFE6E6E6),
+          radius: BorderRadius.circular(30),
+          onPressed: () => Navigator.pop(context),
+          child: Text('Cancel', style: kTitleSmall),
+        ),
+        DialogButton(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          color: kAvocado,
+          radius: BorderRadius.circular(30),
+          onPressed: () {},
+          child: Text(
+            'Log Another?',
+            style: kTitleSmall.copyWith(color: Colors.white),
+          ),
+        ),
+      ],
+    ).show();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -141,9 +184,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
 
                     try {
                       await service.addWasteEntry(widget.scanResult);
-
-                      Navigator.pop(context);
-
+                      _logDisposal();
                     } catch (e) {
                       print("Error logging waste entry: $e");
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -153,8 +194,6 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                   },
                 ),
               ),
-
-
 
               SizedBox(height: 50),
             ],

@@ -100,12 +100,6 @@ class _LoginFormState extends State<LoginForm> {
                   });
                 },
               );
-
-              if (_errorMessage == null) {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => DashboardScreen()),
-                );
-              }
             },
           ),
 
