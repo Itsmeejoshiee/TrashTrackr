@@ -24,7 +24,6 @@ class SignupForm extends StatefulWidget {
 class _SignupFormState extends State<SignupForm> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
@@ -84,12 +83,6 @@ class _SignupFormState extends State<SignupForm> {
             margin: EdgeInsets.only(bottom: 15),
             controller: _lastNameController,
             hintText: 'Last Name',
-          ),
-          ProfileTextField(
-            margin: EdgeInsets.only(bottom: 15),
-            controller: _usernameController,
-            iconData: Icons.alternate_email,
-            hintText: 'Username',
           ),
           ProfileTextField(
             margin: EdgeInsets.only(bottom: 15),
