@@ -3,12 +3,10 @@ class UserModel {
   final String email;
   final String firstName;
   final String lastName;
-  final String username;
 
   UserModel({
     required this.uid,
     required this.email,
-    required this.username,
     required this.firstName,
     required this.lastName,
   });
@@ -17,7 +15,6 @@ class UserModel {
     return UserModel(
       uid: data['uid'],
       email: data['email'],
-      username: data['username'],
       firstName: data['firstName'],
       lastName: data['lastName'],
     );
@@ -27,7 +24,6 @@ class UserModel {
     return {
       'uid': uid,
       'email': email,
-      'username': username,
       'firstName': firstName,
       'lastName': lastName,
     };

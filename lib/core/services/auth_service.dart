@@ -136,4 +136,15 @@ class AuthService {
     // Once signed in, return the UserCredential
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
+
+  //Get user profile (for testin purposes)
+  Future<void> getUserProfile() async {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user != null) {
+        print(user.uid);
+      } else {
+        print('User is currently signed out!');
+      }
+    });
+  }
 }

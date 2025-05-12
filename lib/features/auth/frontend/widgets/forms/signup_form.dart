@@ -123,7 +123,6 @@ class _SignupFormState extends State<SignupForm> {
                 emailController: _emailController,
                 passwordController: _passwordController,
                 confirmPasswordController: _confirmPasswordController,
-                usernameController: _usernameController,
                 firstNameController: _firstNameController,
                 lastNameController: _lastNameController,
                 setErrorMessage: (message) {
