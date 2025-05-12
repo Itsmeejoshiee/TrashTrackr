@@ -13,10 +13,9 @@ class LogCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6), // vertical spacing between cards
-      padding: const EdgeInsets.all(8), // inner padding
       width: double.infinity,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start, // aligns image and text at the top
+        crossAxisAlignment: CrossAxisAlignment.center, // Center the text vertically with the image
         children: [
           // Image on the left
           ClipRRect(
@@ -24,11 +23,12 @@ class LogCard extends StatelessWidget {
             child: _buildImage(entry.imageUrl),
           ),
           const SizedBox(width: 12), // space between image and text
-          
+
           // Text content on the right
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center, // Center text vertically within the column
               children: [
                 // Title text
                 Text(
@@ -36,14 +36,14 @@ class LogCard extends StatelessWidget {
                   style: kTitleMedium.copyWith(color: kAvocado, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 2),
-                
+
                 // Formatted date and time
                 Text(
                   '${_formatDate(entry.timestamp)} • ${_formatTime(entry.timestamp)}',
                   style: kPoppinsBodySmall.copyWith(color: const Color(0xFF868686)),
                 ),
                 const SizedBox(height: 2),
-                
+
                 // Waste type row with icon and label
                 Row(
                   children: [
@@ -64,12 +64,6 @@ class LogCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 2),
-
-                // Status text
-                Text(
-                  entry.status,
-                  style: kPoppinsBodySmall.copyWith(color: Colors.black),
-                ),
               ],
             ),
           ),

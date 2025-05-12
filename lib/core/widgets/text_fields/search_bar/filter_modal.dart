@@ -56,6 +56,23 @@ class _FilterModalState extends State<FilterModal> {
       firstDate: DateTime(2023),
       lastDate: DateTime(now.year + 1),
       initialDateRange: selectedDateRange,
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: kForestGreen, // Header background and selected dates
+              onPrimary: Colors.white, // Text color on header
+              onSurface: kForestGreen, // Text color on surface
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: kForestGreen, // Button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null) {
       setState(() {

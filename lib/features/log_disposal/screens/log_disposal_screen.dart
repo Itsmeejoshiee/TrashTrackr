@@ -7,8 +7,6 @@ import 'package:trashtrackr/features/log_disposal/widgets/log_card.dart';
 import 'package:trashtrackr/core/widgets/text_fields/search_bar/search_bar.dart';
 import 'package:trashtrackr/core/widgets/text_fields/search_bar/filter_modal.dart';
 
-/// Screen that displays a list of log entries related to waste disposal,
-/// grouped by the date they were recorded.
 class LogDisposalScreen extends StatefulWidget {
   const LogDisposalScreen({super.key});
 
@@ -24,44 +22,7 @@ class _LogDisposalScreenState extends State<LogDisposalScreen> {
   String? selectedWasteType;
   final List<String> multiSelectOptions = [];
 
-  /// Dummy log entries for display purposes
-  final List<LogEntry> dummyEntries = [
-    LogEntry(
-      imageUrl: 'assets/images/placeholder-item.png',
-      title: 'Coca-cola Glass 100 ml',
-      timestamp: DateTime.now(),
-      wasteType: 'E-Waste',
-      status: 'Scanned',
-    ),
-    LogEntry(
-      imageUrl: 'assets/images/placeholder-item.png',
-      title: 'Pepsi Bottle 1L',
-      timestamp: DateTime.now().subtract(const Duration(days: 1)),
-      wasteType: 'Recycle',
-      status: 'Sorted',
-    ),
-    LogEntry(
-      imageUrl: 'assets/images/placeholder-item.png',
-      title: 'Sprite Can 250ml',
-      timestamp: DateTime.now(),
-      wasteType: 'Non-biodegradable',
-      status: 'Scanned',
-    ),
-    LogEntry(
-      imageUrl: 'assets/images/placeholder-item.png',
-      title: 'Old Newspaper Bundle',
-      timestamp: DateTime(2025, 4, 1),
-      wasteType: 'Biodegradable',
-      status: 'Disposed',
-    ),
-    LogEntry(
-      imageUrl: 'assets/images/placeholder-item.png',
-      title: 'Roaring Water Bottle',
-      timestamp: DateTime(2025, 5, 1),
-      wasteType: 'Non-biodegradable',
-      status: 'Disposed',
-    ),
-  ];
+   final List<LogEntry> logEntries = logEntry;
 
   @override
   void initState() {
@@ -151,10 +112,10 @@ class _LogDisposalScreenState extends State<LogDisposalScreen> {
   Widget build(BuildContext context) {
     final query = searchQuery.toLowerCase();
 
-    final filteredEntries = dummyEntries.where((entry) {
+    final filteredEntries = logEntries.where((entry) {
       final matchesSearch = entry.title.toLowerCase().contains(query) ||
           entry.wasteType.toLowerCase().contains(query) ||
-          entry.status.toLowerCase().contains(query);
+          entry.timestamp.toString().contains(query);
 
       final matchesWasteType = selectedWasteType == null || entry.wasteType == selectedWasteType;
 
@@ -190,10 +151,14 @@ class _LogDisposalScreenState extends State<LogDisposalScreen> {
               },
               onFilterTap: () => _showFilterModal(context),
             ),
-            const SizedBox(height: 12),
             if (filteredEntries.isEmpty)
-              const Expanded(
-                child: Center(child: Text("No results found.")),
+              Expanded(
+                child: Center( // Center the message both vertically and horizontally
+                  child: Text(
+                    "No results found.",
+                    style: kTitleMedium.copyWith(color: kDarkGrey), // Optional: Add styling
+                  ),
+                ),
               )
             else
               Expanded(

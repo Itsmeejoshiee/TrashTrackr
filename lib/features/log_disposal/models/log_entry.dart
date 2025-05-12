@@ -1,28 +1,18 @@
 /// A model class representing a single log entry (e.g., trash pickup or disposal record).
 class LogEntry {
-  /// URL or asset path of the image associated with the log entry.
-  final String imageUrl;
-
-  /// Title or description of the log entry (e.g., "Collected plastic bottles").
+  final String imageUrl; // Added imageUrl property
   final String title;
-
-  /// Date and time when the log entry was created.
+  final String wasteType;
   final DateTime timestamp;
 
-  /// The type of waste (e.g., "Recycle", "Biodegradable", etc.).
-  final String wasteType;
-
-  /// The current status of the entry (e.g., "Collected", "Pending").
-  final String status;
-
-  /// Constructor requiring all fields to be provided when creating a LogEntry instance.
   LogEntry({
-    required this.imageUrl,
+    required this.imageUrl, // Required imageUrl in the constructor
     required this.title,
-    required this.timestamp,
     required this.wasteType,
-    required this.status,
+
+    required this.timestamp,
   });
+
 
   // For Firebase integration later:
   // Uncomment and use this factory when reading entries from Firestore.
@@ -36,7 +26,42 @@ class LogEntry {
       timestamp: (data['timestamp'] as Timestamp).toDate(),
       wasteType: data['wasteType'],
       status: data['status'],
-    );
+    ;
   }
   */
+  // Example list of log entries
+
+
 }
+final List<LogEntry> logEntry = [
+  LogEntry(
+    imageUrl: 'assets/images/placeholder-item.png',
+    title: 'Coca-cola Glass 100 ml',
+    timestamp: DateTime.now(),
+    wasteType: 'E-Waste',
+  ),
+  LogEntry(
+    imageUrl: 'assets/images/placeholder-item.png',
+    title: 'Pepsi Bottle 1L',
+    timestamp: DateTime.now().subtract(const Duration(days: 1)),
+    wasteType: 'Recycle',
+  ),
+  LogEntry(
+    imageUrl: 'assets/images/placeholder-item.png',
+    title: 'Sprite Can 250ml',
+    timestamp: DateTime.now(),
+    wasteType: 'Non-biodegradable',
+  ),
+  LogEntry(
+    imageUrl: 'assets/images/placeholder-item.png',
+    title: 'Old Newspaper Bundle',
+    timestamp: DateTime(2025, 4, 1),
+    wasteType: 'Biodegradable',
+  ),
+  LogEntry(
+    imageUrl: 'assets/images/placeholder-item.png',
+    title: 'Roaring Water Bottle',
+    timestamp: DateTime(2025, 5, 1),
+    wasteType: 'Non-biodegradable',
+  ),
+];
