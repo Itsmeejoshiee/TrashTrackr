@@ -1,6 +1,6 @@
 /// A model class representing a single log entry (e.g., trash pickup or disposal record).
 class LogEntry {
-  final String imageUrl; // Added imageUrl property
+  String imageUrl; // Added imageUrl property
   final String title;
   final String wasteType;
   final DateTime timestamp;
@@ -10,6 +10,8 @@ class LogEntry {
   final List<String> disposalGuideNotToDo; // New field for disposal guide (not-to-do list)
   final String disposalGuideProTip; // New field for disposal guide pro tip
   final String disposalLocation; // New field for disposal location
+  String? notes; // New field for optional notes
+  String? quantity; // New field for optional quantity
 
   LogEntry({
     required this.imageUrl, // Required imageUrl in the constructor
@@ -22,6 +24,8 @@ class LogEntry {
     required this.disposalGuideNotToDo,
     required this.disposalGuideProTip,
     required this.disposalLocation,
+    this.notes, // Optional notes field
+    this.quantity, // Optional quantity field
   });
 }
 
@@ -33,7 +37,9 @@ final List<LogEntry> logEntry = [
     timestamp: DateTime.now(),
     productInfo: 'A small glass bottle used for Coca-Cola beverages.',
     productProperties: [
-      'Glass', // Only material-related details
+      'Material: Glass',
+      'Capacity: 100ml',
+      'Lightweight and recyclable',
     ],
     disposalGuideToDo: [
       'Rinse the bottle',
