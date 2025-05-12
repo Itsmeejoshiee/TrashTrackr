@@ -136,12 +136,12 @@ class UserService {
     });
   }
 
-  Future uploadImage(Uint8List? image) async {
+  Future uploadImage(String? directory, Uint8List? image) async {
     if (image == null) return;
 
     final storageRef = FirebaseStorage.instance.ref();
     final imageRef = storageRef.child(
-      'posts/${DateTime.now().millisecondsSinceEpoch}.jpg',
+      '$directory/${DateTime.now().millisecondsSinceEpoch}.jpg',
     );
 
     try {
