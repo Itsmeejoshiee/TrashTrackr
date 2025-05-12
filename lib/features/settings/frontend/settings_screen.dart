@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:trashtrackr/core/services/auth_service.dart';
+import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
-import 'package:trashtrackr/features/auth/backend/auth_bloc.dart';
 import 'package:trashtrackr/features/about/frontend/about_screen.dart';
 import 'package:trashtrackr/features/auth/backend/auth_manager.dart';
 import 'package:trashtrackr/features/faqs/frontend/faq_screen.dart';
@@ -26,10 +27,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _logout() async {
     // Retrieve AuthBloc
-    final authViewModel = Provider.of<AuthBloc>(context, listen: false);
+    final authService = Provider.of<AuthService>(context, listen: false);
 
     // Sign Out
-    await authViewModel.signOut();
+    await authService.signOut();
 
     // Navigate back to AuthManager and clear navigation stack
     Navigator.pushAndRemoveUntil(
@@ -40,8 +41,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _deleteAccount() async {
-    // Retrieve AuthBloc
-    final authViewModel = Provider.of<AuthBloc>(context, listen: false);
 
     // TODO: Delete account(please use the deleteAccount method in AuthBloc)
 
