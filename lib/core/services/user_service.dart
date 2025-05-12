@@ -121,6 +121,30 @@ class UserService {
     }
   }
 
+  //delete user data and account
+  Future<void> deleteUserData() async {
+    final user = AuthService().currentUser;
+
+    if (user == null) {
+      print('No user is currently signed in.');
+      return;
+    }
+
+    try {
+      // Delete user data from Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .delete();
+      await FirebaseFirestore.instance
+          .collection('posts')
+          .doc(user.uid)
+          .delete();
+    } catch (e) {
+      print('Error deleting user data: $e');
+    }
+  }
+
   Future<void> createPost(String body, String? imageUrl) async {
     final uid = AuthService().currentUser?.uid;
     if (uid == null) return;

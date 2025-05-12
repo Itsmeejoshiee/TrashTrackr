@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:trashtrackr/core/services/user_service.dart';
 
 class AuthService {
   //initialize firebase auth
@@ -59,6 +61,24 @@ class AuthService {
     }
   }
 
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
   // Sign out
   Future<void> signOut() async {
     await firebaseAuth.signOut();
@@ -84,6 +104,7 @@ class AuthService {
 
   //Delete account
   Future<void> deleteAccount({
+    required BuildContext context,
     required String email,
     required String password,
   }) async {
@@ -94,6 +115,8 @@ class AuthService {
         password: password,
       );
       await currentUser!.reauthenticateWithCredential(credential);
+      final userService = UserService(context);
+      await userService.deleteUserData();
       await currentUser!.delete();
       await firebaseAuth.signOut();
     } catch (e) {
@@ -117,24 +140,6 @@ class AuthService {
     } catch (e) {
       rethrow;
     }
-  }
-
-  Future<UserCredential> signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
-
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
   //Get user profile (for testin purposes)
