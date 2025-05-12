@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:trashtrackr/core/models/scan_result_model.dart';
 
 class GeminiService {
   // Initialize the Gemini model with the API key and safety settings.

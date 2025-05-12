@@ -5,14 +5,12 @@ class DisposalGuide extends StatelessWidget {
   const DisposalGuide({
     super.key,
     required this.material,
-    required this.guide,
     required this.toDo,
     required this.notToDo,
     required this.proTip,
   });
 
   final String material;
-  final String guide;
   final List<String> toDo;
   final List<String> notToDo;
   final String proTip;
@@ -53,11 +51,6 @@ class DisposalGuide extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-
-          Text(
-            guide,
-            style: kPoppinsBodyMedium.copyWith(color: Colors.black54),
           ),
 
           IntrinsicHeight(
