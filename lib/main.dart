@@ -36,6 +36,8 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthBloc()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+
+        Provider<AuthService>(create: (_) => AuthService()),
       ],
       child: const TrashTrackr(),
     ),

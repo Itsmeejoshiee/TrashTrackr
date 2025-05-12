@@ -88,6 +88,7 @@ class AuthService {
   Future<void> resetPassword({required String email}) async {
     try {
       await firebaseAuth.sendPasswordResetEmail(email: email);
+      print('Password reset email sent to $email');
     } catch (e) {
       rethrow;
     }
@@ -125,7 +126,7 @@ class AuthService {
     }
   }
 
-  //reset Password
+  //reset Password (when signed in)
   Future<void> resetPasswordFromCurrentPassword({
     required String currentPassword,
     required String newPassword,
