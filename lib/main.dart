@@ -11,6 +11,7 @@ import 'package:trashtrackr/features/badges/frontend/badge_screen.dart';
 import 'package:trashtrackr/features/dashboard/frontend/dashboard_screen.dart';
 import 'package:trashtrackr/features/faqs/frontend/faq_screen.dart';
 import 'package:trashtrackr/features/feed/frontend/feed_screen.dart';
+import 'package:trashtrackr/features/log_disposal/screens/log_disposal_screen.dart';
 import 'package:trashtrackr/features/notifs/frontend/notif_screen.dart';
 import 'package:trashtrackr/features/profile/frontend/profile_screen.dart';
 import 'package:trashtrackr/features/settings/frontend/edit_profile_screen.dart';
