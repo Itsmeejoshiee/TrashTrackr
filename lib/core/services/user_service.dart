@@ -19,7 +19,6 @@ class UserService {
     required TextEditingController emailController,
     required TextEditingController passwordController,
     required TextEditingController confirmPasswordController,
-    required TextEditingController usernameController,
     required TextEditingController firstNameController,
     required TextEditingController lastNameController,
     required Function(String?) setErrorMessage,
@@ -48,7 +47,6 @@ class UserService {
       final newUser = UserModel(
         uid: AuthService().currentUser?.uid ?? '',
         email: emailController.text.trim(),
-        username: usernameController.text.trim(),
         firstName: firstNameController.text.trim(),
         lastName: lastNameController.text.trim(),
       );
@@ -83,7 +81,6 @@ class UserService {
     final newUser = UserModel(
       uid: AuthService().currentUser?.uid ?? '',
       email: AuthService().currentUser?.email ?? '',
-      username: AuthService().currentUser?.displayName ?? '',
       firstName: firstName,
       lastName: lastName,
     );
@@ -124,16 +121,59 @@ class UserService {
     }
   }
 
+  //delete user data and account
+  Future<void> deleteUserData() async {
+    final user = AuthService().currentUser;
+
+    if (user == null) {
+      print('No user is currently signed in.');
+      return;
+    }
+
+    try {
+      // Delete user data from Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .delete();
+      await FirebaseFirestore.instance
+          .collection('posts')
+          .doc(user.uid)
+          .delete();
+    } catch (e) {
+      print('Error deleting user data: $e');
+    }
+  }
+
   Future<void> createPost(String body, String? imageUrl) async {
-    //to be updated
-    await FirebaseFirestore.instance.collection('posts').add({
-      'uid': AuthService().currentUser?.uid,
-      'username': AuthService().currentUser?.displayName,
-      'date': DateTime.now(),
-      'body': body,
-      'image_url': imageUrl,
-      //add user profile picture
-    });
+    final uid = AuthService().currentUser?.uid;
+    if (uid == null) return;
+
+    try {
+      // Fetch user document from Firestore
+      final userDoc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+      if (!userDoc.exists) {
+        print('User document not found');
+        return;
+      }
+
+      final userData = userDoc.data()!;
+      final firstName = userData['firstName'] ?? '';
+      final lastName = userData['lastName'] ?? '';
+      final fullName = '$firstName $lastName'.trim();
+
+      await FirebaseFirestore.instance.collection('posts').add({
+        'uid': uid,
+        'fullname': fullName,
+        'date': DateTime.now(),
+        'body': body,
+        'image_url': imageUrl,
+      });
+    } catch (e) {
+      print('Error creating post: $e');
+    }
   }
 
   Future uploadImage(String? directory, Uint8List? image) async {

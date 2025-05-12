@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/settings/frontend/widgets/buttons/edit_profile_picture_button.dart';
 import 'package:trashtrackr/core/widgets/text_fields/profile_text_field.dart';
@@ -14,7 +15,6 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lasttNameController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
   @override
@@ -48,25 +48,32 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
               Flexible(child: SizedBox(height: 72)),
 
-              ProfileTextField(controller: _firstNameController),
-
-              ProfileTextField(controller: _lasttNameController),
+              ProfileTextField(
+                controller: _firstNameController,
+                hintText: 'First Name',
+              ),
 
               ProfileTextField(
-                controller: _usernameController,
-                iconData: Icons.alternate_email,
+                controller: _lasttNameController,
+                hintText: 'Last Name',
               ),
 
               ProfileTextField(
                 controller: _emailController,
                 iconData: Icons.email,
+                hintText: 'Email Address',
               ),
 
               // Flexible Offset
               Flexible(child: SizedBox(height: 55)),
 
               // Delete Account Butotn
-              RoundedRectangleButton(title: 'Save', onPressed: () {}),
+              RoundedRectangleButton(
+                title: 'Save',
+                onPressed: () async {
+                  AuthService().getUserProfile();
+                },
+              ),
 
               // Offset
               SizedBox(height: 15),
