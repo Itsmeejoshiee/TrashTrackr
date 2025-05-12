@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -130,20 +131,21 @@ class UserService {
       'username': AuthService().currentUser?.displayName,
       'date': DateTime.now(),
       'body': body,
-      'image_url': imageUrl, //change to imageUrl of file
+      'image_url': imageUrl,
       //add user profile picture
     });
   }
 
-  Future uploadImage(XFile? image) async {
+  Future uploadImage(Uint8List? image) async {
     if (image == null) return;
 
-    // Upload the image to Firebase Storage
     final storageRef = FirebaseStorage.instance.ref();
-    final imageRef = storageRef.child('posts/${image.name}');
+    final imageRef = storageRef.child(
+      'posts/${DateTime.now().millisecondsSinceEpoch}.jpg',
+    );
 
     try {
-      await imageRef.putFile(File(image.path));
+      await imageRef.putData(image);
       final downloadUrl = await imageRef.getDownloadURL();
       return downloadUrl;
     } catch (e) {

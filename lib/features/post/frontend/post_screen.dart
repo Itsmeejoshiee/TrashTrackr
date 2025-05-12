@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -16,18 +17,28 @@ class PostScreen extends StatefulWidget {
 }
 
 class _PostScreenState extends State<PostScreen> {
-  XFile? _imageFile;
+  Uint8List? _imageFile;
   final PostBloc _postBloc = PostBloc();
 
   Future<void> _getImage() async {
     try {
-      final image =
-          await _postBloc.getImage() ?? await _postBloc.getCameraImage();
+      final image = await _postBloc.getImage();
       setState(() {
         _imageFile = image;
       });
     } catch (e) {
       print("Error getting image: $e");
+    }
+  }
+
+  Future<void> _getCameraImage() async {
+    try {
+      final image = await _postBloc.getCameraImage();
+      setState(() {
+        _imageFile = image;
+      });
+    } catch (e) {
+      print("Error getting camera image: $e");
     }
   }
 
@@ -137,15 +148,14 @@ class _PostScreenState extends State<PostScreen> {
               maxLines: 10,
             ),
             SizedBox(height: 20),
-            if (_imageFile != null && File(_imageFile!.path).existsSync())
-              Image.file(File(_imageFile!.path), height: 200),
-
+            if (_imageFile != null) Image.memory(_imageFile!, height: 200),
             SizedBox(height: 16),
 
             // Post Functions
             PostFunctionButtons(
               postController: _postController,
               onAddImage: _getImage,
+              onCaptureImage: _getCameraImage,
             ),
           ],
         ),
