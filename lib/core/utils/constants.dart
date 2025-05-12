@@ -16,6 +16,9 @@ const Color kLightOrange = Color(0xFFFAF1DC);
 const Color kDarkOrange = Color(0xFFEDB552);
 const Color kDisabledGreen = Color(0xFFD9D9D9);
 
+const Color kForestGreen =Color(0xFF3F5C00);
+const Color kDarkGrey =Color.fromRGBO(134, 134, 134, 1);
+
 // TEXT STYLES
 
 //Default Text Font is Urbanist
