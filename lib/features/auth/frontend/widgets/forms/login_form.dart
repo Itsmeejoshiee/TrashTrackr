@@ -11,9 +11,14 @@ import 'package:trashtrackr/core/widgets/buttons/auth_provider_button.dart';
 import '../../../../dashboard/frontend/dashboard_screen.dart';
 
 class LoginForm extends StatefulWidget {
-  const LoginForm({super.key, required this.onToggle});
+  const LoginForm({
+    super.key,
+    required this.onToggle,
+    required this.onForgotPassword,
+  });
 
   final VoidCallback onToggle;
+  final VoidCallback onForgotPassword;
 
   @override
   State<LoginForm> createState() => _LoginFormState();
@@ -84,13 +89,7 @@ class _LoginFormState extends State<LoginForm> {
               'Forgot Password?',
               style: kBodyMedium.copyWith(color: kAvocado),
             ),
-            onTap: () async {
-              final authService = Provider.of<AuthService>(
-                context,
-                listen: false,
-              );
-              await authService.resetPassword(email: 'joshgorospe03@gmail.com');
-            },
+            onTap: widget.onForgotPassword,
           ),
 
           Flexible(child: SizedBox(height: 80)),
