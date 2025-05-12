@@ -1,0 +1,177 @@
+/// A model class representing a single log entry (e.g., trash pickup or disposal record).
+class LogEntry {
+  final String imageUrl; // Added imageUrl property
+  final String title;
+  final String wasteType;
+  final DateTime timestamp;
+  final String savedCO2; // New field for saved CO2 emissions
+  final String productInfo; // New field for product information
+  final List<String> productProperties; // New field for product properties
+  final List<String> disposalGuideToDo; // New field for disposal guide (to-do list)
+  final List<String> disposalGuideNotToDo; // New field for disposal guide (not-to-do list)
+  final String disposalGuideProTip; // New field for disposal guide pro tip
+  final String disposalLocation; // New field for disposal location
+
+  LogEntry({
+    required this.imageUrl, // Required imageUrl in the constructor
+    required this.title,
+    required this.wasteType,
+    required this.timestamp,
+    required this.savedCO2,
+    required this.productInfo,
+    required this.productProperties,
+    required this.disposalGuideToDo,
+    required this.disposalGuideNotToDo,
+    required this.disposalGuideProTip,
+    required this.disposalLocation,
+  });
+}
+
+final List<LogEntry> logEntry = [
+  LogEntry(
+    imageUrl: 'assets/images/placeholder-item.png',
+    title: 'Coca-Cola Glass Bottle 100ml',
+    wasteType: 'Recyclable',
+    timestamp: DateTime.now(),
+    savedCO2: '15g', // Saved CO2 emissions
+    productInfo: 'A small glass bottle used for Coca-Cola beverages.',
+    productProperties: [
+      'Material: Glass',
+      'Capacity: 100ml',
+      'Reusable and recyclable',
+    ],
+    disposalGuideToDo: [
+      'Rinse the bottle',
+      'Remove caps or corks',
+      'Sort by color if required',
+      'Use designated recycling bins',
+    ],
+    disposalGuideNotToDo: [
+      'Do not mix with non-recyclables',
+      'Avoid contamination with food waste',
+    ],
+    disposalGuideProTip: 'Glass is endlessly recyclable without losing quality!',
+    disposalLocation: 'Recycling Center A, Main Street',
+  ),
+  LogEntry(
+    imageUrl: 'assets/images/placeholder-item.png',
+    title: 'Pepsi Plastic Bottle 1L',
+    wasteType: 'Recyclable',
+    timestamp: DateTime.now().subtract(const Duration(days: 1)),
+    savedCO2: '10g', // Saved CO2 emissions
+    productInfo: 'A 1-liter plastic bottle used for Pepsi beverages.',
+    productProperties: [
+      'Material: Plastic',
+      'Capacity: 1L',
+      'Lightweight and recyclable',
+    ],
+    disposalGuideToDo: [
+      'Rinse the bottle',
+      'Remove the label and cap',
+      'Crush the bottle to save space',
+      'Place in plastic recycling bins',
+    ],
+    disposalGuideNotToDo: [
+      'Do not burn the plastic',
+      'Avoid mixing with glass or metal waste',
+    ],
+    disposalGuideProTip: 'Recycling plastic reduces pollution and saves energy!',
+    disposalLocation: 'Recycling Center B, Green Avenue',
+  ),
+  LogEntry(
+    imageUrl: 'assets/images/placeholder-item.png',
+    title: 'Sprite Aluminum Can 250ml',
+    wasteType: 'Recyclable',
+    timestamp: DateTime.now(),
+    savedCO2: '8g', // Saved CO2 emissions
+    productInfo: 'A small aluminum can used for Sprite beverages.',
+    productProperties: [
+      'Material: Aluminum',
+      'Capacity: 250ml',
+      'Lightweight and recyclable',
+    ],
+    disposalGuideToDo: [
+      'Rinse the can',
+      'Crush the can to save space',
+      'Place in metal recycling bins',
+    ],
+    disposalGuideNotToDo: [
+      'Do not mix with food waste',
+      'Avoid throwing in general trash',
+    ],
+    disposalGuideProTip: 'Aluminum is 100% recyclable and can be reused endlessly!',
+    disposalLocation: 'Recycling Center C, Eco Park',
+  ),
+  LogEntry(
+    imageUrl: 'assets/images/placeholder-item.png',
+    title: 'Old Newspaper Bundle',
+    wasteType: 'Biodegradable',
+    timestamp: DateTime(2025, 4, 1),
+    savedCO2: '5g', // Saved CO2 emissions
+    productInfo: 'A bundle of old newspapers ready for recycling.',
+    productProperties: [
+      'Material: Paper',
+      'Reusable and recyclable',
+      'Biodegradable',
+    ],
+    disposalGuideToDo: [
+      'Tie the newspapers into bundles',
+      'Keep them dry',
+      'Drop them off at paper recycling centers',
+    ],
+    disposalGuideNotToDo: [
+      'Do not mix with wet waste',
+      'Avoid tearing into small pieces',
+    ],
+    disposalGuideProTip: 'Recycling paper saves trees and reduces landfill waste!',
+    disposalLocation: 'Paper Recycling Center, Maple Street',
+  ),
+  LogEntry(
+    imageUrl: 'assets/images/placeholder-item.png',
+    title: 'Old Smartphone',
+    wasteType: 'E-Waste',
+    timestamp: DateTime(2025, 5, 1),
+    savedCO2: '20g', // Saved CO2 emissions
+    productInfo: 'An old smartphone ready for e-waste recycling.',
+    productProperties: [
+      'Material: Plastic and Metal',
+      'Contains electronic components',
+      'Non-biodegradable',
+    ],
+    disposalGuideToDo: [
+      'Remove personal data',
+      'Take to an authorized e-waste recycler',
+      'Ensure proper handling of batteries',
+    ],
+    disposalGuideNotToDo: [
+      'Do not throw in general trash',
+      'Avoid dismantling without proper tools',
+    ],
+    disposalGuideProTip: 'Recycling e-waste prevents hazardous materials from harming the environment!',
+    disposalLocation: 'E-Waste Recycling Center, Tech Park',
+  ),
+  LogEntry(
+    imageUrl: 'assets/images/placeholder-item.png',
+    title: 'Reusable Water Bottle',
+    wasteType: 'Non-Biodegradable',
+    timestamp: DateTime(2025, 5, 1),
+    savedCO2: '12g', // Saved CO2 emissions
+    productInfo: 'A reusable water bottle made of durable plastic.',
+    productProperties: [
+      'Material: Plastic',
+      'Capacity: 500ml',
+      'Reusable and recyclable',
+    ],
+    disposalGuideToDo: [
+      'Clean the bottle thoroughly',
+      'Check if it can be reused',
+      'Recycle in plastic bins if damaged',
+    ],
+    disposalGuideNotToDo: [
+      'Do not throw in general trash',
+      'Avoid mixing with glass or metal waste',
+    ],
+    disposalGuideProTip: 'Reusing water bottles reduces waste and saves resources!',
+    disposalLocation: 'Recycling Center D, Ocean Drive',
+  ),
+];
