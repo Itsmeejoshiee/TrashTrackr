@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:trashtrackr/features/log_disposal/models/log_entry.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
+import 'package:trashtrackr/features/log_disposal/screens/log_details_screen.dart';
 
 /// A widget that displays a single log entry as a card.
 class LogCard extends StatelessWidget {
@@ -11,63 +12,73 @@ class LogCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 6), // vertical spacing between cards
-      width: double.infinity,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center, // Center the text vertically with the image
-        children: [
-          // Image on the left
-          ClipRRect(
-            borderRadius: BorderRadius.circular(6.03), // rounded corners
-            child: _buildImage(entry.imageUrl),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LogDetailsScreen(entry: entry),
           ),
-          const SizedBox(width: 12), // space between image and text
-
-          // Text content on the right
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center, // Center text vertically within the column
-              children: [
-                // Title text
-                Text(
-                  entry.title,
-                  style: kTitleMedium.copyWith(color: kAvocado, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 2),
-
-                // Formatted date and time
-                Text(
-                  '${_formatDate(entry.timestamp)} • ${_formatTime(entry.timestamp)}',
-                  style: kPoppinsBodySmall.copyWith(color: const Color(0xFF868686)),
-                ),
-                const SizedBox(height: 2),
-
-                // Waste type row with icon and label
-                Row(
-                  children: [
-                    Image.asset(
-                      _getWasteTypeImage(entry.wasteType),
-                      width: 20,
-                      height: 20,
-                      fit: BoxFit.contain,
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      entry.wasteType,
-                      style: kPoppinsBodySmall.copyWith(
-                        color: const Color(0xFF868686),
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 2),
-              ],
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 6), // Vertical spacing between cards
+        width: double.infinity,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center, // Center the text vertically with the image
+          children: [
+            // Image on the left
+            ClipRRect(
+              borderRadius: BorderRadius.circular(6.03), // Rounded corners
+              child: _buildImage(entry.imageUrl),
             ),
-          ),
-        ],
+            const SizedBox(width: 12), // Space between image and text
+
+            // Text content on the right
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center, // Center text vertically within the column
+                children: [
+                  // Title text
+                  Text(
+                    entry.title,
+                    style: kTitleMedium.copyWith(color: kAvocado, fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 2),
+
+                  // Formatted date and time
+                  Text(
+                    '${_formatDate(entry.timestamp)} • ${_formatTime(entry.timestamp)}',
+                    style: kPoppinsBodySmall.copyWith(color: const Color(0xFF868686)),
+                  ),
+                  const SizedBox(height: 2),
+
+                  // Waste type row with icon and label
+                  Row(
+                    children: [
+                      Image.asset(
+                        _getWasteTypeImage(entry.wasteType), // Dynamically fetch icon based on wasteType
+                        width: 20,
+                        height: 20,
+                        fit: BoxFit.contain,
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        entry.wasteType, // Display the waste type dynamically
+                        style: kPoppinsBodySmall.copyWith(
+                          color: const Color(0xFF868686),
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -125,7 +136,7 @@ class LogCard extends StatelessWidget {
   /// Maps a waste type string to the appropriate image asset path.
   String _getWasteTypeImage(String wasteType) {
     switch (wasteType.toLowerCase()) {
-      case 'recycle':
+      case 'recyclable':
         return 'assets/images/icons/recycling.png';
       case 'biodegradable':
         return 'assets/images/icons/leaf_brown.png';
@@ -134,7 +145,7 @@ class LogCard extends StatelessWidget {
       case 'e-waste':
         return 'assets/images/icons/battery-blue.png';
       default:
-        return 'assets/images/icons/plant.png'; // fallback icon
+        return 'assets/images/icons/plant.png'; // Fallback icon
     }
   }
 }
