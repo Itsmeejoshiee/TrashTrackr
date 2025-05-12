@@ -35,7 +35,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => AuthManager()),
-          (r) => false,
+      (r) => false,
     );
   }
 
@@ -43,13 +43,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     // Retrieve AuthBloc
     final authViewModel = Provider.of<AuthBloc>(context, listen: false);
 
-    // TODO: Delete account
+    // TODO: Delete account(please use the deleteAccount method in AuthBloc)
 
     // Navigate back to AuthManager and clear navigation stack
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => AuthManager()),
-          (r) => false,
+      (r) => false,
     );
   }
 

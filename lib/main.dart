@@ -26,8 +26,6 @@ import 'package:trashtrackr/features/waste_scanner/backend/camera_module.dart';
 import 'package:trashtrackr/features/intro/frontend/intro_screen.dart';
 import 'package:trashtrackr/features/waste_stats/frontend/waste_stats_screen.dart';
 
-
-
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +36,8 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthBloc()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+
+        Provider<AuthService>(create: (_) => AuthService()),
       ],
       child: const TrashTrackr(),
     ),

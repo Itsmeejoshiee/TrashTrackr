@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:trashtrackr/core/services/auth_service.dart';
+import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/text_fields/profile_text_field.dart';
 import 'package:trashtrackr/core/widgets/buttons/rounded_rectangle_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/auth_provider_button.dart';
 import 'package:trashtrackr/features/auth/backend/auth_bloc.dart';
+
+import '../../../../dashboard/frontend/dashboard_screen.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key, required this.onToggle});
@@ -80,6 +84,13 @@ class _LoginFormState extends State<LoginForm> {
               'Forgot Password?',
               style: kBodyMedium.copyWith(color: kAvocado),
             ),
+            onTap: () async {
+              final authService = Provider.of<AuthService>(
+                context,
+                listen: false,
+              );
+              await authService.resetPassword(email: 'joshgorospe03@gmail.com');
+            },
           ),
 
           Flexible(child: SizedBox(height: 80)),
@@ -87,26 +98,16 @@ class _LoginFormState extends State<LoginForm> {
           RoundedRectangleButton(
             title: 'Login',
             onPressed: () async {
-              final authViewModel = Provider.of<AuthBloc>(
-                context,
-                listen: false,
+              final UserService userService = UserService(context);
+              await userService.loginUserAccount(
+                emailController: _emailController,
+                passwordController: _passwordController,
+                setErrorMessage: (message) {
+                  setState(() {
+                    _errorMessage = message;
+                  });
+                },
               );
-              //reset error message
-              setState(() {
-                _errorMessage = null;
-              });
-              try {
-                await authViewModel.signIn(
-                  _emailController.text.trim(),
-                  _passwordController.text.trim(),
-                );
-
-                //add navigation to home screen here
-              } catch (e) {
-                setState(() {
-                  _errorMessage = e.toString();
-                });
-              }
             },
           ),
 
@@ -151,6 +152,7 @@ class _LoginFormState extends State<LoginForm> {
             mainAxisAlignment: MainAxisAlignment.center,
             spacing: 20,
             children: [
+              //Google Sign In Button
               AuthProviderButton(
                 padding: EdgeInsets.all(14),
                 onPressed: () async {

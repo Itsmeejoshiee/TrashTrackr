@@ -1,31 +1,36 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:trashtrackr/features/post/backend/post_bloc.dart';
 
 class PostFunctionButtons extends StatelessWidget {
   final TextEditingController postController;
+  final VoidCallback? onAddImage;
+  final VoidCallback? onCaptureImage;
 
-  const PostFunctionButtons({super.key, required this.postController});
+  const PostFunctionButtons({
+    super.key,
+    required this.postController,
+    this.onCaptureImage,
+    this.onAddImage,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        // Add image
+        // Add image from Camera
         GestureDetector(
-          onTap: () {
-            // Handle adding image
-          },
+          onTap: onCaptureImage,
           child: Image.asset('assets/images/gallery-add.png', width: 50),
         ),
 
         SizedBox(width: 25),
 
-        // Add Emoji
+        // Add  Image from Gallery
         GestureDetector(
-          onTap: () {
-            // Handle adding emoji
-          },
-          child: Image.asset('assets/images/emoji-normal.png', width: 50),
+          onTap: onAddImage,
+          child: Image.asset('assets/images/gallery-add.png', width: 50),
         ),
 
         SizedBox(width: 25),
@@ -45,7 +50,9 @@ class PostFunctionButtons extends StatelessWidget {
             postController.text = newText;
 
             // Place the cursor right after the bullet
-            postController.selection = TextSelection.collapsed(offset: selection.start + 2);
+            postController.selection = TextSelection.collapsed(
+              offset: selection.start + 2,
+            );
           },
           child: Image.asset('assets/images/task-square.png', width: 50),
         ),
@@ -53,4 +60,3 @@ class PostFunctionButtons extends StatelessWidget {
     );
   }
 }
-

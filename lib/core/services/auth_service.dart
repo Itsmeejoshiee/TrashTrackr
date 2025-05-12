@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:trashtrackr/core/services/user_service.dart';
 
 class AuthService {
   //initialize firebase auth
@@ -59,6 +61,24 @@ class AuthService {
     }
   }
 
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
   // Sign out
   Future<void> signOut() async {
     await firebaseAuth.signOut();
@@ -68,6 +88,7 @@ class AuthService {
   Future<void> resetPassword({required String email}) async {
     try {
       await firebaseAuth.sendPasswordResetEmail(email: email);
+      print('Password reset email sent to $email');
     } catch (e) {
       rethrow;
     }
@@ -82,8 +103,10 @@ class AuthService {
     }
   }
 
+  //To do: test this function
   //Delete account
   Future<void> deleteAccount({
+    required BuildContext context,
     required String email,
     required String password,
   }) async {
@@ -94,6 +117,8 @@ class AuthService {
         password: password,
       );
       await currentUser!.reauthenticateWithCredential(credential);
+      final userService = UserService(context);
+      await userService.deleteUserData();
       await currentUser!.delete();
       await firebaseAuth.signOut();
     } catch (e) {
@@ -101,7 +126,7 @@ class AuthService {
     }
   }
 
-  //reset Password
+  //reset Password (when signed in)
   Future<void> resetPasswordFromCurrentPassword({
     required String currentPassword,
     required String newPassword,
@@ -119,21 +144,14 @@ class AuthService {
     }
   }
 
-  Future<UserCredential> signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
-
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+  //Get user profile (for testin purposes)
+  Future<void> getUserProfile() async {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user != null) {
+        print(user.uid);
+      } else {
+        print('User is currently signed out!');
+      }
+    });
   }
 }

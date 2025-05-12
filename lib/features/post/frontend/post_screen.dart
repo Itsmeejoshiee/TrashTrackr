@@ -1,6 +1,12 @@
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
+import 'package:trashtrackr/features/post/backend/post_bloc.dart';
 import 'package:trashtrackr/features/post/frontend/widgets/post_function_buttons.dart';
 
 class PostScreen extends StatefulWidget {
@@ -11,6 +17,31 @@ class PostScreen extends StatefulWidget {
 }
 
 class _PostScreenState extends State<PostScreen> {
+  Uint8List? _imageFile;
+  final PostBloc _postBloc = PostBloc();
+
+  Future<void> _getImage() async {
+    try {
+      final image = await _postBloc.getImage();
+      setState(() {
+        _imageFile = image;
+      });
+    } catch (e) {
+      print("Error getting image: $e");
+    }
+  }
+
+  Future<void> _getCameraImage() async {
+    try {
+      final image = await _postBloc.getCameraImage();
+      setState(() {
+        _imageFile = image;
+      });
+    } catch (e) {
+      print("Error getting camera image: $e");
+    }
+  }
+
   // Text controller
   final TextEditingController _postController = TextEditingController();
 
@@ -25,15 +56,23 @@ class _PostScreenState extends State<PostScreen> {
       ),
       title: "Post Successful",
       desc:
-      "Congrats! You’ve successfully posted your post. Let’s see it now! 🌿👏",
+          "Congrats! You’ve successfully posted your post. Let’s see it now! 🌿👏",
       image: Image.asset("assets/images/post-successful.png", width: 110),
       buttons: [
         DialogButton(
           margin: EdgeInsets.symmetric(horizontal: 20),
           color: Color(0xFF819D39),
           radius: BorderRadius.circular(10),
-          onPressed: () => Navigator.pop(context),
-          child: Text('See My Post', style: kTitleSmall.copyWith(color: Colors.white)),
+          onPressed: () async {
+            final userService = UserService(context);
+            final imageUrl = await userService.uploadImage('posts', _imageFile);
+            await userService.createPost(_postController.text, imageUrl);
+            Navigator.pop(context);
+          },
+          child: Text(
+            'See My Post',
+            style: kTitleSmall.copyWith(color: Colors.white),
+          ),
         ),
       ],
     ).show();
@@ -50,7 +89,6 @@ class _PostScreenState extends State<PostScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-
                 //Exit
                 IconButton(
                   icon: Icon(Icons.cancel, color: Color(0xFF819D39), size: 35),
@@ -62,14 +100,15 @@ class _PostScreenState extends State<PostScreen> {
                   onPressed: () {
                     _createPost();
                   },
-                  child: Text(
-                      'Post',
-                      style: TextStyle(color: Colors.white)
-                  ),
+                  child: Text('Post', style: TextStyle(color: Colors.white)),
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF819D39)),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      Color(0xFF819D39),
+                    ),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
                     ),
                   ),
                 ),
@@ -82,15 +121,17 @@ class _PostScreenState extends State<PostScreen> {
             Row(
               children: [
                 CircleAvatar(
-                  foregroundImage: AssetImage("assets/images/placeholder_profile.jpg"),
+                  foregroundImage: AssetImage(
+                    "assets/images/placeholder_profile.jpg",
+                  ),
                 ),
 
                 SizedBox(width: 15),
-                
+
                 Text(
                   "Ella Green",
                   style: kTitleLarge.copyWith(fontWeight: FontWeight.w700),
-                )
+                ),
               ],
             ),
 
@@ -101,19 +142,21 @@ class _PostScreenState extends State<PostScreen> {
               controller: _postController,
               decoration: InputDecoration(
                 hintText: "What's on your mind?",
-                hintStyle: TextStyle(
-                  color: Colors.grey
-                ),
+                hintStyle: TextStyle(color: Colors.grey),
                 border: InputBorder.none,
               ),
               maxLines: 10,
             ),
-
+            SizedBox(height: 20),
+            if (_imageFile != null) Image.memory(_imageFile!, height: 200),
             SizedBox(height: 16),
 
             // Post Functions
-            PostFunctionButtons(postController: _postController,)
-
+            PostFunctionButtons(
+              postController: _postController,
+              onAddImage: _getImage,
+              onCaptureImage: _getCameraImage,
+            ),
           ],
         ),
       ),

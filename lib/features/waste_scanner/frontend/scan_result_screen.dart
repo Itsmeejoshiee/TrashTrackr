@@ -1,13 +1,20 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/buttons/disposal_location_button.dart';
 import 'widgets/properties_tile.dart';
 import 'widgets/disposal_guide.dart';
 import 'widgets/scan_result_field.dart';
 import 'widgets/log_button.dart';
+import 'package:trashtrackr/core/models/scan_result_model.dart';
+import 'package:trashtrackr/core/services/waste_entry_service.dart';
+
 
 class ScanResultScreen extends StatefulWidget {
-  const ScanResultScreen({super.key});
+  final ScanResult scanResult;
+
+  const ScanResultScreen({super.key, required this.scanResult});
 
   @override
   State<ScanResultScreen> createState() => _ScanResultScreenState();
@@ -17,12 +24,58 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
   final TextEditingController _noteController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
 
+
+  // for logging disposal
+  void _logDisposal() {
+    Alert(
+      context: context,
+      style: AlertStyle(
+        animationType: AnimationType.grow,
+        isCloseButton: false,
+        titleStyle: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
+        descStyle: kTitleMedium,
+      ),
+      title: "Log Successful",
+      desc: "Congrats! You've successfully logged your waste. 🌿👏",
+      image: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        child: Image.asset(
+          "assets/images/icons/logDisposal.png",
+          width: 90,
+        ),
+      ),
+      buttons: [
+        DialogButton(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          color: Color(0xFFE6E6E6),
+          radius: BorderRadius.circular(30),
+          onPressed: () => Navigator.pop(context),
+          child: Text('Cancel', style: kTitleSmall),
+        ),
+        DialogButton(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          color: kAvocado,
+          radius: BorderRadius.circular(30),
+          onPressed: () {},
+          child: Text(
+            'Log Another?',
+            style: kTitleSmall.copyWith(color: Colors.white),
+          ),
+        ),
+      ],
+    ).show();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final result = widget.scanResult;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        leading: IconButton(onPressed: () {}, icon: Icon(Icons.arrow_back_ios)),
+        leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: Icon(Icons.arrow_back_ios)),
         title: Text(
           'Waste Scanner',
           style: kTitleMedium.copyWith(fontWeight: FontWeight.bold),
@@ -38,35 +91,29 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
 
               // Product Title
               Row(
-                spacing: 18,
                 children: [
                   Text(
-                    'Purple Soda Can',
+                    result.productName,
                     style: kTitleLarge.copyWith(
                       color: kAvocado,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Image.asset('assets/images/icons/bio.png', height: 18),
+                  SizedBox(width: 8),
+                  Image.asset(
+                    result.classification == 'biodegradable'
+                        ? 'assets/images/icons/bio.png'
+                        : result.classification == 'recyclable'
+                          ? 'assets/images/icons/recycling.png'
+                          : 'assets/images/icons/nonbio.png',
+                    height: 18,
+                  )
                 ],
               ),
 
-              // Product Properties
               PropertiesTile(
-                material: 'Metal Can',
-                savedEmissions: '10g',
-              ),
-
-              SizedBox(height: 10),
-
-              // Product Info
-              Text(
-                'Product Info',
-                style: kBodyLarge.copyWith(fontWeight: FontWeight.bold),
-              ),
-              Text(
-                'Lorem ipsum dolor sit amet consectetur. Sodales purus diam dolor dolor. Sit a nisl viverra vitae facilisis mauris.',
-                style: kTitleSmall.copyWith(color: Colors.black54),
+                materials: result.materials,
+                classification: result.classification,
               ),
 
               SizedBox(height: 10),
@@ -79,20 +126,10 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
               SizedBox(height: 10),
 
               DisposalGuide(
-                material: 'Glass Bottles',
-                guide: "Glass bottles are 100% recyclable — but only if disposed of properly. Here's how to do it right:",
-                toDo: [
-                  'Rinse the bottle',
-                  'Rome caps or corks',
-                  'Sort by color if needed',
-                  'Use recycling bins or bottle banks',
-                  'Reuse for crafts or storage',
-                ],
-                notToDo: [
-                  "Don't recycle broken glass",
-                  'No ceramics, mirrors, or bulbs',
-                ],
-                proTip: 'Glass is endlessly recyclable without loss in quality. So every time you recycle a bottle, you help reduce raw material use and energy!',
+                material: result.productName,
+                toDo: result.toDo,
+                notToDo: result.notToDo,
+                proTip: result.proTip,
               ),
 
               SizedBox(height: 23),
@@ -104,9 +141,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
 
               SizedBox(height: 10),
 
-              DisposalLocationButton(
-                onPressed: () {},
-              ),
+              DisposalLocationButton(onPressed: () {}),
 
               SizedBox(height: 23),
 
@@ -128,19 +163,39 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
 
               SizedBox(height: 10),
 
-              ScanResultField(controller: _quantityController, width: 80,),
+              ScanResultField(controller: _quantityController, width: 80),
 
               SizedBox(height: 40),
 
               Align(
                 alignment: Alignment.centerRight,
                 child: LogButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    final user = FirebaseAuth.instance.currentUser;
+
+                    if (user == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("User not logged in")),
+                      );
+                      return;
+                    }
+
+                    final WasteEntryService service = WasteEntryService();
+
+                    try {
+                      await service.addWasteEntry(widget.scanResult);
+                      _logDisposal();
+                    } catch (e) {
+                      print("Error logging waste entry: $e");
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Failed to log waste entry.")),
+                      );
+                    }
+                  },
                 ),
               ),
 
               SizedBox(height: 50),
-
             ],
           ),
         ),
@@ -148,4 +203,3 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
     );
   }
 }
-

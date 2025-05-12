@@ -1,1 +1,1 @@
-enum AuthFormView {waiting, login, signup}
+enum AuthFormView { waiting, login, signup, resetPassword }
