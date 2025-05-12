@@ -54,10 +54,8 @@ class _PostScreenState extends State<PostScreen> {
           radius: BorderRadius.circular(10),
           onPressed: () async {
             final userService = UserService(context);
-            await userService.createPost(
-              _postController.text,
-              _imageFile?.path,
-            );
+            final imageUrl = await userService.uploadImage(_imageFile);
+            await userService.createPost(_postController.text, imageUrl);
             Navigator.pop(context);
           },
           child: Text(

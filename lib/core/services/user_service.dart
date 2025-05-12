@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trashtrackr/core/models/user_model.dart';
@@ -31,10 +35,10 @@ class UserService {
 
     try {
       // Access the AuthBloc for signing up
-      final authViewModel = Provider.of<AuthBloc>(context, listen: false);
+      final authBloc = Provider.of<AuthBloc>(context, listen: false);
 
       // Sign up the user
-      await authViewModel.signUp(
+      await authBloc.signUp(
         emailController.text.trim(),
         passwordController.text.trim(),
       );
@@ -65,8 +69,8 @@ class UserService {
 
   // Function to create a user account using Google Sign-In
   Future<void> createUserGoogleAccount() async {
-    final authViewModel = Provider.of<AuthBloc>(context, listen: false);
-    await authViewModel.signInWithGoogle();
+    final authBloc = Provider.of<AuthBloc>(context, listen: false);
+    await authBloc.signInWithGoogle();
 
     //Chop off the first name and last name from the display name
     final displayName = AuthService().currentUser?.displayName ?? '';
@@ -100,10 +104,10 @@ class UserService {
 
     try {
       // Access the AuthBloc for signing in
-      final authViewModel = Provider.of<AuthBloc>(context, listen: false);
+      final authBloc = Provider.of<AuthBloc>(context, listen: false);
 
       // Sign in the user
-      await authViewModel.signIn(
+      await authBloc.signIn(
         emailController.text.trim(),
         passwordController.text.trim(),
       );
@@ -126,8 +130,25 @@ class UserService {
       'username': AuthService().currentUser?.displayName,
       'date': DateTime.now(),
       'body': body,
-      'image_url': imageUrl, //change to imageUrl of firebase storage
+      'image_url': imageUrl, //change to imageUrl of file
       //add user profile picture
     });
+  }
+
+  Future uploadImage(XFile? image) async {
+    if (image == null) return;
+
+    // Upload the image to Firebase Storage
+    final storageRef = FirebaseStorage.instance.ref();
+    final imageRef = storageRef.child('posts/${image.name}');
+
+    try {
+      await imageRef.putFile(File(image.path));
+      final downloadUrl = await imageRef.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      print('Error uploading image: $e');
+      return null;
+    }
   }
 }
