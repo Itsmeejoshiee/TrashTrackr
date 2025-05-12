@@ -7,6 +7,8 @@ import 'package:trashtrackr/core/widgets/buttons/rounded_rectangle_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/auth_provider_button.dart';
 import 'package:trashtrackr/features/auth/backend/auth_bloc.dart';
 
+import '../../../../dashboard/frontend/dashboard_screen.dart';
+
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key, required this.onToggle});
 
@@ -98,6 +100,12 @@ class _LoginFormState extends State<LoginForm> {
                   });
                 },
               );
+
+              if (_errorMessage == null) {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => DashboardScreen()),
+                );
+              }
             },
           ),
 

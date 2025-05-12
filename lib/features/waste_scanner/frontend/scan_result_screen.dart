@@ -1,4 +1,4 @@
-// screens/scan_result_screen.dart
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/buttons/disposal_location_button.dart';
@@ -7,6 +7,7 @@ import 'widgets/disposal_guide.dart';
 import 'widgets/scan_result_field.dart';
 import 'widgets/log_button.dart';
 import 'package:trashtrackr/core/models/scan_result_model.dart';
+import 'package:trashtrackr/core/services/waste_entry_service.dart';
 
 
 class ScanResultScreen extends StatefulWidget {
@@ -59,9 +60,11 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                   Image.asset(
                     result.classification == 'biodegradable'
                         ? 'assets/images/icons/bio.png'
-                        : 'assets/images/icons/nonbio.png',
+                        : result.classification == 'recyclable'
+                          ? 'assets/images/icons/recycling.png'
+                          : 'assets/images/icons/nonbio.png',
                     height: 18,
-                  ),
+                  )
                 ],
               ),
 
@@ -123,8 +126,35 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
 
               Align(
                 alignment: Alignment.centerRight,
-                child: LogButton(onPressed: () {}),
+                child: LogButton(
+                  onPressed: () async {
+                    final user = FirebaseAuth.instance.currentUser;
+
+                    if (user == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("User not logged in")),
+                      );
+                      return;
+                    }
+
+                    final WasteEntryService service = WasteEntryService();
+
+                    try {
+                      await service.addWasteEntry(widget.scanResult);
+
+                      Navigator.pop(context);
+
+                    } catch (e) {
+                      print("Error logging waste entry: $e");
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Failed to log waste entry.")),
+                      );
+                    }
+                  },
+                ),
               ),
+
+
 
               SizedBox(height: 50),
             ],

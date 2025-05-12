@@ -1,29 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:trashtrackr/core/models/scan_result_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:trashtrackr/core/models/scan_result_model.dart';
 
 class WasteEntryService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final user = FirebaseAuth.instance.currentUser;
+  final CollectionReference wasteEntries = FirebaseFirestore.instance.collection("waste_entries");
 
-  Future<void> addWasteEntry(String userId, ScanResult entry) async {
-    await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('wasteEntries')
-        .add(entry.toMap());
+  Future<void> addWasteEntry(ScanResult entry) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    try {
+      // use uid as the document ID
+      final userDoc = FirebaseFirestore.instance.collection('waste_entries').doc(user.uid);
+
+      // et or update email
+      await userDoc.set({
+        'uid': user.uid,
+        'email': user.email,
+      }, SetOptions(merge: true));
+
+      // add entry to subcollection
+      await userDoc.collection('log_disposal').add(entry.toMap());
+    } catch (e) {
+      print('Error adding waste entry: $e');
+      rethrow;
+    }
   }
 
-  Stream<List<ScanResult>> getWasteEntries(String userId) {
-    return _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('wasteEntries')
-        .orderBy('timestamp', descending: true)
-        .snapshots()
-        .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => ScanResult.fromMap(doc.data()))
-          .toList();
-    });
-  }
 }

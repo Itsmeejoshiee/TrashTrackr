@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class ScanResult {
   final String productName;
   final List<String> materials;
@@ -5,6 +7,8 @@ class ScanResult {
   final List<String> toDo;
   final List<String> notToDo;
   final String proTip;
+  final DateTime? timestamp;
+
 
   ScanResult({
     required this.productName,
@@ -13,6 +17,7 @@ class ScanResult {
     required this.toDo,
     required this.notToDo,
     required this.proTip,
+    this.timestamp
   });
 
   // from Gemini response
@@ -45,8 +50,19 @@ class ScanResult {
     );
   }
 
-  // TODO: remove unnecessary comment block (timestamp)
+
   // for Firestore
+  factory ScanResult.fromMap(Map<String, dynamic> data) {
+    return ScanResult(
+      productName: data['productName'],
+      materials: List<String>.from(data['materials']),
+      classification: data['classification'],
+      toDo: List<String>.from(data['toDo']),
+      notToDo: List<String>.from(data['notToDo']),
+      proTip: data['proTip'],
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'productName': productName,
@@ -55,18 +71,7 @@ class ScanResult {
       'toDo': toDo,
       'notToDo': notToDo,
       'proTip': proTip,
-      'timestamp': DateTime.now(),
+      'timestamp': FieldValue.serverTimestamp(),
     };
-  }
-
-  factory ScanResult.fromMap(Map<String, dynamic> map) {
-    return ScanResult(
-      productName: map['productName'] ?? '',
-      materials: List<String>.from(map['materials'] ?? []),
-      classification: map['classification'] ?? '',
-      toDo: List<String>.from(map['toDo'] ?? []),
-      notToDo: List<String>.from(map['notToDo'] ?? []),
-      proTip: map['proTip'] ?? '',
-    );
   }
 }

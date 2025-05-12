@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 
 class LogButton extends StatelessWidget {
-  const LogButton({
+  LogButton({
     super.key,
     this.title = 'Log This',
     required this.onPressed,
@@ -11,25 +11,25 @@ class LogButton extends StatelessWidget {
   final String title;
   final VoidCallback onPressed;
 
+  final ButtonStyle flatButton = TextButton.styleFrom(
+    foregroundColor: Colors.white,
+    backgroundColor: Colors.grey.shade800,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(5))
+    )
+  );
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Container(
-        width: 150,
-        height: 40,
-        decoration: BoxDecoration(
-          color: Colors.grey.shade800,
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Center(
-          child: Text(
-            title,
-            style: kBodyLarge.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+    return SizedBox(
+      width: 150,
+      height: 40,
+      child: TextButton(
+        onPressed: onPressed,
+        style: flatButton,
+        child: Text(
+          title,
+          style: kBodyLarge.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
     );

@@ -7,6 +7,7 @@ import 'package:trashtrackr/features/waste_scanner/backend/camera_module.dart';
 import 'package:trashtrackr/features/waste_scanner/backend/gemini_service.dart';
 import 'package:trashtrackr/features/waste_scanner/frontend/scan_result_screen.dart';
 import 'package:trashtrackr/core/models/scan_result_model.dart';
+import '../../../core/widgets/buttons/multi_action_fab.dart';
 import 'scan_result_screen.dart';
 
 class WasteScannerScreen extends StatefulWidget {
@@ -117,6 +118,14 @@ class _WasteScannerScreenState extends State<WasteScannerScreen> {
               ),
             ),
           ),
+
+          bottomNavigationBar: MainNavigationBar(
+            activeRoute: _selectedRoute,
+            onSelect: _selectRoute,
+          ),
+
+          floatingActionButton: MultiActionFab(),
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         );
       },
     );
