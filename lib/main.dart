@@ -2,10 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
-import 'package:trashtrackr/core/providers/user_provider.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
+import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/features/about/frontend/about_screen.dart';
-import 'package:trashtrackr/features/auth/backend/auth_bloc.dart';
 import 'package:trashtrackr/features/auth/backend/auth_manager.dart';
 import 'package:trashtrackr/features/badges/frontend/badge_screen.dart';
 import 'package:trashtrackr/features/dashboard/frontend/dashboard_screen.dart';
@@ -34,10 +33,8 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthBloc()),
-        ChangeNotifierProvider(create: (_) => UserProvider()),
-
         Provider<AuthService>(create: (_) => AuthService()),
+        Provider<UserService>(create: (_) => UserService()),
       ],
       child: const TrashTrackr(),
     ),

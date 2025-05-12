@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
@@ -6,7 +7,6 @@ import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/text_fields/profile_text_field.dart';
 import 'package:trashtrackr/core/widgets/buttons/rounded_rectangle_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/auth_provider_button.dart';
-import 'package:trashtrackr/features/auth/backend/auth_bloc.dart';
 
 import '../../../../dashboard/frontend/dashboard_screen.dart';
 
@@ -98,10 +98,10 @@ class _LoginFormState extends State<LoginForm> {
           RoundedRectangleButton(
             title: 'Login',
             onPressed: () async {
-              final UserService userService = UserService(context);
+              final UserService userService = UserService();
               await userService.loginUserAccount(
-                emailController: _emailController,
-                passwordController: _passwordController,
+                email: _emailController.text.trim(),
+                password: _passwordController.text.trim(),
                 setErrorMessage: (message) {
                   setState(() {
                     _errorMessage = message;
@@ -156,11 +156,11 @@ class _LoginFormState extends State<LoginForm> {
               AuthProviderButton(
                 padding: EdgeInsets.all(14),
                 onPressed: () async {
-                  final authViewModel = Provider.of<AuthBloc>(
+                  final userService = Provider.of<UserService>(
                     context,
                     listen: false,
                   );
-                  await authViewModel.signInWithGoogle();
+                  await userService.signInWithGoogle();
                 },
                 child: Image.asset('assets/images/icons/google_green.png'),
               ),

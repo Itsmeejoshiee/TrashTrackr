@@ -1,19 +1,34 @@
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trashtrackr/core/models/user_model.dart';
-import 'package:trashtrackr/core/providers/user_provider.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
-import 'package:trashtrackr/features/auth/backend/auth_bloc.dart';
 
-class UserService {
-  final BuildContext context;
-  UserService(this.context);
+class UserService extends ChangeNotifier {
+  final AuthService _authService = AuthService();
+
+  UserModel? _user;
+
+  UserModel? get user => _user;
+
+  void setUser(UserModel user) {
+    _user = user;
+    notifyListeners();
+  }
+
+  Future<void> loadUserFromFirestore(String uid) async {
+    DocumentSnapshot doc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+    if (doc.exists) {
+      _user = UserModel.fromMap(doc.data() as Map<String, dynamic>);
+      notifyListeners();
+    }
+  }
 
   Future<void> createUserAccount({
     required TextEditingController emailController,
@@ -34,18 +49,16 @@ class UserService {
     }
 
     try {
-      // Access the AuthBloc for signing up
-      final authBloc = Provider.of<AuthBloc>(context, listen: false);
 
       // Sign up the user
-      await authBloc.signUp(
+      await _authService.createAccount(
         emailController.text.trim(),
         passwordController.text.trim(),
       );
 
       // Create a new user model
       final newUser = UserModel(
-        uid: AuthService().currentUser?.uid ?? '',
+        uid: _authService.currentUser?.uid ?? '',
         email: emailController.text.trim(),
         firstName: firstNameController.text.trim(),
         lastName: lastNameController.text.trim(),
@@ -58,8 +71,7 @@ class UserService {
           .set(newUser.toMap());
 
       // Update the user provider with the new user
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      userProvider.setUser(newUser);
+      setUser(newUser);
     } catch (e) {
       setErrorMessage('An error occurred. Please try again.');
       print('Error: $e');
@@ -68,11 +80,10 @@ class UserService {
 
   // Function to create a user account using Google Sign-In
   Future<void> createUserGoogleAccount() async {
-    final authBloc = Provider.of<AuthBloc>(context, listen: false);
-    await authBloc.signInWithGoogle();
+    await _authService.signInWithGoogle();
 
     //Chop off the first name and last name from the display name
-    final displayName = AuthService().currentUser?.displayName ?? '';
+    final displayName = _authService.currentUser?.displayName ?? '';
     final nameParts = displayName.trim().split(RegExp(r'\s+'));
 
     final firstName = nameParts.isNotEmpty ? nameParts[0] : '';
@@ -91,30 +102,28 @@ class UserService {
         .set(newUser.toMap());
   }
 
+  Future<void> signInWithGoogle() async {
+    await _authService.signInWithGoogle();
+  }
+
   // Function to login user account
   Future<void> loginUserAccount({
-    required TextEditingController emailController,
-    required TextEditingController passwordController,
+    required String email,
+    required String password,
     required Function(String?) setErrorMessage,
   }) async {
     // Clear any previous error
     setErrorMessage(null);
 
     try {
-      // Access the AuthBloc for signing in
-      final authBloc = Provider.of<AuthBloc>(context, listen: false);
-
       // Sign in the user
-      await authBloc.signIn(
-        emailController.text.trim(),
-        passwordController.text.trim(),
+      await _authService.signIn(
+        email,
+        password,
       );
 
       // Fetch the user from Firestore
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      await userProvider.loadUserFromFirestore(
-        AuthService().currentUser?.uid ?? '',
-      );
+      await loadUserFromFirestore(AuthService().currentUser?.uid ?? '');
     } catch (e) {
       setErrorMessage('An error occurred. Please try again.');
       print('Error: $e');
@@ -122,27 +131,8 @@ class UserService {
   }
 
   //delete user data and account
-  Future<void> deleteUserData() async {
-    final user = AuthService().currentUser;
-
-    if (user == null) {
-      print('No user is currently signed in.');
-      return;
-    }
-
-    try {
-      // Delete user data from Firestore
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .delete();
-      await FirebaseFirestore.instance
-          .collection('posts')
-          .doc(user.uid)
-          .delete();
-    } catch (e) {
-      print('Error deleting user data: $e');
-    }
+  Future<void> deleteUserData(String email, String password) async {
+    await _authService.deleteAccount(email: email, password: password);
   }
 
   Future<void> createPost(String body, String? imageUrl) async {
