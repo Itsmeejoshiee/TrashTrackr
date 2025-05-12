@@ -17,11 +17,25 @@ class LogHistoryView extends StatefulWidget {
 class _LogHistoryViewState extends State<LogHistoryView> {
   final _service = WasteEntryService();
   late Future<List<ScanResult>> _logsFuture;
+  bool _isDateSortActive = false;
+  bool _isDateAscending = false;
+  String _selectedType = "Type";
 
   @override
   void initState() {
     super.initState();
     _logsFuture = _service.fetchWasteEntries();
+  }
+
+  void _toggleDateSortOrder() {
+    setState(() {
+      if (!_isDateSortActive) {
+        _isDateSortActive = true;
+        _isDateAscending = true;
+      } else {
+        _isDateAscending = !_isDateAscending;
+      }
+    });
   }
 
   String _formatDateCategory(DateTime date) {
@@ -53,36 +67,58 @@ class _LogHistoryViewState extends State<LogHistoryView> {
 
         final logs = snapshot.data ?? [];
 
-        // Group logs by date category
+        // Filter logs based on the selected type
+        final filteredLogs = _selectedType == "Type"
+            ? logs
+            : logs.where((log) => log.classification == _selectedType).toList();
+
+        // Group filtered logs by date category
         final Map<String, List<ScanResult>> categorizedLogs = {
           'Today': [],
           'Yesterday': [],
           'Earlier': [],
         };
 
-        for (var log in logs) {
+        for (var log in filteredLogs) {
           final category = _formatDateCategory(log.timestamp ?? DateTime.now());
           categorizedLogs[category]?.add(log);
         }
 
-        // main body
+        // Sort each category by timestamp, using _isDateAscending
+        for (var category in categorizedLogs.keys) {
+          categorizedLogs[category]!.sort((a, b) {
+            final timeA = a.timestamp ?? DateTime.now();
+            final timeB = b.timestamp ?? DateTime.now();
+
+            // Always sort, even if sort UI is inactive
+            return _isDateAscending ? timeA.compareTo(timeB) : timeB.compareTo(timeA);
+          });
+        }
+
         return SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
-              // Filter Buttons
               Row(
                 children: [
-                  DateButton(onPressed: () {}),
-                  const SizedBox(width: 8),
-                  TypesButton(onPressed: () {}),
+                  DateButton(
+                    onPressed: _toggleDateSortOrder,
+                    isActive: _isDateSortActive,
+                    isAscending: _isDateAscending,
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: TypesButton(
+                      onTypeSelected: (String type) {
+                        setState(() {
+                          _selectedType = type;
+                        });
+                      },
+                    ),
+                  ),
                 ],
               ),
-
               SizedBox(height: 20),
-
-              // Section Builder
               for (final category in ['Today', 'Yesterday', 'Earlier'])
                 if (categorizedLogs[category]!.isNotEmpty) ...[
                   Row(
@@ -103,10 +139,8 @@ class _LogHistoryViewState extends State<LogHistoryView> {
                       ),
                     ],
                   ),
-
                   for (final log in categorizedLogs[category]!)
                     LogCard(
-                      // TODO: Update image
                       itemImage: Image.asset('assets/images/covers/log_image.png'),
                       name: log.productName,
                       dateTime: log.timestamp ?? DateTime.now(),
@@ -120,4 +154,3 @@ class _LogHistoryViewState extends State<LogHistoryView> {
     );
   }
 }
-

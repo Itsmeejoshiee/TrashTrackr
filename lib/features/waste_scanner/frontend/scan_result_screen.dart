@@ -6,6 +6,7 @@ import 'package:trashtrackr/core/services/badge_service.dart';
 import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/buttons/disposal_location_button.dart';
+import 'package:trashtrackr/features/waste_scanner/frontend/waste_scanner_screen.dart';
 import '../../waste_stats/frontend/waste_stats_screen.dart';
 import 'widgets/properties_tile.dart';
 import 'widgets/disposal_guide.dart';
@@ -66,7 +67,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => WasteStatsScreen(),
+                builder: (context) => WasteScannerScreen(),
               ),
             );
           },
@@ -106,6 +107,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
           style: kTitleMedium.copyWith(fontWeight: FontWeight.bold),
         ),
       ),
+
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),
         child: SingleChildScrollView(
@@ -152,9 +154,10 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
 
               DisposalGuide(
                 material: result.productName,
+                guide: result.productName,
                 toDo: result.toDo,
                 notToDo: result.notToDo,
-                proTip: result.proTip, guide: '',
+                proTip: result.proTip,
               ),
 
               SizedBox(height: 23),
