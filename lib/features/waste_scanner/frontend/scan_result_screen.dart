@@ -129,7 +129,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                 material: result.productName,
                 toDo: result.toDo,
                 notToDo: result.notToDo,
-                proTip: result.proTip,
+                proTip: result.proTip, guide: '',
               ),
 
               SizedBox(height: 23),

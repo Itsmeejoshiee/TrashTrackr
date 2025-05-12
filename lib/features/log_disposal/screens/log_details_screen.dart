@@ -40,7 +40,7 @@ class LogDetailsScreen extends StatelessWidget {
             children: [
               const SizedBox(height: 20),
 
-              // Product Title
+              // Product Title and Waste Type Icon
               Row(
                 children: [
                   Text(
@@ -49,6 +49,8 @@ class LogDetailsScreen extends StatelessWidget {
                       color: kAvocado,
                       fontWeight: FontWeight.bold,
                     ),
+                    overflow: TextOverflow.ellipsis, // Ensures long text is truncated
+                    maxLines: 1, // Limits the title to a single line
                   ),
                   const SizedBox(width: 8), // Add spacing between the title and the icon
                   Image.asset(
@@ -60,8 +62,11 @@ class LogDetailsScreen extends StatelessWidget {
 
               // Product Properties
               PropertiesTile(
-                material: entry.wasteType,
-                savedEmissions: entry.savedCO2, // Use actual data from the entry
+                materials: entry.productProperties
+                    .where((property) => property.startsWith('Material:')) // Filter only material-related properties
+                    .map((property) => property.replaceFirst('Material: ', '')) // Remove the "Material:" prefix
+                    .toList(),
+                classification: entry.wasteType, // Use actual data from the entry
               ),
 
               const SizedBox(height: 10),
@@ -166,4 +171,3 @@ class LogDetailsScreen extends StatelessWidget {
     }
   }
 }
-

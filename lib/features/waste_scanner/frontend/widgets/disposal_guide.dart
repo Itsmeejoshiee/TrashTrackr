@@ -7,7 +7,7 @@ class DisposalGuide extends StatelessWidget {
     required this.material,
     required this.toDo,
     required this.notToDo,
-    required this.proTip,
+    required this.proTip, required String guide,
   });
 
   final String material;

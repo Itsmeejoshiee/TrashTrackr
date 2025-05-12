@@ -4,7 +4,6 @@ class LogEntry {
   final String title;
   final String wasteType;
   final DateTime timestamp;
-  final String savedCO2; // New field for saved CO2 emissions
   final String productInfo; // New field for product information
   final List<String> productProperties; // New field for product properties
   final List<String> disposalGuideToDo; // New field for disposal guide (to-do list)
@@ -17,7 +16,6 @@ class LogEntry {
     required this.title,
     required this.wasteType,
     required this.timestamp,
-    required this.savedCO2,
     required this.productInfo,
     required this.productProperties,
     required this.disposalGuideToDo,
@@ -33,18 +31,14 @@ final List<LogEntry> logEntry = [
     title: 'Coca-Cola Glass Bottle 100ml',
     wasteType: 'Recyclable',
     timestamp: DateTime.now(),
-    savedCO2: '15g', // Saved CO2 emissions
     productInfo: 'A small glass bottle used for Coca-Cola beverages.',
     productProperties: [
-      'Material: Glass',
-      'Capacity: 100ml',
-      'Reusable and recyclable',
+      'Glass', // Only material-related details
     ],
     disposalGuideToDo: [
       'Rinse the bottle',
       'Remove caps or corks',
       'Sort by color if required',
-      'Use designated recycling bins',
     ],
     disposalGuideNotToDo: [
       'Do not mix with non-recyclables',
@@ -58,18 +52,14 @@ final List<LogEntry> logEntry = [
     title: 'Pepsi Plastic Bottle 1L',
     wasteType: 'Recyclable',
     timestamp: DateTime.now().subtract(const Duration(days: 1)),
-    savedCO2: '10g', // Saved CO2 emissions
     productInfo: 'A 1-liter plastic bottle used for Pepsi beverages.',
     productProperties: [
-      'Material: Plastic',
-      'Capacity: 1L',
-      'Lightweight and recyclable',
+      'Material: Plastic', // Only material-related details
     ],
     disposalGuideToDo: [
       'Rinse the bottle',
       'Remove the label and cap',
       'Crush the bottle to save space',
-      'Place in plastic recycling bins',
     ],
     disposalGuideNotToDo: [
       'Do not burn the plastic',
@@ -83,7 +73,6 @@ final List<LogEntry> logEntry = [
     title: 'Sprite Aluminum Can 250ml',
     wasteType: 'Recyclable',
     timestamp: DateTime.now(),
-    savedCO2: '8g', // Saved CO2 emissions
     productInfo: 'A small aluminum can used for Sprite beverages.',
     productProperties: [
       'Material: Aluminum',
@@ -107,7 +96,6 @@ final List<LogEntry> logEntry = [
     title: 'Old Newspaper Bundle',
     wasteType: 'Biodegradable',
     timestamp: DateTime(2025, 4, 1),
-    savedCO2: '5g', // Saved CO2 emissions
     productInfo: 'A bundle of old newspapers ready for recycling.',
     productProperties: [
       'Material: Paper',
@@ -131,7 +119,6 @@ final List<LogEntry> logEntry = [
     title: 'Old Smartphone',
     wasteType: 'E-Waste',
     timestamp: DateTime(2025, 5, 1),
-    savedCO2: '20g', // Saved CO2 emissions
     productInfo: 'An old smartphone ready for e-waste recycling.',
     productProperties: [
       'Material: Plastic and Metal',
@@ -155,7 +142,6 @@ final List<LogEntry> logEntry = [
     title: 'Reusable Water Bottle',
     wasteType: 'Non-Biodegradable',
     timestamp: DateTime(2025, 5, 1),
-    savedCO2: '12g', // Saved CO2 emissions
     productInfo: 'A reusable water bottle made of durable plastic.',
     productProperties: [
       'Material: Plastic',
