@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/text_fields/profile_text_field.dart';
@@ -83,6 +84,13 @@ class _LoginFormState extends State<LoginForm> {
               'Forgot Password?',
               style: kBodyMedium.copyWith(color: kAvocado),
             ),
+            onTap: () async {
+              final authService = Provider.of<AuthService>(
+                context,
+                listen: false,
+              );
+              await authService.resetPassword(email: 'joshgorospe03@gmail.com');
+            },
           ),
 
           Flexible(child: SizedBox(height: 80)),
