@@ -60,6 +60,7 @@ class ScanResult {
       toDo: List<String>.from(data['toDo']),
       notToDo: List<String>.from(data['notToDo']),
       proTip: data['proTip'],
+      timestamp: (data['timestamp'] as Timestamp?)?.toDate(),
     );
   }
 

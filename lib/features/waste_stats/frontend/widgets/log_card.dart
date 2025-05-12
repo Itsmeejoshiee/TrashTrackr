@@ -42,6 +42,7 @@ class LogCard extends StatelessWidget {
           itemImage,
           SizedBox(width: 10),
           Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
@@ -64,11 +65,6 @@ class LogCard extends StatelessWidget {
                   ),
                 ],
               ),
-
-              Text(
-                "Scanned",
-                style: kBodySmall.copyWith(fontWeight: FontWeight.w800),
-              )
             ],
           )
         ],

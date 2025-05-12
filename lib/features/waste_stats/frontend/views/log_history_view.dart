@@ -4,55 +4,25 @@ import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/waste_stats/frontend/widgets/date_button.dart';
 import 'package:trashtrackr/features/waste_stats/frontend/widgets/log_card.dart';
 import 'package:trashtrackr/features/waste_stats/frontend/widgets/types_button.dart';
+import '../../../../core/models/scan_result_model.dart';
+import '../../../../core/services/waste_entry_service.dart';
 
-class LogHistoryView extends StatelessWidget {
-  LogHistoryView({super.key});
+class LogHistoryView extends StatefulWidget {
+  const LogHistoryView({super.key});
 
-  // Mock data - replace with dynamic list from your source
-  final List<Map<String, dynamic>> logData = [
-    {
-      'image': 'assets/images/covers/log_image.png',
-      'name': 'Coca-cola Glass 100 ml',
-      'dateTime': DateTime(2025, 5, 12, 0, 01),
-      'type': 'Non-Biodegradable'
-    },
-    {
-      'image': 'assets/images/covers/log_image.png',
-      'name': 'Coca-cola Glass 100 ml',
-      'dateTime': DateTime(2025, 5, 11, 0, 01),
-      'type': 'Recycle'
-    },
-    {
-      'image': 'assets/images/covers/log_image.png',
-      'name': 'Coca-cola Glass 100 ml',
-      'dateTime': DateTime(2025, 5, 6, 0, 01),
-      'type': 'Biodegradable'
-    },
-    {
-      'image': 'assets/images/covers/log_image.png',
-      'name': 'Coca-cola Glass 100 ml',
-      'dateTime': DateTime(2025, 5, 5, 0, 01),
-      'type': 'Recycle'
-    },
-    {
-      'image': 'assets/images/covers/log_image.png',
-      'name': 'Coca-cola Glass 100 ml',
-      'dateTime': DateTime(2025, 5, 5, 0, 01),
-      'type': 'Biodegradable'
-    },
-    {
-      'image': 'assets/images/covers/log_image.png',
-      'name': 'Coca-cola Glass 100 ml',
-      'dateTime': DateTime(2025, 5, 2, 0, 01),
-      'type': 'Recycle'
-    },
-    {
-      'image': 'assets/images/covers/log_image.png',
-      'name': 'Coca-cola Glass 100 ml',
-      'dateTime': DateTime(2025, 5, 1, 0, 01),
-      'type': 'Biodegradable'
-    },
-  ];
+  @override
+  State<LogHistoryView> createState() => _LogHistoryViewState();
+}
+
+class _LogHistoryViewState extends State<LogHistoryView> {
+  final _service = WasteEntryService();
+  late Future<List<ScanResult>> _logsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _logsFuture = _service.fetchWasteEntries();
+  }
 
   String _formatDateCategory(DateTime date) {
     final now = DateTime.now();
@@ -70,67 +40,84 @@ class LogHistoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder<List<ScanResult>>(
+      future: _logsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-    // Group logs by category
-    final Map<String, List<Map<String, dynamic>>> categorizedLogs = {
-      'Today': [],
-      'Yesterday': [],
-      'Earlier': [],
-    };
+        if (snapshot.hasError) {
+          return Center(child: Text("Error: ${snapshot.error}"));
+        }
 
-    for (var log in logData) {
-      final category = _formatDateCategory(log['dateTime']);
-      categorizedLogs[category]?.add(log);
-    }
+        final logs = snapshot.data ?? [];
 
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        // Group logs by date category
+        final Map<String, List<ScanResult>> categorizedLogs = {
+          'Today': [],
+          'Yesterday': [],
+          'Earlier': [],
+        };
 
-          // Filter Buttons
-          Row(
+        for (var log in logs) {
+          final category = _formatDateCategory(log.timestamp ?? DateTime.now());
+          categorizedLogs[category]?.add(log);
+        }
+
+        // main body
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              DateButton(onPressed: () {}),
-              const SizedBox(width: 8),
-              TypesButton(onPressed: () {}),
-            ],
-          ),
 
-          // Section Builder
-          for (final category in ['Today', 'Yesterday', 'Earlier'])
-            if (categorizedLogs[category]!.isNotEmpty) ...[
-              // Section Header
+              // Filter Buttons
               Row(
                 children: [
-                  Text(
-                    category,
-                    style: kTitleMedium.copyWith(
-                      color: kAvocado,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const Flexible(
-                    child: Divider(
-                      indent: 20,
-                      thickness: 2,
-                      color: Color(0xff868686),
-                    ),
-                  ),
+                  DateButton(onPressed: () {}),
+                  const SizedBox(width: 8),
+                  TypesButton(onPressed: () {}),
                 ],
               ),
 
-              // LogCards
-              for (final log in categorizedLogs[category]!)
-                LogCard(
-                  itemImage: Image.asset(log['image']),
-                  name: log['name'],
-                  dateTime: log['dateTime'],
-                  type: log['type'],
-                ),
+              SizedBox(height: 20),
+
+              // Section Builder
+              for (final category in ['Today', 'Yesterday', 'Earlier'])
+                if (categorizedLogs[category]!.isNotEmpty) ...[
+                  Row(
+                    children: [
+                      Text(
+                        category,
+                        style: kTitleMedium.copyWith(
+                          color: kAvocado,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const Flexible(
+                        child: Divider(
+                          indent: 20,
+                          thickness: 2,
+                          color: Color(0xff868686),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  for (final log in categorizedLogs[category]!)
+                    LogCard(
+                      // TODO: Update image
+                      itemImage: Image.asset('assets/images/covers/log_image.png'),
+                      name: log.productName,
+                      dateTime: log.timestamp ?? DateTime.now(),
+                      type: log.classification,
+                    ),
+                ],
             ],
-        ],
-      ),
+          ),
+        );
+      },
     );
   }
 }
+

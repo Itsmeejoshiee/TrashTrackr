@@ -6,6 +6,7 @@ import 'package:trashtrackr/core/services/badge_service.dart';
 import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/buttons/disposal_location_button.dart';
+import '../../waste_stats/frontend/waste_stats_screen.dart';
 import 'widgets/properties_tile.dart';
 import 'widgets/disposal_guide.dart';
 import 'widgets/scan_result_field.dart';
@@ -61,7 +62,14 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
           margin: EdgeInsets.symmetric(horizontal: 20),
           color: kAvocado,
           radius: BorderRadius.circular(30),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => WasteStatsScreen(),
+              ),
+            );
+          },
           child: Text(
             'Log Another?',
             style: kTitleSmall.copyWith(color: Colors.white),

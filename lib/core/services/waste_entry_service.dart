@@ -28,4 +28,24 @@ class WasteEntryService {
     }
   }
 
+
+  Future<List<ScanResult>> fetchWasteEntries() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return [];
+
+    try {
+      final userDoc = FirebaseFirestore.instance.collection('waste_entries').doc(user.uid);
+      final snapshot = await userDoc.collection('log_disposal').get();
+
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
+        return ScanResult.fromMap(data);
+      }).toList();
+    } catch (e) {
+      print('Error fetching waste entries: $e');
+      rethrow;
+    }
+  }
+
+
 }
