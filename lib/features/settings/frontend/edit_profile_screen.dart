@@ -22,8 +22,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _lasttNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
-  final ProfilePicture profilePicture = ProfilePicture();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,6 +45,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               // Edit Profile Picture
               EditProfilePictureButton(
                 onPressed: () async {
+                  final profilePicture = ProfilePicture();
                   await profilePicture.update(context);
                 },
               ),

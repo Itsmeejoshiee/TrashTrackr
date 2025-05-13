@@ -7,6 +7,7 @@ import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/about/frontend/about_screen.dart';
 import 'package:trashtrackr/features/auth/backend/auth_manager.dart';
 import 'package:trashtrackr/features/faqs/frontend/faq_screen.dart';
+import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
 import 'package:trashtrackr/features/settings/frontend/edit_profile_screen.dart';
 import 'package:trashtrackr/features/settings/frontend/privacy_screen.dart';
 import 'package:trashtrackr/features/settings/frontend/widgets/buttons/edit_profile_picture_button.dart';
@@ -148,7 +149,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Column(
             children: [
               // Edit Profile Picture
-              EditProfilePictureButton(onPressed: () {}),
+              EditProfilePictureButton(
+                onPressed: () async {
+                  final profilePicture = ProfilePicture();
+                  await profilePicture.update(context);
+                },
+              ),
 
               Text(
                 'Ella Green',
