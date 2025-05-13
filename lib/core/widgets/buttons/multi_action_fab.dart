@@ -3,7 +3,7 @@ import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/waste_scanner/frontend/waste_scanner_screen.dart';
 import 'dart:math' as math;
 
-import '../../../features/post/frontend/post_screen.dart';
+import '../../../features/post/screens/post_screen.dart';
 
 class MultiActionFab extends StatefulWidget {
   const MultiActionFab({super.key});
@@ -36,7 +36,8 @@ class _MultiActionFabState extends State<MultiActionFab>
       builder: (context) {
         return SizedBox(
           height: MediaQuery.of(context).size.height * 0.9,
-          child: PostScreen(),
+          child: PostScreen(
+          ),
         );
       },
     );

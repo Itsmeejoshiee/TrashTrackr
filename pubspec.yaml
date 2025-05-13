@@ -59,6 +59,8 @@ dependencies:
   flutter_image_compress: ^2.4.0
   #storing of data locally
   shared_preferences: ^2.5.3
+  #hashtag
+  extended_text_field: ^10.0.0
 
 
 

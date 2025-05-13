@@ -44,6 +44,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     // TODO: Delete account(please use the deleteAccount method in AuthBloc)
 
     // Navigate back to AuthManager and clear navigation stack
+
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => AuthManager()),

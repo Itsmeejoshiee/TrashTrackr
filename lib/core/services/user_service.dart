@@ -267,6 +267,23 @@ class UserService {
       print('Error creating post: $e');
     }
   }
+  Future<void> createEvent(String imageUrl, String eventType,
+      DateTimeRange dateRange, String eventDescription) async {
+    final uid = AuthService().currentUser?.uid;
+    if (uid == null) return;
+
+    try {
+      await FirebaseFirestore.instance.collection('events').add({
+        'uid': uid,
+        'image_url': imageUrl,
+        'event_type': eventType,
+        'date_range': dateRange,
+        'event_description': eventDescription,
+      });
+    } catch (e) {
+      print('Error creating event: $e');
+    }
+  }
 
   Future uploadPostImage(Uint8List? image) async {
     if (image == null) return;
@@ -302,6 +319,27 @@ class UserService {
       });
     } catch (e) {
       print('Error uploading image: $e');
+      return null;
+    }
+  }
+
+  Future<String?> getProfilePicture() async {
+    final uid = AuthService().currentUser?.uid;
+    if (uid == null) {
+      print('UID is null, cannot fetch profile picture');
+      return null;
+    }
+
+    try {
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final userData = userDoc.data();
+      if (userData == null) {
+        print('User document not found for UID: $uid');
+        return null;
+      }
+      return userData['profile_picture'] as String?;
+    } catch (e) {
+      print('Error fetching profile picture: $e');
       return null;
     }
   }
