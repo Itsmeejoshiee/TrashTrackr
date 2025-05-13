@@ -185,7 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         SizedBox(height: 31),
 
                         // Badges
-                        BadgeGrid(),
+                        BadgeGrid(badgeIdList: [1, 2, 3, 4, 5, 6, 7, 8]),
 
                         SizedBox(height: 33),
 
