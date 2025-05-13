@@ -54,7 +54,7 @@ const Map<BadgeType, String> badgeDesc = {
   BadgeType.weekendWarrior: 'Use the app on both a Saturday and a Sunday',
   BadgeType.barcodeSleuth: 'Scan 10 product barcodes',
   BadgeType.ecoChampion: 'Hit a 30-day milestone',
-  BadgeType.scannerRookie: 'Scan 10 items',
+  BadgeType.scannerRookie: 'Classify 10 items correctly',
   BadgeType.zeroWasteHero: 'Log a waste-free day',
   BadgeType.firstToss: 'Classify your first item correctly',
   BadgeType.sortingExpert: 'Get 100 correct classifications',
@@ -83,29 +83,11 @@ const Map<int, BadgeType> badgeId = {
   14: BadgeType.trashTrackrOg,
 };
 
+class EcoBadge{
 
-class BadgeModel {
+  const EcoBadge({required this.id});
+
   final int id;
-  final double percent;
-
-  BadgeModel({
-    required this.id,
-    required this.percent,
-  });
-
-  factory BadgeModel.fromMap(Map<String, dynamic> data) {
-    return BadgeModel(
-      id: data['id'],
-      percent: (data['percent'] ?? 0).toDouble(),
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'percent': percent,
-    };
-  }
 
   String get imagePath {
     final BadgeType badge = badgeId[id]!;
@@ -122,5 +104,4 @@ class BadgeModel {
     return badgeDesc[badge]!;
   }
 
-  bool get isEarned => percent == 1; // Determine if the badge is earned
 }

@@ -12,7 +12,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trashtrackr/core/models/activity_model.dart';
 import 'package:trashtrackr/core/models/user_model.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
-import 'package:trashtrackr/core/services/badge_service.dart';
 import 'package:trashtrackr/core/user_provider.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/settings/backend/edit_profile_bloc.dart';
@@ -20,7 +19,6 @@ import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
 
 class UserService {
   final AuthService _authService = AuthService();
-  final BadgeService _badgeService = BadgeService();
 
   Future<void> createUserAccount({
     required TextEditingController emailController,
@@ -47,11 +45,9 @@ class UserService {
         passwordController.text.trim(),
       );
 
-      final uid = _authService.currentUser?.uid;
-
       // Create a new user model
       final newUser = UserModel(
-        uid: uid ?? '',
+        uid: _authService.currentUser?.uid ?? '',
         email: emailController.text.trim(),
         firstName: firstNameController.text.trim(),
         lastName: lastNameController.text.trim(),
@@ -65,9 +61,6 @@ class UserService {
           .collection('users')
           .doc(newUser.uid)
           .set(newUser.toMap());
-
-      await _badgeService.initUserBadges();
-
     } catch (e) {
       setErrorMessage('An error occurred. Please try again.');
       print('Error: $e');
@@ -79,8 +72,6 @@ class UserService {
   Future<void> createUserGoogleAccount() async {
     await _authService.signInWithGoogle();
 
-    final uid = _authService.currentUser?.uid;
-
     //Chop off the first name and last name from the display name
     final displayName = _authService.currentUser?.displayName ?? '';
     final nameParts = displayName.trim().split(RegExp(r'\s+'));
@@ -89,16 +80,14 @@ class UserService {
     final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
 
     final newUser = UserModel(
-      uid: uid ?? '',
-      email: _authService.currentUser?.email ?? '',
+      uid: AuthService().currentUser?.uid ?? '',
+      email: AuthService().currentUser?.email ?? '',
       firstName: firstName,
       lastName: lastName,
       profilePicture: '',
       followerCount: 0,
       followingCount: 0,
     );
-
-    await _badgeService.initUserBadges();
 
     await FirebaseFirestore.instance
         .collection('users')
