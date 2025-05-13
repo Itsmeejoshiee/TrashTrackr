@@ -41,7 +41,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _deleteAccount() async {
-    final userService = UserService(context);
+    final userService = UserService();
     await userService.deleteUser();
     Navigator.pushAndRemoveUntil(
       context,
