@@ -4,11 +4,11 @@ import 'package:trashtrackr/core/utils/constants.dart';
 class EditProfilePictureButton extends StatelessWidget {
   const EditProfilePictureButton({
     super.key,
-    this.image,
+    required this.image,
     required this.onPressed,
   });
 
-  final ImageProvider? image;
+  final ImageProvider image;
   final VoidCallback onPressed;
 
   @override
@@ -16,9 +16,7 @@ class EditProfilePictureButton extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: CircleAvatar(
-        backgroundImage: image ?? AssetImage(
-          'assets/images/placeholder_profile.jpg',
-        ),
+        backgroundImage: image,
         radius: 50,
         child: Align(
           alignment: Alignment.bottomRight,
