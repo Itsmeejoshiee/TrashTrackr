@@ -2,33 +2,23 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trashtrackr/core/models/user_model.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
+import 'package:trashtrackr/core/user_provider.dart';
+import 'package:trashtrackr/core/utils/constants.dart';
+import 'package:trashtrackr/features/settings/backend/edit_profile_bloc.dart';
+import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
 
-class UserService extends ChangeNotifier {
+class UserService {
+
   final AuthService _authService = AuthService();
-
-  UserModel? _user;
-
-  UserModel? get user => _user;
-
-  void setUser(UserModel user) {
-    _user = user;
-    notifyListeners();
-  }
-
-  Future<void> loadUserFromFirestore(String uid) async {
-    DocumentSnapshot doc =
-        await FirebaseFirestore.instance.collection('users').doc(uid).get();
-
-    if (doc.exists) {
-      _user = UserModel.fromMap(doc.data() as Map<String, dynamic>);
-      notifyListeners();
-    }
-  }
 
   Future<void> createUserAccount({
     required TextEditingController emailController,
@@ -49,7 +39,6 @@ class UserService extends ChangeNotifier {
     }
 
     try {
-
       // Sign up the user
       await _authService.createAccount(
         emailController.text.trim(),
@@ -70,11 +59,10 @@ class UserService extends ChangeNotifier {
           .doc(newUser.uid)
           .set(newUser.toMap());
 
-      // Update the user provider with the new user
-      setUser(newUser);
     } catch (e) {
       setErrorMessage('An error occurred. Please try again.');
       print('Error: $e');
+      return null;
     }
   }
 
@@ -103,7 +91,11 @@ class UserService extends ChangeNotifier {
   }
 
   Future<void> signInWithGoogle() async {
-    await _authService.signInWithGoogle();
+    try {
+      final userCredential = await _authService.signInWithGoogle();
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   // Function to login user account
@@ -117,13 +109,8 @@ class UserService extends ChangeNotifier {
 
     try {
       // Sign in the user
-      await _authService.signIn(
-        email,
-        password,
-      );
+      await _authService.signIn(email, password);
 
-      // Fetch the user from Firestore
-      await loadUserFromFirestore(AuthService().currentUser?.uid ?? '');
     } catch (e) {
       setErrorMessage('An error occurred. Please try again.');
       print('Error: $e');
@@ -135,6 +122,45 @@ class UserService extends ChangeNotifier {
     await _authService.deleteAccount(email: email, password: password);
   }
 
+  //TODO: Optimize this function, loads slowly. I think im using shared prefs wrong way.
+
+  Future<String?> getFullName() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final uid = AuthService().currentUser?.uid;
+
+    if (uid == null) {
+      print('UID is null, cannot fetch full name');
+      return null;
+    }
+
+    try {
+      final userDoc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final userData = userDoc.data();
+
+      if (userData == null) {
+        print('User document not found for UID: $uid');
+        return null;
+      }
+
+      final firstName = userData['first_name'] ?? '';
+      final lastName = userData['last_name'] ?? '';
+      final fullName = '$firstName $lastName'.trim();
+
+      final cachedFullName = prefs.getString('fullName');
+      if (cachedFullName != fullName) {
+        await prefs.setString('fullName', fullName);
+        print('Full name updated in SharedPreferences: $fullName');
+      } else {
+        print('No Updates in SharedPreferences.');
+      }
+      return cachedFullName;
+    } catch (e) {
+      print('Error fetching user document: $e');
+      return null;
+    }
+  }
+
   Future<void> createPost(String body, String? imageUrl) async {
     final uid = AuthService().currentUser?.uid;
     if (uid == null) return;
@@ -142,7 +168,7 @@ class UserService extends ChangeNotifier {
     try {
       // Fetch user document from Firestore
       final userDoc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      await FirebaseFirestore.instance.collection('users').doc(uid).get();
 
       if (!userDoc.exists) {
         print('User document not found');
@@ -150,13 +176,13 @@ class UserService extends ChangeNotifier {
       }
 
       final userData = userDoc.data()!;
-      final firstName = userData['firstName'] ?? '';
-      final lastName = userData['lastName'] ?? '';
+      final firstName = userData['first_name'] ?? '';
+      final lastName = userData['last_name'] ?? '';
       final fullName = '$firstName $lastName'.trim();
 
       await FirebaseFirestore.instance.collection('posts').add({
         'uid': uid,
-        'fullname': fullName,
+        'full_name': fullName,
         'date': DateTime.now(),
         'body': body,
         'image_url': imageUrl,
@@ -166,18 +192,42 @@ class UserService extends ChangeNotifier {
     }
   }
 
-  Future uploadImage(String? directory, Uint8List? image) async {
+  Future uploadPostImage(Uint8List? image) async {
     if (image == null) return;
 
     final storageRef = FirebaseStorage.instance.ref();
     final imageRef = storageRef.child(
-      '$directory/${DateTime.now().millisecondsSinceEpoch}.jpg',
+      'posts/${DateTime
+          .now()
+          .millisecondsSinceEpoch}.jpg',
     );
 
     try {
       await imageRef.putData(image);
       final downloadUrl = await imageRef.getDownloadURL();
       return downloadUrl;
+    } catch (e) {
+      print('Error uploading image: $e');
+      return null;
+    }
+  }
+
+  Future uploadProfileImage(Uint8List? image) async {
+    if (image == null) return;
+
+    final storageRef = FirebaseStorage.instance.ref();
+    final uid = _authService.currentUser!.uid;
+    final imageRef = storageRef.child('profile/$uid.jpg');
+
+    try {
+      await imageRef.putData(image);
+      final downloadUrl = await imageRef.getDownloadURL();
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .update({'profile_picture': downloadUrl});
+
     } catch (e) {
       print('Error uploading image: $e');
       return null;

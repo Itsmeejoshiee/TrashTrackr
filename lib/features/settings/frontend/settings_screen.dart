@@ -7,6 +7,7 @@ import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/about/frontend/about_screen.dart';
 import 'package:trashtrackr/features/auth/backend/auth_manager.dart';
 import 'package:trashtrackr/features/faqs/frontend/faq_screen.dart';
+import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
 import 'package:trashtrackr/features/settings/frontend/edit_profile_screen.dart';
 import 'package:trashtrackr/features/settings/frontend/privacy_screen.dart';
 import 'package:trashtrackr/features/settings/frontend/widgets/buttons/edit_profile_picture_button.dart';
@@ -25,12 +26,12 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _notifsEnabled = true;
 
+  final AuthService _authService = AuthService();
+
   Future<void> _logout() async {
-    // Retrieve AuthBloc
-    final authService = Provider.of<AuthService>(context, listen: false);
 
     // Sign Out
-    await authService.signOut();
+    await _authService.signOut();
 
     // Navigate back to AuthManager and clear navigation stack
     Navigator.pushAndRemoveUntil(
@@ -148,7 +149,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Column(
             children: [
               // Edit Profile Picture
-              EditProfilePictureButton(onPressed: () {}),
+              EditProfilePictureButton(
+                onPressed: () async {
+                  final profilePicture = ProfilePicture();
+                  await profilePicture.update(context);
+                },
+              ),
 
               Text(
                 'Ella Green',
