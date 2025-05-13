@@ -44,7 +44,10 @@ class TrashTrackr extends StatelessWidget {
     return MaterialApp(
       title: 'TrashTrackr',
       home: SplashScreen(),
-      theme: ThemeData(primaryColor: kAvocado, scaffoldBackgroundColor: kLightGray),
+      theme: ThemeData(
+        primaryColor: kAvocado,
+        scaffoldBackgroundColor: kLightGray,
+      ),
     );
   }
 }
