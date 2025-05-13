@@ -23,6 +23,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _emailController = TextEditingController();
 
   final UserService _userService = UserService();
+  bool _controllersInitialized = false;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         print(snapshot.data);
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator(color: kAvocado,));
+          return Center(child: CircularProgressIndicator(color: kAvocado));
         }
 
         if (!snapshot.hasData || snapshot.data == null) {
@@ -41,6 +42,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         }
 
         final user = snapshot.data;
+
+        // Initialize the controllers only once
+        if (!_controllersInitialized) {
+          _firstNameController.text = user!.firstName;
+          _lasttNameController.text = user.lastName;
+          _emailController.text = user.email;
+          _controllersInitialized = true;
+        }
+
         return Scaffold(
           backgroundColor: kLightGray,
           appBar: AppBar(
@@ -61,7 +71,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 children: [
                   // Edit Profile Picture
                   EditProfilePictureButton(
-                    image: (user!.profilePicture.isNotEmpty) ? NetworkImage(user.profilePicture) : AssetImage('assets/images/placeholder_profile.jpg'),
+                    image:
+                        (user!.profilePicture.isNotEmpty)
+                            ? NetworkImage(user.profilePicture)
+                            : AssetImage(
+                              'assets/images/placeholder_profile.jpg',
+                            ),
                     onPressed: () async {
                       final profilePicture = ProfilePicture();
                       await profilePicture.update(context);
@@ -69,12 +84,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
 
                   Text(
-                    'Ella Green',
+                    '${user!.firstName} ${user.lastName}',
                     style: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
 
                   Flexible(child: SizedBox(height: 72)),
+
+                  ProfileTextField(
+                    controller: _emailController,
+                    iconData: Icons.email,
+                    hintText: 'Email Address',
+                    enabled: false,
+                  ),
 
                   ProfileTextField(
                     controller: _firstNameController,
@@ -86,19 +108,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     hintText: 'Last Name',
                   ),
 
-                  ProfileTextField(
-                    controller: _emailController,
-                    iconData: Icons.email,
-                    hintText: 'Email Address',
-                  ),
-
                   // Flexible Offset
                   Flexible(child: SizedBox(height: 55)),
 
-                  // Delete Account Butotn
+                  // Save Account Button
                   RoundedRectangleButton(
                     title: 'Save',
                     onPressed: () async {
+                      final UserService userService = UserService();
+
+                      if (_firstNameController.text != user.firstName) {
+                        await userService.updateUserInfo(
+                          'first_name',
+                          _firstNameController.text,
+                        );
+                      }
+
+                      if (_lasttNameController.text != user.lastName) {
+                        await userService.updateUserInfo(
+                          'last_name',
+                          _lasttNameController.text,
+                        );
+                      }
+
                       AuthService().getUserProfile();
                     },
                   ),
