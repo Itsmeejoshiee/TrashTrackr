@@ -27,6 +27,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _notifsEnabled = true;
 
   final AuthService _authService = AuthService();
+  final UserService _userService = UserService();
 
   Future<void> _logout() async {
 
@@ -130,125 +131,143 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kLightGray,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back_ios),
-        ),
-        title: Text(
-          'Settings',
-          style: kTitleMedium.copyWith(fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: Column(
-            children: [
-              // Edit Profile Picture
-              EditProfilePictureButton(
-                onPressed: () async {
-                  final profilePicture = ProfilePicture();
-                  await profilePicture.update(context);
-                },
-              ),
+    return StreamBuilder(
+      stream: _userService.getUserStream(),
+      builder: (context, snapshot) {
+        print('SNAPSHOT DATA');
+        print(snapshot.data);
 
-              Text(
-                'Ella Green',
-                style: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator(color: kAvocado,));
+        }
 
-              // Offset
-              Flexible(child: SizedBox(height: 35)),
+        if (!snapshot.hasData || snapshot.data == null) {
+          return Center(child: Text('User data is not available.'));
+        }
 
-              SettingTileGroup(
+        final user = snapshot.data;
+        return Scaffold(
+          backgroundColor: kLightGray,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            leading: IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(Icons.arrow_back_ios),
+            ),
+            title: Text(
+              'Settings',
+              style: kTitleMedium.copyWith(fontWeight: FontWeight.bold),
+            ),
+          ),
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Column(
                 children: [
-                  SettingTile(
-                    title: 'Edit Profile Details',
-                    iconData: Icons.edit,
-                    onTap:
-                        () => Navigator.push(
+                  // Edit Profile Picture
+                  EditProfilePictureButton(
+                    image: (user!.profilePicture.isNotEmpty) ? NetworkImage(user.profilePicture) : AssetImage('assets/images/placeholder_profile.jpg'),
+                    onPressed: () async {
+                      final profilePicture = ProfilePicture();
+                      await profilePicture.update(context);
+                    },
+                  ),
+
+                  Text(
+                    'Ella Green',
+                    style: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+
+                  // Offset
+                  Flexible(child: SizedBox(height: 35)),
+
+                  SettingTileGroup(
+                    children: [
+                      SettingTile(
+                        title: 'Edit Profile Details',
+                        iconData: Icons.edit,
+                        onTap:
+                            () => Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => EditProfileScreen(),
                           ),
                         ),
-                  ),
+                      ),
 
-                  SwitchSettingTile(
-                    title: 'Notifications',
-                    iconData: Icons.notifications,
-                    value: _notifsEnabled,
-                    onChanged: (value) {
-                      setState(() {
-                        _notifsEnabled = value;
-                      });
-                    },
-                  ),
+                      SwitchSettingTile(
+                        title: 'Notifications',
+                        iconData: Icons.notifications,
+                        value: _notifsEnabled,
+                        onChanged: (value) {
+                          setState(() {
+                            _notifsEnabled = value;
+                          });
+                        },
+                      ),
 
-                  SettingTile(
-                    title: 'Privacy Options',
-                    iconData: Icons.shield,
-                    onTap:
-                        () => Navigator.push(
+                      SettingTile(
+                        title: 'Privacy Options',
+                        iconData: Icons.shield,
+                        onTap:
+                            () => Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => PrivacyScreen(),
                           ),
                         ),
-                  ),
+                      ),
 
-                  SettingTile(
-                    title: 'Help & FAQs',
-                    iconData: Icons.help,
-                    onTap:
-                        () => Navigator.push(
+                      SettingTile(
+                        title: 'Help & FAQs',
+                        iconData: Icons.help,
+                        onTap:
+                            () => Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => FaqScreen()),
                         ),
-                  ),
+                      ),
 
-                  SettingTile(
-                    title: 'About TrashTrackr',
-                    iconData: Icons.info,
-                    onTap:
-                        () => Navigator.push(
+                      SettingTile(
+                        title: 'About TrashTrackr',
+                        iconData: Icons.info,
+                        onTap:
+                            () => Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => AboutScreen(),
                           ),
                         ),
+                      ),
+
+                      SettingTile(
+                        title: 'Logout',
+                        iconData: Icons.logout,
+                        color: kRed,
+                        onTap: _logoutAlert,
+                      ),
+                    ],
                   ),
 
-                  SettingTile(
-                    title: 'Logout',
-                    iconData: Icons.logout,
-                    color: kRed,
-                    onTap: _logoutAlert,
+                  // Flexible Offset
+                  Flexible(child: SizedBox(height: 120)),
+
+                  // Delete Account Butotn
+                  RoundedRectangleButton(
+                    backgroundColor: kRed,
+                    title: 'Delete Account',
+                    onPressed: _deleteAccountAlert,
                   ),
+
+                  // Offset
+                  SizedBox(height: 15),
                 ],
               ),
-
-              // Flexible Offset
-              Flexible(child: SizedBox(height: 120)),
-
-              // Delete Account Butotn
-              RoundedRectangleButton(
-                backgroundColor: kRed,
-                title: 'Delete Account',
-                onPressed: _deleteAccountAlert,
-              ),
-
-              // Offset
-              SizedBox(height: 15),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
