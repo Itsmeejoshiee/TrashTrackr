@@ -13,10 +13,10 @@ class EventForm extends StatefulWidget {
   const EventForm({super.key, this.eventEntry});
 
   @override
-  State<EventForm> createState() => _EventFormState();
+  EventFormState createState() => EventFormState();
 }
 
-class _EventFormState extends State<EventForm> {
+class EventFormState extends State<EventForm> {
   late TextEditingController _eventNameController;
   late TextEditingController _eventDescController;
   String? _eventType;
@@ -26,8 +26,12 @@ class _EventFormState extends State<EventForm> {
   @override
   void initState() {
     super.initState();
-    _eventNameController = TextEditingController(text: widget.eventEntry?.eventType ?? '');
-    _eventDescController = TextEditingController(text: widget.eventEntry?.eventDescription ?? '');
+    _eventNameController = TextEditingController(
+      text: widget.eventEntry?.eventType ?? '',
+    );
+    _eventDescController = TextEditingController(
+      text: widget.eventEntry?.eventDescription ?? '',
+    );
     _eventType = widget.eventEntry?.eventType;
     _eventDateRange = widget.eventEntry?.dateRange;
   }
@@ -73,7 +77,10 @@ class _EventFormState extends State<EventForm> {
   }) {
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(fontFamily: kFontPoppins, color: Colors.black87),
+      labelStyle: const TextStyle(
+        fontFamily: kFontPoppins,
+        color: Colors.black87,
+      ),
       filled: true,
       fillColor: Colors.white,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -92,6 +99,18 @@ class _EventFormState extends State<EventForm> {
     );
   }
 
+  /// 🔹 This is the method PostScreen will call using the GlobalKey
+  EventEntry? getEventEntry() {
+    if (_eventType == null || _eventDateRange == null) return null;
+
+    return EventEntry(
+      imageUrl: '', // To be updated if uploading to storage
+      eventType: _eventType!,
+      dateRange: _eventDateRange!,
+      eventDescription: _eventDescController.text,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -103,26 +122,32 @@ class _EventFormState extends State<EventForm> {
             onTap: _pickImage,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: _pickedImage != null
-                  ? Image.file(
-                      _pickedImage!,
-                      width: double.infinity, // Make it wide
-                      height: 180,
-                      fit: BoxFit.cover,
-                    )
-                  : widget.eventEntry?.imageUrl != null && widget.eventEntry!.imageUrl.isNotEmpty
+              child:
+                  _pickedImage != null
+                      ? Image.file(
+                        _pickedImage!,
+                        width: double.infinity,
+                        height: 180,
+                        fit: BoxFit.cover,
+                      )
+                      : widget.eventEntry?.imageUrl != null &&
+                          widget.eventEntry!.imageUrl.isNotEmpty
                       ? Image.network(
-                          widget.eventEntry!.imageUrl,
-                          width: double.infinity, // Make it wide
-                          height: 180,
-                          fit: BoxFit.cover,
-                        )
+                        widget.eventEntry!.imageUrl,
+                        width: double.infinity,
+                        height: 180,
+                        fit: BoxFit.cover,
+                      )
                       : Container(
-                          width: double.infinity, // Make it wide
-                          height: 180,
-                          color: kForestGreen.withOpacity(0.1),
-                          child: const Icon(Icons.add_a_photo, color: kForestGreen, size: 40),
+                        width: double.infinity,
+                        height: 180,
+                        color: kForestGreen.withOpacity(0.1),
+                        child: const Icon(
+                          Icons.add_a_photo,
+                          color: kForestGreen,
+                          size: 40,
                         ),
+                      ),
             ),
           ),
         ),
@@ -141,18 +166,24 @@ class _EventFormState extends State<EventForm> {
         TextField(
           controller: _eventNameController,
           style: const TextStyle(fontFamily: kFontPoppins),
-          cursorColor: kForestGreen, // <-- Add this line
+          cursorColor: kForestGreen,
           decoration: _customFieldDecoration(label: "Event Name"),
         ),
         const SizedBox(height: 12),
         DropdownButtonFormField<String>(
           value: _eventType,
-          items: ["Cleanup", "Workshop", "Donation"]
-              .map((e) => DropdownMenuItem(
-                    value: e,
-                    child: Text(e, style: const TextStyle(fontFamily: kFontPoppins)),
-                  ))
-              .toList(),
+          items:
+              ["Cleanup", "Workshop", "Donation"]
+                  .map(
+                    (e) => DropdownMenuItem(
+                      value: e,
+                      child: Text(
+                        e,
+                        style: const TextStyle(fontFamily: kFontPoppins),
+                      ),
+                    ),
+                  )
+                  .toList(),
           onChanged: (val) => setState(() => _eventType = val),
           decoration: _customFieldDecoration(label: "Event Type"),
         ),
@@ -167,14 +198,14 @@ class _EventFormState extends State<EventForm> {
                 return Theme(
                   data: Theme.of(context).copyWith(
                     colorScheme: ColorScheme.light(
-                      primary: kForestGreen, // header background color
-                      onPrimary: Colors.white, // header text color
-                      onSurface: const Color(0xFF779235), 
-                      onBackground: Color.fromARGB(255, 246, 246, 246)// body text color
+                      primary: kForestGreen,
+                      onPrimary: Colors.white,
+                      onSurface: const Color(0xFF779235),
+                      onBackground: const Color(0xFFF6F6F6),
                     ),
                     textButtonTheme: TextButtonThemeData(
                       style: TextButton.styleFrom(
-                        foregroundColor: kForestGreen, // button text color
+                        foregroundColor: kForestGreen,
                       ),
                     ),
                   ),
@@ -187,26 +218,31 @@ class _EventFormState extends State<EventForm> {
           child: AbsorbPointer(
             child: TextField(
               style: const TextStyle(fontFamily: kFontPoppins),
-              cursorColor: kForestGreen, // <-- Add this line
+              cursorColor: kForestGreen,
               readOnly: true,
               decoration: _customFieldDecoration(
                 label: "Select date and time",
               ).copyWith(
-                suffixIcon: const Icon(Icons.calendar_today, color: kForestGreen),
-                hintText: _eventDateRange == null
-                    ? "Pick a date range"
-                    : "${_eventDateRange!.start.month}/${_eventDateRange!.start.day}/${_eventDateRange!.start.year} - "
-                      "${_eventDateRange!.end.month}/${_eventDateRange!.end.day}/${_eventDateRange!.end.year}",
+                suffixIcon: const Icon(
+                  Icons.calendar_today,
+                  color: kForestGreen,
+                ),
+                hintText:
+                    _eventDateRange == null
+                        ? "Pick a date range"
+                        : "${_eventDateRange!.start.month}/${_eventDateRange!.start.day}/${_eventDateRange!.start.year} - "
+                            "${_eventDateRange!.end.month}/${_eventDateRange!.end.day}/${_eventDateRange!.end.year}",
                 hintStyle: const TextStyle(
                   fontFamily: kFontPoppins,
                   color: Colors.black54,
                 ),
               ),
               controller: TextEditingController(
-                text: _eventDateRange == null
-                    ? ""
-                    : "${_eventDateRange!.start.month}/${_eventDateRange!.start.day}/${_eventDateRange!.start.year} - "
-                      "${_eventDateRange!.end.month}/${_eventDateRange!.end.day}/${_eventDateRange!.end.year}",
+                text:
+                    _eventDateRange == null
+                        ? ""
+                        : "${_eventDateRange!.start.month}/${_eventDateRange!.start.day}/${_eventDateRange!.start.year} - "
+                            "${_eventDateRange!.end.month}/${_eventDateRange!.end.day}/${_eventDateRange!.end.year}",
               ),
             ),
           ),
@@ -215,7 +251,7 @@ class _EventFormState extends State<EventForm> {
         TextField(
           controller: _eventDescController,
           style: const TextStyle(fontFamily: kFontPoppins),
-          cursorColor: kForestGreen, // <-- Add this line
+          cursorColor: kForestGreen,
           decoration: _customFieldDecoration(
             label: "Event description",
             borderColor: kForestGreen,
@@ -223,7 +259,6 @@ class _EventFormState extends State<EventForm> {
           maxLines: 3,
         ),
         const SizedBox(height: 16),
-        
       ],
     );
   }

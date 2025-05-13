@@ -22,24 +22,24 @@ class PostEntry {
 
   // Example: fromMap and toMap for Firebase integration
   factory PostEntry.fromMap(Map<String, dynamic> map) => PostEntry(
-        body: map['body'] ?? '',
-        date: (map['date'] as Timestamp).toDate(),
-        fullname: map['fullname'] ?? '',
-        imageUrl: map['image_url'] ?? '',
-        postId: map['post_id'] ?? '',
-        uid: map['uid'] ?? '',
-        userPfp: map['user_pfp'] ?? '',
-      );
+    body: map['body'] ?? '',
+    date: (map['date'] as Timestamp).toDate(),
+    fullname: map['fullname'] ?? '',
+    imageUrl: map['image_url'] ?? '',
+    postId: map['post_id'] ?? '',
+    uid: map['uid'] ?? '',
+    userPfp: map['user_pfp'] ?? '',
+  );
 
   Map<String, dynamic> toMap() => {
-        'body': body,
-        'date': date,
-        'fullname': fullname,
-        'image_url': imageUrl,
-        'post_id': postId,
-        'uid': uid,
-        'user_pfp': userPfp,
-      };
+    'body': body,
+    'date': date,
+    'fullname': fullname,
+    'image_url': imageUrl,
+    'post_id': postId,
+    'uid': uid,
+    'user_pfp': userPfp,
+  };
 
   // Dummy user info as static fields
   static const String dummyFullname = "Ella Green";
@@ -62,32 +62,23 @@ class EventEntry {
 
   // Example: fromMap and toMap for Firebase integration
   factory EventEntry.fromMap(Map<String, dynamic> map) => EventEntry(
-        imageUrl: map['image_url'] ?? '',
-        eventType: map['event_type'] ?? '',
-        dateRange: DateTimeRange(
-          start: (map['date_start'] as Timestamp).toDate(),
-          end: (map['date_end'] as Timestamp).toDate(),
-        ),
-        eventDescription: map['event_description'] ?? '',
-      );
+    imageUrl: map['image_url'] ?? '',
+    eventType: map['event_type'] ?? '',
+    dateRange: DateTimeRange(
+      start: (map['date_start'] as Timestamp).toDate(),
+      end: (map['date_end'] as Timestamp).toDate(),
+    ),
+    eventDescription: map['event_description'] ?? '',
+  );
 
   Map<String, dynamic> toMap() => {
-        'image_url': imageUrl,
-        'event_type': eventType,
-        'date_start': dateRange.start,
-        'date_end': dateRange.end,
-        'event_description': eventDescription,
-      };
+    'image_url': imageUrl,
+    'event_type': eventType,
+    'date_start': dateRange.start,
+    'date_end': dateRange.end,
+    'event_description': eventDescription,
+  };
 
   // Dummy event image (optional)
   static const String dummyEventImage = "assets/images/placeholder_event.jpg";
-}
-
-class UserService {
-  Future<void> createPost(PostEntry post) async {
-    // Save post to backend
-  }
-  Future<void> createEvent(EventEntry event) async {
-    // Save event to backend
-  }
 }

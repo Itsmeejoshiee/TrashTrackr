@@ -15,6 +15,7 @@ import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:trashtrackr/core/services/badge_service.dart';
 import 'package:trashtrackr/core/user_provider.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
+import 'package:trashtrackr/features/post/models/post_entry.dart';
 import 'package:trashtrackr/features/settings/backend/edit_profile_bloc.dart';
 import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
 
@@ -242,13 +243,14 @@ class UserService {
         .collection('activity_log')
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs.map((doc) {
-        return ActivityModel.fromMap(doc.data());
-      }).toList();
-    });
+          return snapshot.docs.map((doc) {
+            return ActivityModel.fromMap(doc.data());
+          }).toList();
+        });
   }
 
-  Future<void> createPost(String body, String? imageUrl) async {
+  /*
+  Future<void> createPost(String body, String? imageUrl, String? emotion) async {
     final uid = _authService.currentUser?.uid;
     if (uid == null) return;
 
@@ -273,6 +275,7 @@ class UserService {
         'date': DateTime.now(),
         'body': body,
         'image_url': imageUrl,
+        'emotion': emotion
       });
     } catch (e) {
       print('Error creating post: $e');
@@ -294,6 +297,18 @@ class UserService {
     } catch (e) {
       print('Error creating event: $e');
     }
+  }
+*/
+  Future<void> createPost(PostEntry post) async {
+    final uid = _authService.currentUser?.uid;
+    await FirebaseFirestore.instance
+        .collection('posts')
+        .doc(uid)
+        .set(post.toMap());
+  }
+
+  Future<void> createEvent(EventEntry event) async {
+    await FirebaseFirestore.instance.collection('events').add(event.toMap());
   }
 
   Future uploadPostImage(Uint8List? image) async {
@@ -342,7 +357,8 @@ class UserService {
     }
 
     try {
-      final userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final userDoc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final userData = userDoc.data();
       if (userData == null) {
         print('User document not found for UID: $uid');
