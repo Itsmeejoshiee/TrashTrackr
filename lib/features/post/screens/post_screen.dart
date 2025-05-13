@@ -1,17 +1,13 @@
-//post_screen.dart for control and logic
 import 'package:flutter/material.dart';
+import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/features/post/models/post_entry.dart';
-import 'package:trashtrackr/features/post/widgets/event_form.dart'; // <-- Import event form here
-import 'package:trashtrackr/features/post/widgets/post_form.dart'; // new import
+import 'package:trashtrackr/features/post/widgets/event_form.dart';
+import 'package:trashtrackr/features/post/widgets/post_form.dart';
 
 // --- kForest theme colors ---
 const kForestGreen = Color(0xFF819D39);
 const kNeoShadow = [
-  BoxShadow(
-    color: Color(0x1A819D39),
-    blurRadius: 12,
-    offset: Offset(0, 4),
-  ),
+  BoxShadow(color: Color(0x1A819D39), blurRadius: 12, offset: Offset(0, 4)),
 ];
 
 const String kFontUrbanist = 'Urbanist';
@@ -30,10 +26,12 @@ class PostScreen extends StatefulWidget {
 class _PostScreenState extends State<PostScreen> {
   bool isPost = true;
 
+  final GlobalKey<PostFormState> _postKey = GlobalKey();
+  final GlobalKey<EventFormState> _eventKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
-    // If an event entry is passed, show event form by default
     if (widget.eventEntry != null) isPost = false;
   }
 
@@ -109,19 +107,41 @@ class _PostScreenState extends State<PostScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.cancel, color: kForestGreen, size: 35),
+                        icon: const Icon(
+                          Icons.cancel,
+                          color: kForestGreen,
+                          size: 35,
+                        ),
                         onPressed: () => Navigator.pop(context),
                       ),
                       _neoBoxToggle(),
                       ElevatedButton(
-                        onPressed: () {
-                          // Add your post or event submission logic here
+                        onPressed: () async {
+                          if (isPost) {
+                            final post = _postKey.currentState?.getPostEntry();
+                            if (post != null) {
+                              await UserService().createPost(post);
+                              Navigator.pop(context);
+                            }
+                          } else {
+                            final event =
+                                _eventKey.currentState?.getEventEntry();
+                            if (event != null) {
+                              await UserService().createEvent(event);
+                              Navigator.pop(context);
+                            }
+                          }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(kForestGreen),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            kForestGreen,
                           ),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                              ),
                         ),
                         child: Text(
                           isPost ? 'Post' : 'Create',
@@ -138,13 +158,16 @@ class _PostScreenState extends State<PostScreen> {
                   // Main form area
                   Expanded(
                     child: SingleChildScrollView(
-                      child: isPost
-                          ? PostForm(
-                              postEntry: widget.postEntry,
-                            )
-                          : EventForm(
-                              eventEntry: widget.eventEntry,
-                            ),
+                      child:
+                          isPost
+                              ? PostForm(
+                                key: _postKey,
+                                postEntry: widget.postEntry,
+                              )
+                              : EventForm(
+                                key: _eventKey,
+                                eventEntry: widget.eventEntry,
+                              ),
                     ),
                   ),
                 ],
