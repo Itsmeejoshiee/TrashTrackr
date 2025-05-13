@@ -60,10 +60,6 @@ class ProfilePicture {
   }
 
   Future<void> update(BuildContext context) async {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final user = userProvider.user;
-    print('USER');
-    print(user);
     await showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -75,19 +71,18 @@ class ProfilePicture {
                 leading: const Icon(Icons.photo_library),
                 title: const Text('Gallery'),
                 onTap: () async {
-                  final image = await ProfilePicture().selectImage(ImageSource.gallery);
-                  await userService.uploadProfileImage(uid: user!.uid, image: image);
                   Navigator.of(context).pop();
+                  final image = await ProfilePicture().selectImage(ImageSource.gallery);
+                  await userService.uploadProfileImage(image);
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.camera_alt),
                 title: const Text('Camera'),
                 onTap: () async {
-                  final image = await ProfilePicture().selectImage(ImageSource.camera);
-                  print('USER PROVIDER UID: ${user!.uid}');
-                  await userService.uploadProfileImage(uid: user.uid, image: image);
                   Navigator.of(context).pop();
+                  final image = await ProfilePicture().selectImage(ImageSource.camera);
+                  await userService.uploadProfileImage(image);
                 },
               ),
             ],
