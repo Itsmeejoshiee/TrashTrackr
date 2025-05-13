@@ -132,35 +132,42 @@ class UserService extends ChangeNotifier {
     await _authService.deleteAccount(email: email, password: password);
   }
 
-  //TODO: fix this, it returns nothing
+  //TODO: Optimize this function, loads slowly. I think im using shared prefs wrong way.
+
   Future<String?> getFullName() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final uid = AuthService().currentUser?.uid;
+
     if (uid == null) {
       print('UID is null, cannot fetch full name');
       return null;
     }
-    print('UID EXISTS');
-    // Check if full name is already stored in SharedPreferences
-    final cachedFullName = prefs.getString('fullName');
-    if (cachedFullName != null) {
-      return cachedFullName;
-    } else {
-      try {
-        // Fetch user document from Firestore
-        final userDoc =
-            await FirebaseFirestore.instance.collection('users').doc(uid).get();
 
-        final userData = userDoc.data()!;
-        final firstName = userData['first_name'] ?? '';
-        final lastName = userData['last_name'] ?? '';
-        final fullName = '$firstName $lastName'.trim();
-        await prefs.setString('fullName', fullName);
-        return fullName;
-      } catch (e) {
-        print('Error fetching user document: $e');
+    try {
+      final userDoc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final userData = userDoc.data();
+
+      if (userData == null) {
+        print('User document not found for UID: $uid');
         return null;
       }
+
+      final firstName = userData['first_name'] ?? '';
+      final lastName = userData['last_name'] ?? '';
+      final fullName = '$firstName $lastName'.trim();
+
+      final cachedFullName = prefs.getString('fullName');
+      if (cachedFullName != fullName) {
+        await prefs.setString('fullName', fullName);
+        print('Full name updated in SharedPreferences: $fullName');
+      } else {
+        print('No Updates in SharedPreferences.');
+      }
+      return cachedFullName;
+    } catch (e) {
+      print('Error fetching user document: $e');
+      return null;
     }
   }
 

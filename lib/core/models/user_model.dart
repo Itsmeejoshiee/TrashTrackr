@@ -15,8 +15,8 @@ class UserModel {
     return UserModel(
       uid: data['uid'],
       email: data['email'],
-      firstName: data['firstName'],
-      lastName: data['lastName'],
+      firstName: data['first_name'],
+      lastName: data['last_name'],
     );
   }
 
@@ -24,8 +24,8 @@ class UserModel {
     return {
       'uid': uid,
       'email': email,
-      'firstName': firstName,
-      'lastName': lastName,
+      'first_name': firstName,
+      'last_name': lastName,
     };
   }
 }
