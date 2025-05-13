@@ -9,6 +9,7 @@ class ProfileTextField extends StatelessWidget {
     this.iconData = Icons.person,
     this.obscureText = false,
     this.margin,
+    this.enabled,
   });
 
   final TextEditingController controller;
@@ -16,6 +17,7 @@ class ProfileTextField extends StatelessWidget {
   final IconData iconData;
   final bool obscureText;
   final EdgeInsets? margin;
+  final bool? enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +30,7 @@ class ProfileTextField extends StatelessWidget {
           end: Alignment(1.00, 1.00),
           colors: [Colors.white, const Color(0xFFEAEAEA)],
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         shadows: [
           BoxShadow(
             color: Color(0xE5DDDDDD),
@@ -47,6 +47,7 @@ class ProfileTextField extends StatelessWidget {
         ],
       ),
       child: TextField(
+        enabled: enabled,
         controller: controller,
         style: kTitleMedium.copyWith(
           color: kDarkTeal.withOpacity(0.4),

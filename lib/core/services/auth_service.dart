@@ -104,6 +104,26 @@ class AuthService {
     }
   }
 
+  Future<void> updateAuthUserEmail({required String email}) async {
+    try {
+      await currentUser!.updateEmail(email);
+      await UserService().updateUserInfo(email, email);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'invalid-email') {
+        print('The email address is badly formatted.');
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+      } else if (e.code == 'requires-recent-login') {
+        print(
+          'This operation is sensitive and requires recent authentication. Log in again before retrying this request.',
+        );
+      }
+      rethrow;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   //To do: test this function
   //Delete account
   Future<void> deleteAccount({
