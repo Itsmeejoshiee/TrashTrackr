@@ -63,7 +63,7 @@ class ProfilePicture {
     await showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        final UserService userService = UserService(context);
+        final UserService userService = UserService();
         return SafeArea(
           child: Wrap(
             children: [

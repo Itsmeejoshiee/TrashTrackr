@@ -18,10 +18,6 @@ import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
 
 class UserService {
 
-  UserService(this.context);
-
-  final BuildContext context;
-
   final AuthService _authService = AuthService();
 
   Future<void> createUserAccount({

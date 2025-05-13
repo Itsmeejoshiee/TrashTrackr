@@ -64,7 +64,7 @@ class _PostScreenState extends State<PostScreen> {
           color: Color(0xFF819D39),
           radius: BorderRadius.circular(10),
           onPressed: () async {
-            final userService = UserService(context);
+            final userService = UserService();
             final imageUrl = await userService.uploadPostImage(_imageFile);
             await userService.createPost(_postController.text, imageUrl);
             Navigator.pop(context);

@@ -97,7 +97,7 @@ class _LoginFormState extends State<LoginForm> {
           RoundedRectangleButton(
             title: 'Login',
             onPressed: () async {
-              final UserService userService = UserService(context);
+              final UserService userService = UserService();
               await userService.loginUserAccount(
                 email: _emailController.text.trim(),
                 password: _passwordController.text.trim(),
