@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trashtrackr/core/models/user_model.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
 
@@ -131,23 +132,35 @@ class UserService extends ChangeNotifier {
     await _authService.deleteAccount(email: email, password: password);
   }
 
+  //TODO: fix this, it returns nothing
   Future<String?> getFullName() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     final uid = AuthService().currentUser?.uid;
-    if (uid == null) return null;
-
-    try {
-      // Fetch user document from Firestore
-      final userDoc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
-
-      final userData = userDoc.data()!;
-      final firstName = userData['first_name'] ?? '';
-      final lastName = userData['last_name'] ?? '';
-      final fullName = '$firstName $lastName'.trim();
-      return fullName;
-    } catch (e) {
-      print('Error fetching user document: $e');
+    if (uid == null) {
+      print('UID is null, cannot fetch full name');
       return null;
+    }
+    print('UID EXISTS');
+    // Check if full name is already stored in SharedPreferences
+    final cachedFullName = prefs.getString('fullName');
+    if (cachedFullName != null) {
+      return cachedFullName;
+    } else {
+      try {
+        // Fetch user document from Firestore
+        final userDoc =
+            await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+        final userData = userDoc.data()!;
+        final firstName = userData['first_name'] ?? '';
+        final lastName = userData['last_name'] ?? '';
+        final fullName = '$firstName $lastName'.trim();
+        await prefs.setString('fullName', fullName);
+        return fullName;
+      } catch (e) {
+        print('Error fetching user document: $e');
+        return null;
+      }
     }
   }
 
@@ -166,13 +179,13 @@ class UserService extends ChangeNotifier {
       }
 
       final userData = userDoc.data()!;
-      final firstName = userData['firstName'] ?? '';
-      final lastName = userData['lastName'] ?? '';
+      final firstName = userData['first_name'] ?? '';
+      final lastName = userData['last_name'] ?? '';
       final fullName = '$firstName $lastName'.trim();
 
       await FirebaseFirestore.instance.collection('posts').add({
         'uid': uid,
-        'fullname': fullName,
+        'full_name': fullName,
         'date': DateTime.now(),
         'body': body,
         'image_url': imageUrl,
