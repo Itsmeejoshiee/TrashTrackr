@@ -49,7 +49,6 @@ class UserService extends ChangeNotifier {
     }
 
     try {
-
       // Sign up the user
       await _authService.createAccount(
         emailController.text.trim(),
@@ -117,10 +116,7 @@ class UserService extends ChangeNotifier {
 
     try {
       // Sign in the user
-      await _authService.signIn(
-        email,
-        password,
-      );
+      await _authService.signIn(email, password);
 
       // Fetch the user from Firestore
       await loadUserFromFirestore(AuthService().currentUser?.uid ?? '');
@@ -133,6 +129,26 @@ class UserService extends ChangeNotifier {
   //delete user data and account
   Future<void> deleteUserData(String email, String password) async {
     await _authService.deleteAccount(email: email, password: password);
+  }
+
+  Future<String?> getFullName() async {
+    final uid = AuthService().currentUser?.uid;
+    if (uid == null) return null;
+
+    try {
+      // Fetch user document from Firestore
+      final userDoc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+      final userData = userDoc.data()!;
+      final firstName = userData['first_name'] ?? '';
+      final lastName = userData['last_name'] ?? '';
+      final fullName = '$firstName $lastName'.trim();
+      return fullName;
+    } catch (e) {
+      print('Error fetching user document: $e');
+      return null;
+    }
   }
 
   Future<void> createPost(String body, String? imageUrl) async {
