@@ -50,7 +50,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         titleStyle: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
       ),
       title: "Delete Account",
-
       content: Column(
         children: <Widget>[
           TextField(
@@ -175,6 +174,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: kLightGray,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -190,106 +190,110 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: Column(
-            children: [
-              // Edit Profile Picture
-              EditProfilePictureButton(
-                onPressed: () async {
-                  final profilePicture = ProfilePicture();
-                  await profilePicture.update(context);
-                },
-              ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Edit Profile Picture
+                EditProfilePictureButton(
+                  onPressed: () async {
+                    final profilePicture = ProfilePicture();
+                    await profilePicture.update(context);
+                  },
+                ),
 
-              Text(
-                'Ella Green',
-                style: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
+                Text(
+                  'Ella Green',
+                  style: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
 
-              // Offset
-              Flexible(child: SizedBox(height: 35)),
+                // Offset
+                SizedBox(height: 35),
 
-              SettingTileGroup(
-                children: [
-                  SettingTile(
-                    title: 'Edit Profile Details',
-                    iconData: Icons.edit,
-                    onTap:
-                        () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EditProfileScreen(),
+                SettingTileGroup(
+                  children: [
+                    SettingTile(
+                      title: 'Edit Profile Details',
+                      iconData: Icons.edit,
+                      onTap:
+                          () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditProfileScreen(),
+                            ),
                           ),
-                        ),
-                  ),
+                    ),
 
-                  SwitchSettingTile(
-                    title: 'Notifications',
-                    iconData: Icons.notifications,
-                    value: _notifsEnabled,
-                    onChanged: (value) {
-                      setState(() {
-                        _notifsEnabled = value;
-                      });
-                    },
-                  ),
+                    SwitchSettingTile(
+                      title: 'Notifications',
+                      iconData: Icons.notifications,
+                      value: _notifsEnabled,
+                      onChanged: (value) {
+                        setState(() {
+                          _notifsEnabled = value;
+                        });
+                      },
+                    ),
 
-                  SettingTile(
-                    title: 'Privacy Options',
-                    iconData: Icons.shield,
-                    onTap:
-                        () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PrivacyScreen(),
+                    SettingTile(
+                      title: 'Privacy Options',
+                      iconData: Icons.shield,
+                      onTap:
+                          () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PrivacyScreen(),
+                            ),
                           ),
-                        ),
-                  ),
+                    ),
 
-                  SettingTile(
-                    title: 'Help & FAQs',
-                    iconData: Icons.help,
-                    onTap:
-                        () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => FaqScreen()),
-                        ),
-                  ),
-
-                  SettingTile(
-                    title: 'About TrashTrackr',
-                    iconData: Icons.info,
-                    onTap:
-                        () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AboutScreen(),
+                    SettingTile(
+                      title: 'Help & FAQs',
+                      iconData: Icons.help,
+                      onTap:
+                          () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FaqScreen(),
+                            ),
                           ),
-                        ),
-                  ),
+                    ),
 
-                  SettingTile(
-                    title: 'Logout',
-                    iconData: Icons.logout,
-                    color: kRed,
-                    onTap: _logoutAlert,
-                  ),
-                ],
-              ),
+                    SettingTile(
+                      title: 'About TrashTrackr',
+                      iconData: Icons.info,
+                      onTap:
+                          () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AboutScreen(),
+                            ),
+                          ),
+                    ),
 
-              // Flexible Offset
-              Flexible(child: SizedBox(height: 120)),
+                    SettingTile(
+                      title: 'Logout',
+                      iconData: Icons.logout,
+                      color: kRed,
+                      onTap: _logoutAlert,
+                    ),
+                  ],
+                ),
 
-              // Delete Account Butotn
-              RoundedRectangleButton(
-                backgroundColor: kRed,
-                title: 'Delete Account',
-                onPressed: _deleteAccount,
-              ),
+                // Flexible Offset
+                SizedBox(height: 120),
 
-              // Offset
-              SizedBox(height: 15),
-            ],
+                // Delete Account Butotn
+                RoundedRectangleButton(
+                  backgroundColor: kRed,
+                  title: 'Delete Account',
+                  onPressed: _deleteAccount,
+                ),
+
+                // Offset
+                SizedBox(height: 15),
+              ],
+            ),
           ),
         ),
       ),
