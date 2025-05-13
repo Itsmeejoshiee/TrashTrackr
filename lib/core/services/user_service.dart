@@ -23,7 +23,7 @@ class UserService {
 
   final AuthService _authService = AuthService();
 
-  Future<UserModel?> createUserAccount({
+  Future<void> createUserAccount({
     required TextEditingController emailController,
     required TextEditingController passwordController,
     required TextEditingController confirmPasswordController,
@@ -38,7 +38,7 @@ class UserService {
     if (passwordController.text.trim() !=
         confirmPasswordController.text.trim()) {
       setErrorMessage('Passwords do not match.');
-      return null;
+      return;
     }
 
     try {
@@ -61,10 +61,6 @@ class UserService {
           .collection('users')
           .doc(newUser.uid)
           .set(newUser.toMap());
-
-      // Update the user provider with the new user
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      userProvider.setUser(newUser);
 
     } catch (e) {
       setErrorMessage('An error occurred. Please try again.');
@@ -95,21 +91,11 @@ class UserService {
         .collection('users')
         .doc(newUser.uid)
         .set(newUser.toMap());
-
-    // Update the user provider with the new user
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    userProvider.setUser(newUser);
   }
 
   Future<void> signInWithGoogle() async {
     try {
       final userCredential = await _authService.signInWithGoogle();
-
-      // Update the user provider with the new user
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-
-      // Fetch the user from Firestore
-      await userProvider.loadUserFromFirestore(_authService.currentUser?.uid ?? '');
     } catch (e) {
       print('Error: $e');
     }
@@ -128,11 +114,6 @@ class UserService {
       // Sign in the user
       await _authService.signIn(email, password);
 
-      // Update the user provider with the new user
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-
-      // Fetch the user from Firestore
-      await userProvider.loadUserFromFirestore(_authService.currentUser?.uid ?? '');
     } catch (e) {
       setErrorMessage('An error occurred. Please try again.');
       print('Error: $e');
@@ -151,7 +132,7 @@ class UserService {
     try {
       // Fetch user document from Firestore
       final userDoc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      await FirebaseFirestore.instance.collection('users').doc(uid).get();
 
       if (!userDoc.exists) {
         print('User document not found');
@@ -180,7 +161,9 @@ class UserService {
 
     final storageRef = FirebaseStorage.instance.ref();
     final imageRef = storageRef.child(
-      'posts/${DateTime.now().millisecondsSinceEpoch}.jpg',
+      'posts/${DateTime
+          .now()
+          .millisecondsSinceEpoch}.jpg',
     );
 
     try {
@@ -193,23 +176,21 @@ class UserService {
     }
   }
 
-  Future uploadProfileImage({
-    required String uid,
-    required Uint8List? image,
-  }) async {
+  Future uploadProfileImage(Uint8List? image) async {
     if (image == null) return;
 
     final storageRef = FirebaseStorage.instance.ref();
+    final uid = _authService.currentUser!.uid;
     final imageRef = storageRef.child('profile/$uid.jpg');
 
     try {
       await imageRef.putData(image);
       final downloadUrl = await imageRef.getDownloadURL();
 
-      // await FirebaseFirestore.instance
-      //     .collection('users')
-      //     .doc(uid)
-      //     .set({'profile_picture': downloadUrl});
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .update({'profile_picture': downloadUrl});
 
     } catch (e) {
       print('Error uploading image: $e');

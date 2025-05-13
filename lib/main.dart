@@ -32,12 +32,7 @@ Future<void> main() async {
   await Firebase.initializeApp();
 
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
-      ],
-      child: const TrashTrackr(),
-    ),
+    const TrashTrackr(),
   );
 }
 
