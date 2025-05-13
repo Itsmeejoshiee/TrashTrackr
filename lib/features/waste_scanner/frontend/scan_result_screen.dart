@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/buttons/disposal_location_button.dart';
 import 'widgets/properties_tile.dart';
@@ -24,6 +25,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
   final TextEditingController _noteController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
 
+  final UserService _userService = UserService();
 
   // for logging disposal
   void _logDisposal() {
@@ -64,6 +66,12 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
         ),
       ],
     ).show();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _userService.logActivity('scan');
   }
 
   @override
