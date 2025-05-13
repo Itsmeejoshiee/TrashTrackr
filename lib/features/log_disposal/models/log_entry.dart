@@ -1,20 +1,20 @@
 /// A model class representing a single log entry (e.g., trash pickup or disposal record).
-class LogEntry {
-  String imageUrl; // Added imageUrl property
-  final String title;
-  final String wasteType;
-  final DateTime timestamp;
-  final String productInfo; // New field for product information
-  final List<String> productProperties; // New field for product properties
-  final List<String> disposalGuideToDo; // New field for disposal guide (to-do list)
-  final List<String> disposalGuideNotToDo; // New field for disposal guide (not-to-do list)
-  final String disposalGuideProTip; // New field for disposal guide pro tip
-  final String disposalLocation; // New field for disposal location
-  String? notes; // New field for optional notes
-  String? quantity; // New field for optional quantity
+final class LogEntry {
+  String imageUrl;
+  String title;
+  String wasteType;
+  DateTime timestamp;
+  String productInfo;
+  List<String> productProperties;
+  List<String> disposalGuideToDo;
+  List<String> disposalGuideNotToDo;
+  String disposalGuideProTip;
+  String disposalLocation;
+  String? notes;
+  String? quantity;
 
   LogEntry({
-    required this.imageUrl, // Required imageUrl in the constructor
+    required this.imageUrl,
     required this.title,
     required this.wasteType,
     required this.timestamp,
@@ -24,10 +24,18 @@ class LogEntry {
     required this.disposalGuideNotToDo,
     required this.disposalGuideProTip,
     required this.disposalLocation,
-    this.notes, // Optional notes field
-    this.quantity, // Optional quantity field
+    this.notes,
+    this.quantity,
   });
 }
+enum WasteType {
+  recyclable,
+  biodegradable,
+  ewaste,
+  nonBiodegradable,
+}
+
+
 
 final List<LogEntry> logEntry = [
   LogEntry(
@@ -52,6 +60,8 @@ final List<LogEntry> logEntry = [
     ],
     disposalGuideProTip: 'Glass is endlessly recyclable without losing quality!',
     disposalLocation: 'Recycling Center A, Main Street',
+        notes: 'Handle with care to avoid breakage.', // Example notes
+    quantity: '5', // Example quantity
   ),
   LogEntry(
     imageUrl: 'assets/images/placeholder-item.png',

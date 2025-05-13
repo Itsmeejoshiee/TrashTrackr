@@ -31,23 +31,57 @@ class _LogDetailsScreenState extends State<LogDetailsScreen> {
   final TextEditingController _notesController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
 
+  bool _isEditing = false;
+
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _productInfoController = TextEditingController();
+  final TextEditingController _toDoController = TextEditingController();
+  final TextEditingController _notToDoController = TextEditingController();
+  final TextEditingController _proTipController = TextEditingController();
+
+
+
   @override
   void initState() {
-    super.initState();
-    _notesController.text = widget.entry.notes ?? '';
-    _quantityController.text = widget.entry.quantity ?? '';
-  }
+  super.initState();
+  _notesController.text = widget.entry.notes ?? '';
+  _quantityController.text = widget.entry.quantity ?? '';
+  _titleController.text = widget.entry.title ?? '';
+  _productInfoController.text = widget.entry.productInfo ?? '';
+_toDoController.text = widget.entry.disposalGuideToDo.join('\n');
+_notToDoController.text = widget.entry.disposalGuideNotToDo.join('\n');
+  _proTipController.text = widget.entry.disposalGuideProTip ?? '';
+}
+
 
   @override
   void dispose() {
-    _notesController.dispose();
-    _quantityController.dispose();
-    super.dispose();
-  }
+  _notesController.dispose();
+  _quantityController.dispose();
+  _titleController.dispose();
+  _productInfoController.dispose();
+  _toDoController.dispose();
+  _notToDoController.dispose();
+  _proTipController.dispose();
+  super.dispose();
+}
+
 
   void _updateDetails() {
-    widget.onDetailsUpdated(_notesController.text, _quantityController.text);
-  }
+  setState(() {
+    widget.entry.notes = _notesController.text;
+    widget.entry.quantity = _quantityController.text;
+    widget.entry.title = _titleController.text;
+    widget.entry.productInfo = _productInfoController.text;
+    widget.entry.disposalGuideToDo = _toDoController.text.split('\n');
+    widget.entry.disposalGuideNotToDo = _notToDoController.text.split('\n');
+    widget.entry.disposalGuideProTip = _proTipController.text;
+  });
+
+  widget.onDetailsUpdated(_notesController.text, _quantityController.text);
+}
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -114,10 +148,17 @@ class _LogDetailsScreenState extends State<LogDetailsScreen> {
                             // Edit icon aligned right
                             GestureDetector(
                               onTap: () {
-                                print('Edit-default image clicked');
+                                setState(() {
+                                  if (_isEditing) {
+                                    _updateDetails(); // Save input
+                                  }
+                                  _isEditing = !_isEditing;
+                                });
                               },
                               child: Image.asset(
-                                'assets/images/icons/edit_default.png',
+                                _isEditing
+                                    ? 'assets/images/icons/edit_active.png'
+                                    : 'assets/images/icons/edit_default.png',
                                 width: 64,
                                 height: 64,
                                 fit: BoxFit.contain,
@@ -134,59 +175,117 @@ class _LogDetailsScreenState extends State<LogDetailsScreen> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          'Product Info',
-                          style: kBodyLarge.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          entry.productInfo,
-                          style: kTitleSmall.copyWith(color: Colors.black54),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Recommended Disposal Techniques',
-                          style: kBodyLarge.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 10),
-                        DisposalGuide(
-                          material: entry.wasteType,
-                          guide: "Here's how to dispose of ${entry.productProperties} responsibly:",
-                          toDo: entry.disposalGuideToDo,
-                          notToDo: entry.disposalGuideNotToDo,
-                          proTip: entry.disposalGuideProTip,
-                        ),
-                        const SizedBox(height: 23),
-                        const SizedBox(height: 20),
-                        Text(
-                          'Notes (optional)',
-                          style: kBodyLarge.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                          controller: _notesController,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: 'Enter your notes here',
+                            'Product Info',
+                            style: kBodyLarge.copyWith(fontWeight: FontWeight.bold),
                           ),
-                          maxLines: 3,
-                          onChanged: (value) => _updateDetails(),
-                        ),
-                        const SizedBox(height: 20),
-                        Text(
-                          'Quantity (optional)',
-                          style: kBodyLarge.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                          controller: _quantityController,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: 'Enter quantity',
+                          const SizedBox(height: 10),
+                          _isEditing
+                              ? TextField(
+                                  controller: _productInfoController,
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    hintText: 'Enter product info',
+                                  ),
+                                  maxLines: null,
+                                )
+                              : Text(
+                                  entry.productInfo,
+                                  style: kTitleSmall.copyWith(color: Colors.black54),
+                                ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'Recommended Disposal Techniques',
+                            style: kBodyLarge.copyWith(fontWeight: FontWeight.bold),
                           ),
-                          keyboardType: TextInputType.number,
-                          onChanged: (value) => _updateDetails(),
-                        ),
-                        const SizedBox(height: 50),
+                          const SizedBox(height: 10),
+                          _isEditing
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('To Do:', style: kTitleSmall.copyWith(fontWeight: FontWeight.bold)),
+                                    const SizedBox(height: 5),
+                                    TextField(
+                                      controller: _toDoController,
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        hintText: 'Separate To-Do actions with new lines',
+                                      ),
+                                      maxLines: null,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text('Not To Do:', style: kTitleSmall.copyWith(fontWeight: FontWeight.bold)),
+                                    const SizedBox(height: 5),
+                                    TextField(
+                                      controller: _notToDoController,
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        hintText: 'Separate Not-To-Do actions with new lines',
+                                      ),
+                                      maxLines: null,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text('Pro Tip:', style: kTitleSmall.copyWith(fontWeight: FontWeight.bold)),
+                                    const SizedBox(height: 5),
+                                    TextField(
+                                      controller: _proTipController,
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        hintText: 'Enter pro tip',
+                                      ),
+                                      maxLines: null,
+                                    ),
+                                  ],
+                                )
+                              : DisposalGuide(
+                                  material: entry.wasteType,
+                                  guide: "Here's how to dispose of ${entry.productProperties} responsibly:",
+                                  toDo: entry.disposalGuideToDo,
+                                  notToDo: entry.disposalGuideNotToDo,
+                                  proTip: entry.disposalGuideProTip,
+                                ),
+                          const SizedBox(height: 20),
+                          Text(
+                            'Notes (optional)',
+                            style: kBodyLarge.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 10),
+                          _isEditing
+                              ? TextField(
+                                  controller: _notesController,
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    hintText: 'Enter your notes here',
+                                  ),
+                                  maxLines: 3,
+                                )
+                              : (entry.notes != null && entry.notes!.isNotEmpty
+                                  ? Text(
+                                      entry.notes!,
+                                      style: kTitleSmall.copyWith(color: Colors.black54),
+                                    )
+                                  : const Text("No notes available.")),
+                          const SizedBox(height: 20),
+                          Text(
+                            'Quantity (optional)',
+                            style: kBodyLarge.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 10),
+                          _isEditing
+                              ? TextField(
+                                  controller: _quantityController,
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    hintText: 'Enter quantity',
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                )
+                              : (entry.quantity != null && entry.quantity!.isNotEmpty
+                                  ? Text(
+                                      entry.quantity!,
+                                      style: kTitleSmall.copyWith(color: Colors.black54),
+                                    )
+                                  : const Text("No quantity specified.")),
+                          const SizedBox(height: 20),
                       ],
                     ),
                   ),
