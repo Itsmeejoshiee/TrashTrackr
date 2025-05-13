@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
-import 'package:trashtrackr/core/models/eco_badge.dart';
+import 'package:trashtrackr/core/models/badge_model.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:trashtrackr/core/widgets/box/neo_box.dart';
@@ -9,17 +9,13 @@ class BadgeBox extends StatelessWidget {
   const BadgeBox({
     super.key,
     required this.badge,
-    this.percent = 0,
-    this.isEarned = true,
     this.width,
     this.height,
     this.padding,
     this.margin,
   });
 
-  final EcoBadge badge;
-  final double percent;
-  final bool isEarned;
+  final BadgeModel badge;
   final double? width;
   final double? height;
   final EdgeInsets? padding;
@@ -27,7 +23,7 @@ class BadgeBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String imagePath = 'assets/images/badges/${(isEarned) ? 'colored' : 'gray'}/${badge.imagePath}';
+    String imagePath = 'assets/images/badges/${(badge.percent >= 1) ? 'colored' : 'gray'}/${badge.imagePath}';
     return GestureDetector(
       onTap: () {
         Alert(
@@ -48,7 +44,7 @@ class BadgeBox extends StatelessWidget {
               backgroundColor: kAppleGreen.withOpacity(0.25),
               progressColor: kAppleGreen,
               circularStrokeCap: CircularStrokeCap.round,
-              percent: (isEarned) ? 1 : percent,
+              percent: badge.percent,
               center: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

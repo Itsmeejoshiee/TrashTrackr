@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/models/activity_model.dart';
+import 'package:trashtrackr/core/services/activity_service.dart';
 import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/utils/date_utils.dart';
@@ -15,7 +16,7 @@ class StreakCalendar extends StatefulWidget {
 
 class _StreakCalendarState extends State<StreakCalendar> {
   final DateUtilsHelper _dateUtilsHelper = DateUtilsHelper();
-  final UserService _userService = UserService();
+  final ActivityService _activityService = ActivityService();
 
   List<int> _buildDayList(List<ActivityModel>? activities) {
     List<int> dayList = [];
@@ -33,7 +34,7 @@ class _StreakCalendarState extends State<StreakCalendar> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: _userService.getActivityStream(),
+      stream: _activityService.getActivityStream(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final dayList = _buildDayList(snapshot.data);
