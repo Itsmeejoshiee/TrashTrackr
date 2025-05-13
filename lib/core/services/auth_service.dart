@@ -106,18 +106,8 @@ class AuthService {
 
   //To do: test this function
   //Delete account
-  Future<void> deleteAccount({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> deleteAccount() async {
     try {
-      // Re-authenticate the user before deleting the account
-      AuthCredential credential = EmailAuthProvider.credential(
-        email: email,
-        password: password,
-      );
-      await currentUser!.reauthenticateWithCredential(credential);
-
       final user = currentUser;
 
       if (user == null) {

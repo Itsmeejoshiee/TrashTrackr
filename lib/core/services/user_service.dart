@@ -18,6 +18,7 @@ import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
 
 class UserService {
 
+
   final AuthService _authService = AuthService();
 
   Future<void> createUserAccount({
@@ -58,7 +59,6 @@ class UserService {
           .collection('users')
           .doc(newUser.uid)
           .set(newUser.toMap());
-
     } catch (e) {
       setErrorMessage('An error occurred. Please try again.');
       print('Error: $e');
@@ -110,7 +110,6 @@ class UserService {
     try {
       // Sign in the user
       await _authService.signIn(email, password);
-
     } catch (e) {
       setErrorMessage('An error occurred. Please try again.');
       print('Error: $e');
@@ -118,8 +117,8 @@ class UserService {
   }
 
   //delete user data and account
-  Future<void> deleteUserData(String email, String password) async {
-    await _authService.deleteAccount(email: email, password: password);
+  Future<void> deleteUser() async {
+    await _authService.deleteAccount();
   }
 
   //TODO: Optimize this function, loads slowly. I think im using shared prefs wrong way.
@@ -168,7 +167,7 @@ class UserService {
     try {
       // Fetch user document from Firestore
       final userDoc =
-      await FirebaseFirestore.instance.collection('users').doc(uid).get();
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
 
       if (!userDoc.exists) {
         print('User document not found');
@@ -197,9 +196,7 @@ class UserService {
 
     final storageRef = FirebaseStorage.instance.ref();
     final imageRef = storageRef.child(
-      'posts/${DateTime
-          .now()
-          .millisecondsSinceEpoch}.jpg',
+      'posts/${DateTime.now().millisecondsSinceEpoch}.jpg',
     );
 
     try {
@@ -223,11 +220,9 @@ class UserService {
       await imageRef.putData(image);
       final downloadUrl = await imageRef.getDownloadURL();
 
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .update({'profile_picture': downloadUrl});
-
+      await FirebaseFirestore.instance.collection('users').doc(uid).update({
+        'profile_picture': downloadUrl,
+      });
     } catch (e) {
       print('Error uploading image: $e');
       return null;

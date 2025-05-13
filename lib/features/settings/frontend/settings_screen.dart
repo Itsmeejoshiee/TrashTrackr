@@ -29,7 +29,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final AuthService _authService = AuthService();
 
   Future<void> _logout() async {
-
     // Sign Out
     await _authService.signOut();
 
@@ -42,10 +41,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _deleteAccount() async {
-
-    // TODO: Delete account(please use the deleteAccount method in AuthBloc)
-
-    // Navigate back to AuthManager and clear navigation stack
+    final userService = UserService(context);
+    await userService.deleteUser();
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => AuthManager()),
@@ -118,7 +115,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           margin: EdgeInsets.symmetric(horizontal: 20),
           color: kRed,
           radius: BorderRadius.circular(30),
-          onPressed: () {},
+          onPressed: () {
+            _deleteAccount();
+          },
           child: Text(
             'Delete',
             style: kTitleSmall.copyWith(color: Colors.white),
