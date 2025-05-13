@@ -55,6 +55,8 @@ dependencies:
   image_picker: ^1.1.2
   #for image compression
   flutter_image_compress: ^2.4.0
+  #storing of data locally
+  shared_preferences: ^2.5.3
 
 
 
