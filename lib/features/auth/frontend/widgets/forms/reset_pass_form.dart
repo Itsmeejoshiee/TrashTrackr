@@ -76,6 +76,7 @@ class _ResetPassFormState extends State<ResetPassForm> {
                 listen: false,
               );
               await authService.resetPassword(email: _emailController.text);
+              widget.onToggle();
             },
           ),
           Flexible(child: SizedBox(height: 60)),

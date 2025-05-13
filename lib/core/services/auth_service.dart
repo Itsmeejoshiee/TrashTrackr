@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -106,7 +107,6 @@ class AuthService {
   //To do: test this function
   //Delete account
   Future<void> deleteAccount({
-    required BuildContext context,
     required String email,
     required String password,
   }) async {
@@ -117,8 +117,28 @@ class AuthService {
         password: password,
       );
       await currentUser!.reauthenticateWithCredential(credential);
-      final userService = UserService(context);
-      await userService.deleteUserData();
+
+      final user = currentUser;
+
+      if (user == null) {
+        print('No user is currently signed in.');
+        return;
+      }
+
+      try {
+        // Delete user data from Firestore
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .delete();
+        await FirebaseFirestore.instance
+            .collection('posts')
+            .doc(user.uid)
+            .delete();
+      } catch (e) {
+        print('Error deleting user data: $e');
+      }
+
       await currentUser!.delete();
       await firebaseAuth.signOut();
     } catch (e) {
