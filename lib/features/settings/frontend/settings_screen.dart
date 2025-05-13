@@ -25,12 +25,12 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _notifsEnabled = true;
 
+  final AuthService _authService = AuthService();
+
   Future<void> _logout() async {
-    // Retrieve AuthBloc
-    final authService = Provider.of<AuthService>(context, listen: false);
 
     // Sign Out
-    await authService.signOut();
+    await _authService.signOut();
 
     // Navigate back to AuthManager and clear navigation stack
     Navigator.pushAndRemoveUntil(
