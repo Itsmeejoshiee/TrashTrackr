@@ -3,6 +3,9 @@ import 'package:intl/intl.dart';
 import 'package:trashtrackr/core/models/scan_result_model.dart';
 import 'package:trashtrackr/features/log_disposal/screens/log_details.dart';
 import '../../../features/log_disposal/models/log_entry.dart';
+
+import '../../../features/log_disposal/screens/log_details_screen.dart';
+import '../../../features/log_disposal/screens/log_details_screen.dart';
 import '../../utils/constants.dart';
 
 class LogCard extends StatelessWidget {
@@ -22,6 +25,7 @@ class LogCard extends StatelessWidget {
   }
   @override
   Widget build(BuildContext context) {
+
     final double screenWidth = MediaQuery.of(context).size.width;
 
     return GestureDetector(
@@ -39,7 +43,7 @@ class LogCard extends StatelessWidget {
           ),
         );
       },
-      
+
       child: Container(
         margin: const EdgeInsets.only(bottom: 8.0),
         width: screenWidth,
