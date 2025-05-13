@@ -166,12 +166,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-                BadgeCarousel(),
+                BadgeCarousel(badgeIdList: [5, 9, 10, 3, 1, 14, 11]),
 
                 SizedBox(height: 20),
               ],
             ),
-
           ),
         );
       },
