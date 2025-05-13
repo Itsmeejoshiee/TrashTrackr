@@ -50,7 +50,7 @@ class _WasteScannerScreenState extends State<WasteScannerScreen> {
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+            body: Center(child: CircularProgressIndicator(color: kAvocado,)),
           );
         }
         if (snapshot.hasError) {
@@ -63,6 +63,16 @@ class _WasteScannerScreenState extends State<WasteScannerScreen> {
 
         return Scaffold(
           backgroundColor: kLightGray,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            leading: IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(Icons.arrow_back_ios)),
+            title: Text(
+              'Dashboard',
+              style: kTitleMedium.copyWith(fontWeight: FontWeight.bold),
+            ),
+          ),
           body: SafeArea(
             child: Center(
               child: Column(
@@ -114,18 +124,11 @@ class _WasteScannerScreenState extends State<WasteScannerScreen> {
                       }
                     },
                   ),
+                  SizedBox(height: 60),
                 ],
               ),
             ),
           ),
-
-          bottomNavigationBar: MainNavigationBar(
-            activeRoute: _selectedRoute,
-            onSelect: _selectRoute,
-          ),
-
-          floatingActionButton: MultiActionFab(),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         );
       },
     );
