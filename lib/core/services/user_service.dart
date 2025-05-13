@@ -16,7 +16,6 @@ import 'package:trashtrackr/features/settings/backend/edit_profile_bloc.dart';
 import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
 
 class UserService {
-
   UserService(this.context);
 
   final BuildContext context;
@@ -65,7 +64,6 @@ class UserService {
       // Update the user provider with the new user
       final userProvider = Provider.of<UserProvider>(context, listen: false);
       userProvider.setUser(newUser);
-
     } catch (e) {
       setErrorMessage('An error occurred. Please try again.');
       print('Error: $e');
@@ -109,7 +107,9 @@ class UserService {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
 
       // Fetch the user from Firestore
-      await userProvider.loadUserFromFirestore(_authService.currentUser?.uid ?? '');
+      await userProvider.loadUserFromFirestore(
+        _authService.currentUser?.uid ?? '',
+      );
     } catch (e) {
       print('Error: $e');
     }
@@ -132,7 +132,9 @@ class UserService {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
 
       // Fetch the user from Firestore
-      await userProvider.loadUserFromFirestore(_authService.currentUser?.uid ?? '');
+      await userProvider.loadUserFromFirestore(
+        _authService.currentUser?.uid ?? '',
+      );
     } catch (e) {
       setErrorMessage('An error occurred. Please try again.');
       print('Error: $e');
@@ -140,8 +142,8 @@ class UserService {
   }
 
   //delete user data and account
-  Future<void> deleteUserData(String email, String password) async {
-    await _authService.deleteAccount(email: email, password: password);
+  Future<void> deleteUser() async {
+    await _authService.deleteAccount();
   }
 
   Future<void> createPost(String body, String? imageUrl) async {
@@ -210,7 +212,6 @@ class UserService {
       //     .collection('users')
       //     .doc(uid)
       //     .set({'profile_picture': downloadUrl});
-
     } catch (e) {
       print('Error uploading image: $e');
       return null;
