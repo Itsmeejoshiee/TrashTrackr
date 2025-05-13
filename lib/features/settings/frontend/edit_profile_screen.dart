@@ -84,7 +84,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
 
                   Text(
-                    'Ella Green',
+                    '${user!.firstName} ${user.lastName}',
                     style: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),

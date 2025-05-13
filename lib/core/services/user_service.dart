@@ -189,28 +189,6 @@ class UserService {
     }
   }
 
-  Future<String?> getUserEmail() async {
-    final uid = _authService.currentUser?.uid;
-    if (uid == null) return null;
-
-    try {
-      final userDoc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
-      final userData = userDoc.data();
-
-      if (userData == null) {
-        print('User document not found for UID: $uid');
-        return null;
-      }
-
-      final email = userData['email'] ?? '';
-      return email;
-    } catch (e) {
-      print('Error fetching user document: $e');
-      return null;
-    }
-  }
-
   // fieldnames: first_name, last_name, email
   Future<void> updateUserInfo(String fieldName, String value) async {
     final uid = _authService.currentUser?.uid;
