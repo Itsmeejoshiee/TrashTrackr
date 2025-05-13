@@ -126,6 +126,7 @@ class UserService {
     await _authService.deleteAccount(email: email, password: password);
   }
 
+  //retrieves a stream of document
   Stream<UserModel?> getUserStream() {
     final uid = _authService.currentUser?.uid;
 
@@ -186,6 +187,20 @@ class UserService {
     } catch (e) {
       print('Error fetching user document: $e');
       return null;
+    }
+  }
+
+  // fieldnames: first_name, last_name, email
+  Future<void> updateUserInfo(String fieldName, String value) async {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return;
+
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(uid).update({
+        fieldName: value,
+      });
+    } catch (e) {
+      print('Error updating user info: $e');
     }
   }
 
