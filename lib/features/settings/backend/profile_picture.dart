@@ -10,14 +10,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 class ProfilePicture {
-
   Future<Uint8List?> selectImage(ImageSource source) async {
     // Pick an image from source (gallery or camera)
     final ImagePicker picker = ImagePicker();
     final XFile? pickedImage = await picker.pickImage(source: source);
 
     if (pickedImage != null) {
-
       // Crop image and transform it into Uint8List
       final File croppedImage = await cropImage(pickedImage);
 
@@ -42,6 +40,7 @@ class ProfilePicture {
         AndroidUiSettings(
           toolbarTitle: 'Cropper',
           toolbarColor: kAvocado,
+          statusBarColor: kAvocado,
           backgroundColor: kLightGray,
           activeControlsWidgetColor: kAppleGreen,
           toolbarWidgetColor: Colors.white,
@@ -50,9 +49,7 @@ class ProfilePicture {
         ),
         IOSUiSettings(
           title: 'Cropper',
-          aspectRatioPresets: [
-            CropAspectRatioPreset.square,
-          ],
+          aspectRatioPresets: [CropAspectRatioPreset.square],
         ),
       ],
     );
@@ -72,7 +69,9 @@ class ProfilePicture {
                 title: const Text('Gallery'),
                 onTap: () async {
                   Navigator.of(context).pop();
-                  final image = await ProfilePicture().selectImage(ImageSource.gallery);
+                  final image = await ProfilePicture().selectImage(
+                    ImageSource.gallery,
+                  );
                   await userService.uploadProfileImage(image);
                 },
               ),
@@ -81,7 +80,9 @@ class ProfilePicture {
                 title: const Text('Camera'),
                 onTap: () async {
                   Navigator.of(context).pop();
-                  final image = await ProfilePicture().selectImage(ImageSource.camera);
+                  final image = await ProfilePicture().selectImage(
+                    ImageSource.camera,
+                  );
                   await userService.uploadProfileImage(image);
                 },
               ),
@@ -91,5 +92,4 @@ class ProfilePicture {
       },
     );
   }
-
 }

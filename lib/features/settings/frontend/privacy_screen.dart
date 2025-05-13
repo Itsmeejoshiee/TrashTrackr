@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
-import 'package:trashtrackr/features/settings/frontend/widgets/list_tiles/switch_setting_tile.dart';
 import 'package:trashtrackr/features/settings/frontend/widgets/list_tiles/setting_tile_group.dart';
+import 'package:trashtrackr/features/settings/frontend/widgets/list_tiles/switch_setting_tile.dart';
 
 class PrivacyScreen extends StatefulWidget {
   const PrivacyScreen({super.key});

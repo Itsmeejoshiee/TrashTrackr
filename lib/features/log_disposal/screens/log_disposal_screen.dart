@@ -22,7 +22,7 @@ class _LogDisposalScreenState extends State<LogDisposalScreen> {
   String? selectedWasteType;
   final List<String> multiSelectOptions = [];
 
-   final List<LogEntry> logEntries = logEntry;
+  final List<LogEntry> logEntries = logEntry;
 
   @override
   void initState() {
@@ -46,7 +46,11 @@ class _LogDisposalScreenState extends State<LogDisposalScreen> {
           initialWasteType: selectedWasteType,
           initialDateRange: selectedDateRange,
           initialMultiSelect: multiSelectOptions,
-          onApply: (String? wasteType, DateTimeRange? dateRange, List<String> quickFilters) {
+          onApply: (
+            String? wasteType,
+            DateTimeRange? dateRange,
+            List<String> quickFilters,
+          ) {
             Navigator.of(modalContext).pop(); // Close the modal
             setState(() {
               selectedWasteType = wasteType;
@@ -74,9 +78,15 @@ class _LogDisposalScreenState extends State<LogDisposalScreen> {
 
     for (final option in multiSelectOptions) {
       if (option == 'Today' && _isSameDay(timestamp, now)) return true;
-      if (option == 'Yesterday' && _isSameDay(timestamp, now.subtract(const Duration(days: 1)))) return true;
-      if (option == 'Past 7 days' && timestamp.isAfter(now.subtract(const Duration(days: 7)))) return true;
-      if (option == 'Past 30 days' && timestamp.isAfter(now.subtract(const Duration(days: 30)))) return true;
+      if (option == 'Yesterday' &&
+          _isSameDay(timestamp, now.subtract(const Duration(days: 1))))
+        return true;
+      if (option == 'Past 7 days' &&
+          timestamp.isAfter(now.subtract(const Duration(days: 7))))
+        return true;
+      if (option == 'Past 30 days' &&
+          timestamp.isAfter(now.subtract(const Duration(days: 30))))
+        return true;
     }
 
     return false;
@@ -92,7 +102,8 @@ class _LogDisposalScreenState extends State<LogDisposalScreen> {
     final entryDate = DateTime(date.year, date.month, date.day);
 
     if (entryDate == today) return 'Today';
-    if (entryDate == today.subtract(const Duration(days: 1))) return 'Yesterday';
+    if (entryDate == today.subtract(const Duration(days: 1)))
+      return 'Yesterday';
 
     return DateFormat('MMMM d, y').format(entryDate);
   }
@@ -112,35 +123,57 @@ class _LogDisposalScreenState extends State<LogDisposalScreen> {
   Widget build(BuildContext context) {
     final query = searchQuery.toLowerCase();
 
-    final filteredEntries = logEntries.where((entry) {
-      final matchesSearch = entry.title.toLowerCase().contains(query) ||
-          entry.wasteType.toLowerCase().contains(query) ||
-          entry.timestamp.toString().contains(query);
+    final filteredEntries =
+        logEntries.where((entry) {
+          final matchesSearch =
+              entry.title.toLowerCase().contains(query) ||
+              entry.wasteType.toLowerCase().contains(query) ||
+              entry.timestamp.toString().contains(query);
 
-      final matchesWasteType = selectedWasteType == null || entry.wasteType == selectedWasteType;
+          final matchesWasteType =
+              selectedWasteType == null || entry.wasteType == selectedWasteType;
 
-      final matchesDateRange = selectedDateRange == null ||
-          (entry.timestamp.isAfter(selectedDateRange!.start.subtract(const Duration(days: 1))) &&
-              entry.timestamp.isBefore(selectedDateRange!.end.add(const Duration(days: 1))));
+          final matchesDateRange =
+              selectedDateRange == null ||
+              (entry.timestamp.isAfter(
+                    selectedDateRange!.start.subtract(const Duration(days: 1)),
+                  ) &&
+                  entry.timestamp.isBefore(
+                    selectedDateRange!.end.add(const Duration(days: 1)),
+                  ));
 
-      final matchesQuickOptions = multiSelectOptions.isEmpty || _matchQuickOptions(entry.timestamp);
+          final matchesQuickOptions =
+              multiSelectOptions.isEmpty || _matchQuickOptions(entry.timestamp);
 
-      return matchesSearch && matchesWasteType && matchesDateRange && matchesQuickOptions;
-    }).toList();
+          return matchesSearch &&
+              matchesWasteType &&
+              matchesDateRange &&
+              matchesQuickOptions;
+        }).toList();
 
     final groupedByDate = _groupEntriesByDate(filteredEntries);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F4F4),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back_ios),
+        ),
+        title: Text(
+          'Dashboard',
+          style: kTitleMedium.copyWith(fontWeight: FontWeight.bold),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),
         child: Column(
           children: [
-            const SizedBox(height: 73),
-            Image.asset(
-              'assets/images/titles/log_disposal.png',
-              height: 100,
-            ),
+            const SizedBox(height: 20),
+            Image.asset('assets/images/titles/log_disposal.png', height: 100),
             const SizedBox(height: 20),
             CustomSearchBar(
               controller: _searchController,
@@ -153,41 +186,50 @@ class _LogDisposalScreenState extends State<LogDisposalScreen> {
             ),
             if (filteredEntries.isEmpty)
               Expanded(
-                child: Center( // Center the message both vertically and horizontally
+                child: Center(
+                  // Center the message both vertically and horizontally
                   child: Text(
                     "No results found.",
-                    style: kTitleMedium.copyWith(color: kDarkGrey), // Optional: Add styling
+                    style: kTitleMedium.copyWith(
+                      color: kDarkGrey,
+                    ), // Optional: Add styling
                   ),
                 ),
               )
             else
               Expanded(
                 child: ListView(
-                  children: groupedByDate.entries.map((entry) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+                  children:
+                      groupedByDate.entries.map((entry) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              entry.key,
-                              style: kTitleMedium.copyWith(
-                                color: kForestGreen,
-                                fontWeight: FontWeight.w600,
-                              ),
+                            Row(
+                              children: [
+                                Text(
+                                  entry.key,
+                                  style: kTitleMedium.copyWith(
+                                    color: kForestGreen,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                const Expanded(
+                                  child: Divider(
+                                    thickness: 2,
+                                    color: kDarkGrey,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 8),
-                            const Expanded(
-                              child: Divider(thickness: 2, color: kDarkGrey),
-                            ),
+                            const SizedBox(height: 8),
+                            ...entry.value
+                                .map((log) => LogCard(entry: log))
+                                .toList(),
+                            const SizedBox(height: 16),
                           ],
-                        ),
-                        const SizedBox(height: 8),
-                        ...entry.value.map((log) => LogCard(entry: log)).toList(),
-                        const SizedBox(height: 16),
-                      ],
-                    );
-                  }).toList(),
+                        );
+                      }).toList(),
                 ),
               ),
           ],

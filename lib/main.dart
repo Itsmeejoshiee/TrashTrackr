@@ -15,7 +15,6 @@ import 'package:trashtrackr/features/notifs/frontend/notif_screen.dart';
 import 'package:trashtrackr/features/profile/frontend/profile_screen.dart';
 import 'package:trashtrackr/features/settings/frontend/edit_profile_screen.dart';
 import 'package:trashtrackr/features/settings/frontend/privacy_screen.dart';
-import 'package:trashtrackr/features/settings/frontend/settings_screen.dart';
 import 'package:trashtrackr/features/waste_scanner/frontend/scan_result_screen.dart';
 import 'package:trashtrackr/features/waste_scanner/frontend/waste_scanner_screen.dart';
 import 'package:trashtrackr/features/maps/frontend/map_screen.dart';
@@ -31,9 +30,7 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
 
-  runApp(
-    const TrashTrackr(),
-  );
+  runApp(const TrashTrackr());
 }
 
 class TrashTrackr extends StatelessWidget {

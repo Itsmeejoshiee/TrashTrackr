@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
+import 'package:trashtrackr/core/widgets/buttons/rounded_rectangle_button.dart';
 import 'package:trashtrackr/features/about/frontend/about_screen.dart';
 import 'package:trashtrackr/features/auth/backend/auth_manager.dart';
 import 'package:trashtrackr/features/faqs/frontend/faq_screen.dart';
-import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
 import 'package:trashtrackr/features/settings/frontend/edit_profile_screen.dart';
 import 'package:trashtrackr/features/settings/frontend/privacy_screen.dart';
+import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
 import 'package:trashtrackr/features/settings/frontend/widgets/buttons/edit_profile_picture_button.dart';
-import 'package:trashtrackr/core/widgets/buttons/rounded_rectangle_button.dart';
-import 'widgets/list_tiles/setting_tile.dart';
-import 'widgets/list_tiles/switch_setting_tile.dart';
-import 'widgets/list_tiles/setting_tile_group.dart';
+import 'package:trashtrackr/features/settings/frontend/widgets/list_tiles/setting_tile.dart';
+import 'package:trashtrackr/features/settings/frontend/widgets/list_tiles/setting_tile_group.dart';
+import 'package:trashtrackr/features/settings/frontend/widgets/list_tiles/switch_setting_tile.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -27,6 +26,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _notifsEnabled = true;
 
   final AuthService _authService = AuthService();
+  final UserService _userService = UserService();
 
   Future<void> _logout() async {
     // Sign Out
@@ -41,8 +41,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _deleteAccount() async {
-    final userService = UserService();
-    await userService.deleteUser();
+    // TODO: Delete account(please use the deleteAccount method in AuthBloc)
+
+    // Navigate back to AuthManager and clear navigation stack
+
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => AuthManager()),
@@ -115,9 +117,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           margin: EdgeInsets.symmetric(horizontal: 20),
           color: kRed,
           radius: BorderRadius.circular(30),
-          onPressed: () {
-            _deleteAccount();
-          },
+          onPressed: () {},
           child: Text(
             'Delete',
             style: kTitleSmall.copyWith(color: Colors.white),
@@ -129,125 +129,150 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kLightGray,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back_ios),
-        ),
-        title: Text(
-          'Settings',
-          style: kTitleMedium.copyWith(fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: Column(
-            children: [
-              // Edit Profile Picture
-              EditProfilePictureButton(
-                onPressed: () async {
-                  final profilePicture = ProfilePicture();
-                  await profilePicture.update(context);
-                },
-              ),
+    return StreamBuilder(
+      stream: _userService.getUserStream(),
+      builder: (context, snapshot) {
+        print('SNAPSHOT DATA');
+        print(snapshot.data);
 
-              Text(
-                'Ella Green',
-                style: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator(color: kAvocado));
+        }
 
-              // Offset
-              Flexible(child: SizedBox(height: 35)),
+        if (!snapshot.hasData || snapshot.data == null) {
+          return Center(child: Text('User data is not available.'));
+        }
 
-              SettingTileGroup(
+        final user = snapshot.data;
+        return Scaffold(
+          backgroundColor: kLightGray,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            leading: IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(Icons.arrow_back_ios),
+            ),
+            title: Text(
+              'Settings',
+              style: kTitleMedium.copyWith(fontWeight: FontWeight.bold),
+            ),
+          ),
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Column(
                 children: [
-                  SettingTile(
-                    title: 'Edit Profile Details',
-                    iconData: Icons.edit,
-                    onTap:
-                        () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EditProfileScreen(),
-                          ),
-                        ),
-                  ),
-
-                  SwitchSettingTile(
-                    title: 'Notifications',
-                    iconData: Icons.notifications,
-                    value: _notifsEnabled,
-                    onChanged: (value) {
-                      setState(() {
-                        _notifsEnabled = value;
-                      });
+                  // Edit Profile Picture
+                  EditProfilePictureButton(
+                    image:
+                        (user!.profilePicture.isNotEmpty)
+                            ? NetworkImage(user.profilePicture)
+                            : AssetImage(
+                              'assets/images/placeholder_profile.jpg',
+                            ),
+                    onPressed: () async {
+                      final profilePicture = ProfilePicture();
+                      await profilePicture.update(context);
                     },
                   ),
 
-                  SettingTile(
-                    title: 'Privacy Options',
-                    iconData: Icons.shield,
-                    onTap:
-                        () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PrivacyScreen(),
-                          ),
-                        ),
+                  Text(
+                    '${user.firstName} ${user.lastName}',
+                    style: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
                   ),
 
-                  SettingTile(
-                    title: 'Help & FAQs',
-                    iconData: Icons.help,
-                    onTap:
-                        () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => FaqScreen()),
-                        ),
+                  // Offset
+                  Flexible(child: SizedBox(height: 35)),
+
+                  SettingTileGroup(
+                    children: [
+                      SettingTile(
+                        title: 'Edit Profile Details',
+                        iconData: Icons.edit,
+                        onTap:
+                            () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditProfileScreen(),
+                              ),
+                            ),
+                      ),
+
+                      SwitchSettingTile(
+                        title: 'Notifications',
+                        iconData: Icons.notifications,
+                        value: _notifsEnabled,
+                        onChanged: (value) {
+                          setState(() {
+                            _notifsEnabled = value;
+                          });
+                        },
+                      ),
+
+                      SettingTile(
+                        title: 'Privacy Options',
+                        iconData: Icons.shield,
+                        onTap:
+                            () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PrivacyScreen(),
+                              ),
+                            ),
+                      ),
+
+                      SettingTile(
+                        title: 'Help & FAQs',
+                        iconData: Icons.help,
+                        onTap:
+                            () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FaqScreen(),
+                              ),
+                            ),
+                      ),
+
+                      SettingTile(
+                        title: 'About TrashTrackr',
+                        iconData: Icons.info,
+                        onTap:
+                            () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AboutScreen(),
+                              ),
+                            ),
+                      ),
+
+                      SettingTile(
+                        title: 'Logout',
+                        iconData: Icons.logout,
+                        color: kRed,
+                        onTap: _logoutAlert,
+                      ),
+                    ],
                   ),
 
-                  SettingTile(
-                    title: 'About TrashTrackr',
-                    iconData: Icons.info,
-                    onTap:
-                        () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AboutScreen(),
-                          ),
-                        ),
+                  // Flexible Offset
+                  Flexible(child: SizedBox(height: 120)),
+
+                  // Delete Account Butotn
+                  RoundedRectangleButton(
+                    backgroundColor: kRed,
+                    title: 'Delete Account',
+                    onPressed: _deleteAccountAlert,
                   ),
 
-                  SettingTile(
-                    title: 'Logout',
-                    iconData: Icons.logout,
-                    color: kRed,
-                    onTap: _logoutAlert,
-                  ),
+                  // Offset
+                  SizedBox(height: 15),
                 ],
               ),
-
-              // Flexible Offset
-              Flexible(child: SizedBox(height: 120)),
-
-              // Delete Account Butotn
-              RoundedRectangleButton(
-                backgroundColor: kRed,
-                title: 'Delete Account',
-                onPressed: _deleteAccountAlert,
-              ),
-
-              // Offset
-              SizedBox(height: 15),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

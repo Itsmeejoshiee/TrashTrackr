@@ -9,6 +9,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trashtrackr/core/models/activity_model.dart';
 import 'package:trashtrackr/core/models/user_model.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:trashtrackr/core/user_provider.dart';
@@ -17,8 +18,6 @@ import 'package:trashtrackr/features/settings/backend/edit_profile_bloc.dart';
 import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
 
 class UserService {
-
-
   final AuthService _authService = AuthService();
 
   Future<void> createUserAccount({
@@ -52,6 +51,9 @@ class UserService {
         email: emailController.text.trim(),
         firstName: firstNameController.text.trim(),
         lastName: lastNameController.text.trim(),
+        profilePicture: '',
+        followerCount: 0,
+        followingCount: 0,
       );
 
       // Save the new user to Firestore
@@ -82,6 +84,9 @@ class UserService {
       email: AuthService().currentUser?.email ?? '',
       firstName: firstName,
       lastName: lastName,
+      profilePicture: '',
+      followerCount: 0,
+      followingCount: 0,
     );
 
     await FirebaseFirestore.instance
@@ -117,15 +122,40 @@ class UserService {
   }
 
   //delete user data and account
-  Future<void> deleteUser() async {
-    await _authService.deleteAccount();
+  Future<void> deleteUser(String email, String password) async {
+    await _authService.deleteAccount(email: email, password: password);
+  }
+
+  //retrieves a stream of document
+  Stream<UserModel?> getUserStream() {
+    final uid = _authService.currentUser?.uid;
+
+    if (uid == null) {
+      print('UID is null, cannot fetch user stream');
+      return Stream.value(null);
+    }
+
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .snapshots()
+        .map((snapshot) {
+          if (snapshot.exists) {
+            print('Snapshot exists.');
+            print(snapshot.data());
+            return UserModel.fromMap(snapshot.data()!);
+          } else {
+            print('User document does not exist');
+            return null;
+          }
+        });
   }
 
   //TODO: Optimize this function, loads slowly. I think im using shared prefs wrong way.
 
   Future<String?> getFullName() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final uid = AuthService().currentUser?.uid;
+    final uid = _authService.currentUser?.uid;
 
     if (uid == null) {
       print('UID is null, cannot fetch full name');
@@ -160,8 +190,55 @@ class UserService {
     }
   }
 
+  // fieldnames: first_name, last_name, email
+  Future<void> updateUserInfo(String fieldName, String value) async {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return;
+
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(uid).update({
+        fieldName: value,
+      });
+    } catch (e) {
+      print('Error updating user info: $e');
+    }
+  }
+
+  Future<void> logActivity(String activity) async {
+    final uid = _authService.currentUser?.uid;
+    final activityModel = ActivityModel(
+      activity: activity,
+      timestamp: Timestamp.now(),
+    );
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('activity_log')
+        .add(activityModel.toMap());
+  }
+
+  Stream<List<ActivityModel>> getActivityStream() {
+    final uid = _authService.currentUser?.uid;
+
+    if (uid == null) {
+      print('UID is null, cannot fetch activity stream');
+      return Stream.value([]);
+    }
+
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('activity_log')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return ActivityModel.fromMap(doc.data());
+      }).toList();
+    });
+  }
+
   Future<void> createPost(String body, String? imageUrl) async {
-    final uid = AuthService().currentUser?.uid;
+    final uid = _authService.currentUser?.uid;
     if (uid == null) return;
 
     try {
