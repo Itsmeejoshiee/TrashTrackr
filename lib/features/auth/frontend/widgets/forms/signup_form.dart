@@ -109,7 +109,7 @@ class _SignupFormState extends State<SignupForm> {
           RoundedRectangleButton(
             title: 'Sign up',
             onPressed: () async {
-              final userService = UserService(context);
+              final userService = UserService();
               await userService.createUserAccount(
                 emailController: _emailController,
                 passwordController: _passwordController,
@@ -173,7 +173,7 @@ class _SignupFormState extends State<SignupForm> {
               AuthProviderButton(
                 padding: EdgeInsets.all(14),
                 onPressed: () async {
-                  final userService = UserService(context);
+                  final userService = UserService();
                   await userService.createUserGoogleAccount();
                 },
                 child: Image.asset('assets/images/icons/google_green.png'),

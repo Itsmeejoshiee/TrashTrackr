@@ -17,9 +17,7 @@ import 'package:trashtrackr/features/settings/backend/edit_profile_bloc.dart';
 import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
 
 class UserService {
-  UserService(this.context);
 
-  final BuildContext context;
 
   final AuthService _authService = AuthService();
 
