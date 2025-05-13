@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trashtrackr/core/models/user_model.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:trashtrackr/core/user_provider.dart';
@@ -122,6 +123,45 @@ class UserService {
     await _authService.deleteAccount();
   }
 
+  //TODO: Optimize this function, loads slowly. I think im using shared prefs wrong way.
+
+  Future<String?> getFullName() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final uid = AuthService().currentUser?.uid;
+
+    if (uid == null) {
+      print('UID is null, cannot fetch full name');
+      return null;
+    }
+
+    try {
+      final userDoc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final userData = userDoc.data();
+
+      if (userData == null) {
+        print('User document not found for UID: $uid');
+        return null;
+      }
+
+      final firstName = userData['first_name'] ?? '';
+      final lastName = userData['last_name'] ?? '';
+      final fullName = '$firstName $lastName'.trim();
+
+      final cachedFullName = prefs.getString('fullName');
+      if (cachedFullName != fullName) {
+        await prefs.setString('fullName', fullName);
+        print('Full name updated in SharedPreferences: $fullName');
+      } else {
+        print('No Updates in SharedPreferences.');
+      }
+      return cachedFullName;
+    } catch (e) {
+      print('Error fetching user document: $e');
+      return null;
+    }
+  }
+
   Future<void> createPost(String body, String? imageUrl) async {
     final uid = AuthService().currentUser?.uid;
     if (uid == null) return;
@@ -137,13 +177,13 @@ class UserService {
       }
 
       final userData = userDoc.data()!;
-      final firstName = userData['firstName'] ?? '';
-      final lastName = userData['lastName'] ?? '';
+      final firstName = userData['first_name'] ?? '';
+      final lastName = userData['last_name'] ?? '';
       final fullName = '$firstName $lastName'.trim();
 
       await FirebaseFirestore.instance.collection('posts').add({
         'uid': uid,
-        'fullname': fullName,
+        'full_name': fullName,
         'date': DateTime.now(),
         'body': body,
         'image_url': imageUrl,

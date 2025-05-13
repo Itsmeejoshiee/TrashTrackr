@@ -14,10 +14,16 @@ class LogCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        // Navigate to LogDetailsScreen when the card is clicked
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => LogDetailsScreen(entry: entry),
+            builder: (context) => LogDetailsScreen(
+              entry: entry,
+              onImageUpdated: (newImageUrl) {
+                entry.imageUrl = newImageUrl; // Update the image URL dynamically
+              }, onDetailsUpdated: (String notes, String quantity) {  },
+            ),
           ),
         );
       },
@@ -30,7 +36,7 @@ class LogCard extends StatelessWidget {
             // Image on the left
             ClipRRect(
               borderRadius: BorderRadius.circular(6.03), // Rounded corners
-              child: _buildImage(entry.imageUrl),
+              child: _buildImage(entry.imageUrl), // Dynamically display the updated image
             ),
             const SizedBox(width: 12), // Space between image and text
 
