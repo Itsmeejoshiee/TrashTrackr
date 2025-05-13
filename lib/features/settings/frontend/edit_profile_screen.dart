@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
+import 'package:trashtrackr/core/services/user_service.dart';
+import 'package:trashtrackr/core/user_provider.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
+import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
 import 'package:trashtrackr/features/settings/frontend/widgets/buttons/edit_profile_picture_button.dart';
 import 'package:trashtrackr/core/widgets/text_fields/profile_text_field.dart';
 import 'package:trashtrackr/core/widgets/buttons/rounded_rectangle_button.dart';
@@ -16,6 +21,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lasttNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+
+  final ProfilePicture profilePicture = ProfilePicture();
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +45,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: Column(
             children: [
               // Edit Profile Picture
-              EditProfilePictureButton(onPressed: () {}),
+              EditProfilePictureButton(
+                onPressed: () async {
+                  await profilePicture.update(context);
+                },
+              ),
 
               Text(
                 'Ella Green',
