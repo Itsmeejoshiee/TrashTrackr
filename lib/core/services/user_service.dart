@@ -9,6 +9,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trashtrackr/core/models/activity_model.dart';
 import 'package:trashtrackr/core/models/user_model.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:trashtrackr/core/user_provider.dart';
@@ -190,11 +191,35 @@ class UserService {
 
   Future<void> logActivity(String activity) async {
     final uid = _authService.currentUser?.uid;
+    final activityModel = ActivityModel(
+      activity: activity,
+      timestamp: Timestamp.now(),
+    );
     await FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
         .collection('activity_log')
-        .add({'activity': activity, 'timestamp': DateTime.now()});
+        .add(activityModel.toMap());
+  }
+
+  Stream<List<ActivityModel>> getActivityStream() {
+    final uid = _authService.currentUser?.uid;
+
+    if (uid == null) {
+      print('UID is null, cannot fetch activity stream');
+      return Stream.value([]);
+    }
+
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('activity_log')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return ActivityModel.fromMap(doc.data());
+      }).toList();
+    });
   }
 
   Future<void> createPost(String body, String? imageUrl) async {
