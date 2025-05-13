@@ -27,6 +27,32 @@ final class LogEntry {
     this.notes,
     this.quantity,
   });
+  LogEntry copyWith({
+    String? title,
+    List<String>? productProperties,
+    String? productInfo,
+    String? notes,
+    String? quantity,
+    String? disposalGuideProTip,
+    List<String>? disposalGuideToDo,
+    List<String>? disposalGuideNotToDo,
+    String? wasteType,
+  }) {
+    return LogEntry(
+      imageUrl: imageUrl,
+      title: title ?? this.title,
+      wasteType: wasteType ?? this.wasteType,
+      timestamp: timestamp,
+      productInfo: productInfo ?? this.productInfo,
+      productProperties: productProperties ?? this.productProperties,
+      disposalGuideToDo: disposalGuideToDo ?? this.disposalGuideToDo,
+      disposalGuideNotToDo: disposalGuideNotToDo ?? this.disposalGuideNotToDo,
+      disposalGuideProTip: disposalGuideProTip ?? this.disposalGuideProTip,
+      disposalLocation: disposalLocation,
+      notes: notes ?? this.notes,
+      quantity: quantity ?? this.quantity,
+    );
+  }
 }
 enum WasteType {
   recyclable,
