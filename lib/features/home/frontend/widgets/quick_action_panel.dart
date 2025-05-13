@@ -26,27 +26,27 @@ class QuickActionPanel extends StatelessWidget {
       children: [
         QuickActionButton(
           imagePath: 'assets/images/icons/waste_stats.png',
-          onPressed: () {},
+          onPressed: onWasteStats,
         ),
         QuickActionButton(
           imagePath: 'assets/images/icons/community.png',
-          onPressed: () {},
+          onPressed: onCommunity,
         ),
         QuickActionButton(
           imagePath: 'assets/images/icons/disposal_locations.png',
-          onPressed: () {},
+          onPressed: onDisposalLoc,
         ),
         QuickActionButton(
           imagePath: 'assets/images/icons/games.png',
-          onPressed: () {},
+          onPressed: onGames,
         ),
         QuickActionButton(
           imagePath: 'assets/images/icons/log_disposal.png',
-          onPressed: () {},
+          onPressed: onLogDisposal,
         ),
         QuickActionButton(
           imagePath: 'assets/images/icons/scan.png',
-          onPressed: () {},
+          onPressed: onScan,
         ),
       ],
     );
