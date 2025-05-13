@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
@@ -23,6 +25,9 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final AuthService _authService = AuthService();
+  final UserService _userService = UserService();
+
   NavRoute _selectedRoute = NavRoute.profile;
   ProfileSection _selectedSection = ProfileSection.posts;
   String? fullName;
@@ -34,7 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _loadFullName() async {
-    final name = await UserService().getFullName();
+    final name = await _userService.getFullName();
     setState(() {
       fullName = name;
     });
@@ -103,113 +108,128 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-    return Stack(
-      children: [
-        Container(color: kLightGray),
-        Container(
-          width: double.infinity,
-          height: screenHeight / 6,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment(0.50, 0.00),
-              end: Alignment(0.50, 1.50),
-              colors: [
-                kAvocado.withOpacity(0.4),
-                kAvocado.withOpacity(0.2),
-                Colors.white.withOpacity(0),
-                Colors.white,
-              ],
+    return StreamBuilder(
+      stream: _userService.getUserStream(),
+      builder: (context, snapshot) {
+        print('SNAPSHOT DATA');
+        print(snapshot.data);
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator(color: kAvocado,));
+        }
+
+        if (!snapshot.hasData || snapshot.data == null) {
+          return Center(child: Text('User data is not available.'));
+        }
+
+        final user = snapshot.data;
+        return Stack(
+          children: [
+            Container(color: kLightGray),
+            Container(
+              width: double.infinity,
+              height: screenHeight / 6,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment(0.50, 0.00),
+                  end: Alignment(0.50, 1.50),
+                  colors: [
+                    kAvocado.withOpacity(0.4),
+                    kAvocado.withOpacity(0.2),
+                    Colors.white.withOpacity(0),
+                    Colors.white,
+                  ],
+                ),
+              ),
             ),
-          ),
-        ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          body: SafeArea(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: IconButton(
-                        onPressed:
-                            () => Navigator.push(
+            Scaffold(
+              backgroundColor: Colors.transparent,
+              body: SafeArea(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            onPressed:
+                                () => Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => SettingsScreen(),
                               ),
                             ),
-                        icon: Icon(Icons.settings),
-                      ),
+                            icon: Icon(Icons.settings),
+                          ),
+                        ),
+
+                        // Profile Header
+                        ProfileHeader(
+                          username: '${user!.firstName} ${user.lastName}',
+                          image: (user.profilePicture.isNotEmpty) ? NetworkImage(
+                            user.profilePicture,
+                          ) : AssetImage('assets/images/placeholder_profile.jpg'),
+                          followers: user.followerCount,
+                          following: user.followingCount,
+                        ),
+
+                        SizedBox(height: 38),
+
+                        // Eco Streak Section
+                        StreakCalendar(),
+
+                        SizedBox(height: 31),
+
+                        // Badges
+                        BadgeGrid(badgeIdList: [1, 2, 3, 4, 5, 6, 7, 8]),
+
+                        SizedBox(height: 33),
+
+                        ProfileSwitchTile(
+                          selected: _selectedSection,
+                          onPosts: () {
+                            setState(() {
+                              _selectedSection = ProfileSection.posts;
+                            });
+                          },
+                          onWasteLog: () {
+                            setState(() {
+                              _selectedSection = ProfileSection.wasteLog;
+                            });
+                          },
+                          onCleanup: () {
+                            setState(() {
+                              _selectedSection = ProfileSection.cleanup;
+                            });
+                          },
+                        ),
+
+                        SizedBox(height: 18),
+
+                        // View Body & Animated Switcher
+                        AnimatedSwitcher(
+                          duration: Duration(milliseconds: 300),
+                          transitionBuilder:
+                              (child, animation) => FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          ),
+                          child: _getSectionWidget(),
+                        ),
+
+                        SizedBox(height: 40),
+                      ],
                     ),
-
-                    // Profile Header
-                    ProfileHeader(
-                      username: fullName ?? '',
-                      image: NetworkImage(
-                        'https://s.yimg.com/ny/api/res/1.2/xezrRzHlbJxiqI0S_Z15UA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTk2MDtoPTQ3NQ--/https://media.zenfs.com/en/buzzfeed_articles_778/2fef0be25b6343c5dbf349561ab37a3c',
-                      ),
-                      followers: 353,
-                      following: 257,
-                    ),
-
-                    SizedBox(height: 38),
-
-                    // Eco Streak Section
-                    Text(
-                      'Eco Streak',
-                      style: kTitleLarge.copyWith(fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.left,
-                    ),
-                    StreakCalendar(),
-
-                    SizedBox(height: 31),
-
-                    // Badges
-                    BadgeGrid(badgeIdList: [1, 2, 3, 4, 5, 6, 7, 8]),
-
-                    SizedBox(height: 33),
-
-                    ProfileSwitchTile(
-                      selected: _selectedSection,
-                      onPosts: () {
-                        setState(() {
-                          _selectedSection = ProfileSection.posts;
-                        });
-                      },
-                      onWasteLog: () {
-                        setState(() {
-                          _selectedSection = ProfileSection.wasteLog;
-                        });
-                      },
-                      onCleanup: () {
-                        setState(() {
-                          _selectedSection = ProfileSection.cleanup;
-                        });
-                      },
-                    ),
-
-                    SizedBox(height: 18),
-
-                    // View Body & Animated Switcher
-                    AnimatedSwitcher(
-                      duration: Duration(milliseconds: 300),
-                      transitionBuilder:
-                          (child, animation) =>
-                              FadeTransition(opacity: animation, child: child),
-                      child: _getSectionWidget(),
-                    ),
-
-                    SizedBox(height: 40),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+
+      },
     );
   }
 }
