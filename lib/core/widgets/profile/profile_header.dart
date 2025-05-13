@@ -32,8 +32,8 @@ class ProfileHeader extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Wrap(
-              direction: Axis.vertical,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
                   '$followers',
@@ -53,8 +53,8 @@ class ProfileHeader extends StatelessWidget {
               foregroundImage: image,
               radius: 46,
             ),
-            Wrap(
-              direction: Axis.vertical,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
                   '$following',
