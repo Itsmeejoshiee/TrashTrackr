@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:trashtrackr/core/services/user_service.dart';
@@ -8,13 +7,13 @@ import 'package:trashtrackr/core/widgets/buttons/rounded_rectangle_button.dart';
 import 'package:trashtrackr/features/about/frontend/about_screen.dart';
 import 'package:trashtrackr/features/auth/backend/auth_manager.dart';
 import 'package:trashtrackr/features/faqs/frontend/faq_screen.dart';
-import 'package:trashtrackr/features/settings/backend/frontend/edit_profile_screen.dart';
-import 'package:trashtrackr/features/settings/backend/frontend/privacy_screen.dart';
-import 'package:trashtrackr/features/settings/backend/frontend/widgets/buttons/edit_profile_picture_button.dart';
-import 'package:trashtrackr/features/settings/backend/frontend/widgets/list_tiles/setting_tile.dart';
-import 'package:trashtrackr/features/settings/backend/frontend/widgets/list_tiles/setting_tile_group.dart';
-import 'package:trashtrackr/features/settings/backend/frontend/widgets/list_tiles/switch_setting_tile.dart';
+import 'package:trashtrackr/features/settings/frontend/edit_profile_screen.dart';
+import 'package:trashtrackr/features/settings/frontend/privacy_screen.dart';
 import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
+import 'package:trashtrackr/features/settings/frontend/widgets/buttons/edit_profile_picture_button.dart';
+import 'package:trashtrackr/features/settings/frontend/widgets/list_tiles/setting_tile.dart';
+import 'package:trashtrackr/features/settings/frontend/widgets/list_tiles/setting_tile_group.dart';
+import 'package:trashtrackr/features/settings/frontend/widgets/list_tiles/switch_setting_tile.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});

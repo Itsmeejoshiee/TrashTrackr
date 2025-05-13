@@ -24,8 +24,8 @@ class UserModel {
       firstName: data['first_name'],
       lastName: data['last_name'],
       profilePicture: data['profile_picture'],
-      followerCount: data['followers'],
-      followingCount: data['following'],
+      followerCount: data['follower_count'],
+      followingCount: data['following_count'],
     );
   }
 

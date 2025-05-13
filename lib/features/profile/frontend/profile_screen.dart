@@ -15,7 +15,7 @@ import 'package:trashtrackr/core/widgets/profile/cleanup_card.dart';
 import 'package:trashtrackr/core/widgets/profile/streak_calendar.dart';
 import 'package:trashtrackr/core/widgets/profile/badge_grid.dart';
 import 'package:trashtrackr/core/widgets/profile/wastelog_board.dart';
-import 'package:trashtrackr/features/settings/backend/frontend/settings_screen.dart';
+import 'package:trashtrackr/features/settings/frontend/settings_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
