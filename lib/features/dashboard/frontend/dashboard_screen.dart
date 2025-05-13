@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
 import 'package:trashtrackr/core/widgets/buttons/multi_action_fab.dart';
-import 'package:trashtrackr/core/widgets/text_fields/dashboard_search_bar.dart';
-import 'widgets/dashboard_app_bar.dart';
-import 'widgets/quick_action_panel.dart';
-import 'widgets/section_label.dart';
-import 'widgets/stat_board.dart';
+import 'package:trashtrackr/features/badges/frontend/badge_screen.dart';
+import 'package:trashtrackr/features/feed/frontend/feed_screen.dart';
+import 'package:trashtrackr/features/home/frontend/home_screen.dart';
+import 'package:trashtrackr/features/profile/frontend/profile_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -16,7 +14,7 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  NavRoute _selectedRoute = NavRoute.badge;
+  NavRoute _selectedRoute = NavRoute.home;
 
   void _selectRoute(NavRoute route) {
     setState(() {
@@ -24,69 +22,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
+  Widget _routeBuilder(NavRoute route) {
+    switch (route) {
+      case NavRoute.home:
+        return HomeScreen();
+      case NavRoute.feed:
+        return FeedScreen();
+      case NavRoute.badge:
+        return BadgeScreen();
+      case NavRoute.profile:
+        return ProfileScreen();
+      default:
+        return Center(child: Text('Unknown route'));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32),
-        child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            children: [
-              // Offset
-              SizedBox(height: 50),
-
-              // Dashboard App Bar
-              DashboardAppBar(username: 'User', onNotifs: () {}),
-
-              DashboardSearchBar(controller: TextEditingController()),
-
-              QuickActionPanel(
-                onWasteStats: () {},
-                onCommunity: () {},
-                onDisposalLoc: () {},
-                onGames: () {},
-                onLogDisposal: () {},
-                onScan: () {},
-              ),
-
-              SizedBox(height: 20),
-
-              // Tips n Tricks
-              Column(
-                children: [
-                  // Tips n Tricks & Show more
-                  SectionLabel(label: 'Tips n Tricks', onShowMore: () {}),
-
-                  Container(
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    height: 180,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          'assets/images/covers/tips_n_tricks.png',
-                        ),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SectionLabel(label: 'Current Stats', onShowMore: () {}),
-                  StatBoard(plasticDisposals: 62, streak: 22, badges: 56),
-                ],
-              ),
-              
-            ],
-          ),
-        ),
-      ),
+      body: _routeBuilder(_selectedRoute),
 
       bottomNavigationBar: MainNavigationBar(
         activeRoute: _selectedRoute,

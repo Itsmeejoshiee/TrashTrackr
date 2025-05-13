@@ -17,13 +17,12 @@ class LogCard extends StatelessWidget {
   final String type;
 
 
-
   @override
   Widget build(BuildContext context) {
     final Map<String, String> typeIconMap = {
-      'Recycle': 'assets/images/recycling.png',
-      'Biodegradable': 'assets/images/leaf_brown.png',
-      'Non-Biodegradable': 'assets/images/trashcan.png',
+      'Recycle': 'assets/images/icons/recycling.png',
+      'Biodegradable': 'assets/images/icons/leaf_brown.png',
+      'Non-Biodegradable': 'assets/images/icons/trashcan.png',
     };
 
     final String? iconPath = typeIconMap[type];
@@ -51,7 +50,7 @@ class LogCard extends StatelessWidget {
               ),
 
               Text(
-                DateFormat.yMMMd().add_jm().format(dateTime),
+                '${DateFormat.yMMMd().format(dateTime)} • ${DateFormat.jm().format(dateTime)}',
                 style: kLabelMedium.copyWith(color: kGray.withOpacity(0.3), fontWeight: FontWeight.w800),
               ),
 

@@ -1,11 +1,9 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
 import 'package:trashtrackr/core/widgets/buttons/multi_action_fab.dart';
 import 'package:trashtrackr/core/widgets/text_fields/dashboard_search_bar.dart';
-import 'package:trashtrackr/features/dashboard/frontend/widgets/section_label.dart';
+import 'package:trashtrackr/features/home/frontend/widgets/section_label.dart';
 import 'package:trashtrackr/features/feed/frontend/widgets/recycling_guide_card.dart';
 import 'package:trashtrackr/features/feed/frontend/widgets/recycling_guide_carousel.dart';
 import 'package:trashtrackr/core/widgets/profile/post_card.dart';
@@ -43,7 +41,7 @@ class _FeedScreenState extends State<FeedScreen> {
         timestamp: 'Today @ 10:42 am',
         desc:
             'Logged 5 disposals today! Finally getting the hang of sorting my waste without checking the label every time 😅\nToday’s highlight: discovering my shampoo bottle is recyclable. Score! ♻️🧴',
-        image: AssetImage('assets/images/intro0.png'),
+        image: AssetImage('assets/images/intro/intro0.png'),
       ),
     ];
     return posts;
@@ -108,14 +106,6 @@ class _FeedScreenState extends State<FeedScreen> {
           ],
         ),
       ),
-
-      bottomNavigationBar: MainNavigationBar(
-        activeRoute: _selectedRoute,
-        onSelect: _selectRoute,
-      ),
-
-      floatingActionButton: MultiActionFab(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

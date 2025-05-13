@@ -3,21 +3,23 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
-import 'package:trashtrackr/core/widgets/buttons/multi_action_fab.dart';
 import 'package:trashtrackr/features/waste_scanner/backend/camera_module.dart';
 import 'package:trashtrackr/features/waste_scanner/backend/gemini_service.dart';
+import 'package:trashtrackr/features/waste_scanner/frontend/scan_result_screen.dart';
+import 'package:trashtrackr/core/models/scan_result_model.dart';
+import '../../../core/widgets/buttons/multi_action_fab.dart';
+import 'scan_result_screen.dart';
 
-class WasteScannerPage extends StatefulWidget {
-  const WasteScannerPage({Key? key}) : super(key: key);
+class WasteScannerScreen extends StatefulWidget {
+  const WasteScannerScreen({Key? key}) : super(key: key);
 
   @override
-  _WasteScannerPageState createState() => _WasteScannerPageState();
+  _WasteScannerScreenState createState() => _WasteScannerScreenState();
 }
 
-class _WasteScannerPageState extends State<WasteScannerPage> {
+class _WasteScannerScreenState extends State<WasteScannerScreen> {
   late final Future<CameraController> _controllerFuture;
   final _service = CameraModule();
-
   NavRoute _selectedRoute = NavRoute.badge;
 
   void _selectRoute(NavRoute route) {
@@ -34,7 +36,6 @@ class _WasteScannerPageState extends State<WasteScannerPage> {
 
   @override
   void dispose() {
-    // dispose once the Future completes
     _controllerFuture.then((c) => c.dispose());
     super.dispose();
   }
@@ -49,7 +50,7 @@ class _WasteScannerPageState extends State<WasteScannerPage> {
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+            body: Center(child: CircularProgressIndicator(color: kAvocado,)),
           );
         }
         if (snapshot.hasError) {
@@ -62,6 +63,16 @@ class _WasteScannerPageState extends State<WasteScannerPage> {
 
         return Scaffold(
           backgroundColor: kLightGray,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            leading: IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(Icons.arrow_back_ios)),
+            title: Text(
+              'Dashboard',
+              style: kTitleMedium.copyWith(fontWeight: FontWeight.bold),
+            ),
+          ),
           body: SafeArea(
             child: Center(
               child: Column(
@@ -69,7 +80,7 @@ class _WasteScannerPageState extends State<WasteScannerPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Image.asset(
-                    'assets/images/classify_title.png',
+                    'assets/images/titles/classify_title.png',
                     width: 182.27,
                     height: 95.77,
                   ),
@@ -87,35 +98,24 @@ class _WasteScannerPageState extends State<WasteScannerPage> {
                   SizedBox(height: 10),
                   IconButton(
                     icon: Image.asset(
-                      'assets/images/capture.png',
+                      'assets/images/icons/capture.png',
                       width: 55,
                       height: 55,
                     ),
                     onPressed: () async {
                       try {
-                        //file conversion to image > bytes
                         final XFile picture = await controller.takePicture();
                         final bytes = await picture.readAsBytes();
 
-                        //Call the Gemini API to classify the waste
-                        final response = await GeminiService().classifyWaste(
-                          bytes,
-                        );
-                        //Temporary UI to show the response
-                        showDialog(
-                          context: context,
-                          builder:
-                              (_) => AlertDialog(
-                                title: const Text('Waste Classification'),
-                                content: Text(response),
-                                actions: [
-                                  TextButton(
-                                    onPressed:
-                                        () => Navigator.of(context).pop(),
-                                    child: const Text('OK'),
-                                  ),
-                                ],
-                              ),
+                        final result =
+                        await GeminiService().classifyWaste(bytes);
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ScanResultScreen(scanResult: result),
+                          ),
                         );
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -124,18 +124,11 @@ class _WasteScannerPageState extends State<WasteScannerPage> {
                       }
                     },
                   ),
+                  SizedBox(height: 60),
                 ],
               ),
             ),
           ),
-          bottomNavigationBar: MainNavigationBar(
-            activeRoute: _selectedRoute,
-            onSelect: _selectRoute,
-          ),
-
-          floatingActionButton: MultiActionFab(),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
         );
       },
     );

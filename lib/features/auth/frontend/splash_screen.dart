@@ -1,10 +1,30 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
+import 'package:trashtrackr/features/auth/backend/auth_manager.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  void _welcomeUser(BuildContext context) async {
+    // 5 second delay
+    final delay = Duration(seconds: 5);
+    await Future.delayed(delay);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => AuthManager()),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _welcomeUser(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +42,7 @@ class SplashScreen extends StatelessWidget {
               child: Transform.rotate(
                 angle: 2.8,
                 child: Image.asset(
-                  'assets/images/plant_multicolor.png',
+                  'assets/images/components/plant_multicolor.png',
                   height: plantHeight,
                 ),
               ),
@@ -35,14 +55,17 @@ class SplashScreen extends StatelessWidget {
               child: Transform.rotate(
                 angle: -0.4,
                 child: Image.asset(
-                  'assets/images/plant_multicolor.png',
+                  'assets/images/components/plant_multicolor.png',
                   height: plantHeight,
                 ),
               ),
             ),
           ),
           Center(
-            child: Image.asset('assets/images/logo_white.png', height: logoHeight),
+            child: Image.asset(
+              'assets/images/logo/logo_white.png',
+              height: logoHeight,
+            ),
           ),
         ],
       ),

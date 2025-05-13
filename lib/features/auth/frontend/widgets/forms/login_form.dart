@@ -1,15 +1,24 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:trashtrackr/core/services/auth_service.dart';
+import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/text_fields/profile_text_field.dart';
 import 'package:trashtrackr/core/widgets/buttons/rounded_rectangle_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/auth_provider_button.dart';
-import 'package:trashtrackr/features/auth/backend/auth_bloc.dart';
+
+import '../../../../dashboard/frontend/dashboard_screen.dart';
 
 class LoginForm extends StatefulWidget {
-  const LoginForm({super.key, required this.onToggle});
+  const LoginForm({
+    super.key,
+    required this.onToggle,
+    required this.onForgotPassword,
+  });
 
   final VoidCallback onToggle;
+  final VoidCallback onForgotPassword;
 
   @override
   State<LoginForm> createState() => _LoginFormState();
@@ -80,6 +89,7 @@ class _LoginFormState extends State<LoginForm> {
               'Forgot Password?',
               style: kBodyMedium.copyWith(color: kAvocado),
             ),
+            onTap: widget.onForgotPassword,
           ),
 
           Flexible(child: SizedBox(height: 80)),
@@ -87,26 +97,16 @@ class _LoginFormState extends State<LoginForm> {
           RoundedRectangleButton(
             title: 'Login',
             onPressed: () async {
-              final authViewModel = Provider.of<AuthBloc>(
-                context,
-                listen: false,
+              final UserService userService = UserService();
+              await userService.loginUserAccount(
+                email: _emailController.text.trim(),
+                password: _passwordController.text.trim(),
+                setErrorMessage: (message) {
+                  setState(() {
+                    _errorMessage = message;
+                  });
+                },
               );
-              //reset error message
-              setState(() {
-                _errorMessage = null;
-              });
-              try {
-                await authViewModel.signIn(
-                  _emailController.text.trim(),
-                  _passwordController.text.trim(),
-                );
-
-                //add navigation to home screen here
-              } catch (e) {
-                setState(() {
-                  _errorMessage = e.toString();
-                });
-              }
             },
           ),
 
@@ -151,28 +151,29 @@ class _LoginFormState extends State<LoginForm> {
             mainAxisAlignment: MainAxisAlignment.center,
             spacing: 20,
             children: [
+              //Google Sign In Button
               AuthProviderButton(
                 padding: EdgeInsets.all(14),
                 onPressed: () async {
-                  final authViewModel = Provider.of<AuthBloc>(
+                  final userService = Provider.of<UserService>(
                     context,
                     listen: false,
                   );
-                  await authViewModel.signInWithGoogle();
+                  await userService.signInWithGoogle();
                 },
-                child: Image.asset('assets/images/google_green.png'),
+                child: Image.asset('assets/images/icons/google_green.png'),
               ),
 
               AuthProviderButton(
                 padding: EdgeInsets.all(12),
                 onPressed: () {},
-                child: Image.asset('assets/images/facebook_green.png'),
+                child: Image.asset('assets/images/icons/facebook_green.png'),
               ),
 
               AuthProviderButton(
                 padding: EdgeInsets.all(10),
                 onPressed: () {},
-                child: Image.asset('assets/images/apple_green.png'),
+                child: Image.asset('assets/images/icons/apple_green.png'),
               ),
             ],
           ),

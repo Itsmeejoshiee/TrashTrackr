@@ -30,7 +30,7 @@ class BadgeIntroPage extends StatelessWidget {
               child: Transform.rotate(
                 angle: 2.25,
                 child: Image.asset(
-                  'assets/images/plant.png',
+                  'assets/images/components/plant.png',
                   width: plantWidth,
                 ),
               ),
@@ -43,7 +43,7 @@ class BadgeIntroPage extends StatelessWidget {
               child: Transform.rotate(
                 angle: -0.8,
                 child: Image.asset(
-                  'assets/images/plant.png',
+                  'assets/images/components/plant.png',
                   width: plantWidth,
                 ),
               ),
@@ -69,7 +69,7 @@ class BadgeIntroPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Image.asset('assets/images/leaf_badge.png'),
+                  child: Image.asset('assets/images/icons/leaf_badge.png'),
                 ),
                 Container(
                   width: boxWidth,
@@ -85,7 +85,7 @@ class BadgeIntroPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Image.asset('assets/images/fire_badge.png'),
+                  child: Image.asset('assets/images/icons/fire_badge.png'),
                 ),
               ],
             ),

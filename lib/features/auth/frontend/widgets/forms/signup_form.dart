@@ -3,12 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trashtrackr/core/models/user_model.dart';
-import 'package:trashtrackr/core/providers/user_provider.dart';
+import 'package:trashtrackr/core/services/auth_service.dart';
+import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/text_fields/profile_text_field.dart';
 import 'package:trashtrackr/core/widgets/buttons/rounded_rectangle_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/auth_provider_button.dart';
-import 'package:trashtrackr/features/auth/backend/auth_bloc.dart';
 
 class SignupForm extends StatefulWidget {
   const SignupForm({super.key, required this.onToggle});
@@ -22,7 +22,6 @@ class SignupForm extends StatefulWidget {
 class _SignupFormState extends State<SignupForm> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
@@ -85,12 +84,6 @@ class _SignupFormState extends State<SignupForm> {
           ),
           ProfileTextField(
             margin: EdgeInsets.only(bottom: 15),
-            controller: _usernameController,
-            iconData: Icons.alternate_email,
-            hintText: 'Username',
-          ),
-          ProfileTextField(
-            margin: EdgeInsets.only(bottom: 15),
             controller: _emailController,
             iconData: Icons.email,
             hintText: 'Email',
@@ -116,60 +109,19 @@ class _SignupFormState extends State<SignupForm> {
           RoundedRectangleButton(
             title: 'Sign up',
             onPressed: () async {
-              setState(() {
-                // Clear any previous error
-                _errorMessage = null;
-              });
-              try {
-                if (_passwordController.text.trim() !=
-                    _confirmPasswordController.text.trim()) {
+              final userService = UserService();
+              await userService.createUserAccount(
+                emailController: _emailController,
+                passwordController: _passwordController,
+                confirmPasswordController: _confirmPasswordController,
+                firstNameController: _firstNameController,
+                lastNameController: _lastNameController,
+                setErrorMessage: (message) {
                   setState(() {
-                    _errorMessage = 'Passwords do not match.';
+                    _errorMessage = message;
                   });
-                  return;
-                }
-                final authViewModel = Provider.of<AuthBloc>(
-                  context,
-                  listen: false,
-                );
-
-                await authViewModel.signUp(
-                  _emailController.text.trim(),
-                  _passwordController.text.trim(),
-                );
-
-                final newUser = UserModel(
-                  uid: authViewModel.user!.uid,
-                  email: _emailController.text.trim(),
-                  username: _usernameController.text.trim(),
-                  firstName: _firstNameController.text.trim(),
-                  lastName: _lastNameController.text.trim(),
-                );
-
-                await FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(newUser.uid)
-                    .set(newUser.toMap());
-
-                final userProvider = Provider.of<UserProvider>(
-                  context,
-                  listen: false,
-                );
-                userProvider.setUser(newUser);
-
-                //is this correct??? add the route here nalang to login pls
-                widget.onToggle();
-              } catch (e) {
-                setState(() {
-                  if (e is FirebaseAuthException) {
-                    _errorMessage =
-                        e.message ?? 'An authentication error occurred.';
-                  } else {
-                    _errorMessage =
-                        'An unexpected error occurred: ${e.toString()}';
-                  }
-                });
-              }
+                },
+              );
             },
           ),
 
@@ -217,22 +169,26 @@ class _SignupFormState extends State<SignupForm> {
             mainAxisAlignment: MainAxisAlignment.center,
             spacing: 20,
             children: [
+              //Google Button
               AuthProviderButton(
                 padding: EdgeInsets.all(14),
-                onPressed: () {},
-                child: Image.asset('assets/images/google_green.png'),
+                onPressed: () async {
+                  final userService = UserService();
+                  await userService.createUserGoogleAccount();
+                },
+                child: Image.asset('assets/images/icons/google_green.png'),
               ),
 
               AuthProviderButton(
                 padding: EdgeInsets.all(12),
                 onPressed: () {},
-                child: Image.asset('assets/images/facebook_green.png'),
+                child: Image.asset('assets/images/icons/facebook_green.png'),
               ),
 
               AuthProviderButton(
                 padding: EdgeInsets.all(10),
                 onPressed: () {},
-                child: Image.asset('assets/images/apple_green.png'),
+                child: Image.asset('assets/images/icons/apple_green.png'),
               ),
             ],
           ),

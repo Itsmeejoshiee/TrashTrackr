@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
+import 'package:trashtrackr/features/waste_scanner/frontend/waste_scanner_screen.dart';
 import 'dart:math' as math;
+
+import '../../../features/post/screens/post_screen.dart';
 
 class MultiActionFab extends StatefulWidget {
   const MultiActionFab({super.key});
@@ -11,6 +14,35 @@ class MultiActionFab extends StatefulWidget {
 
 class _MultiActionFabState extends State<MultiActionFab>
     with SingleTickerProviderStateMixin {
+  // For log disposal
+  void _openLogDisposalScreen(BuildContext context) {
+    // TODO: Navigate to LogDisposal Screen
+  }
+
+  // For scan
+  void _openWasteScanenr(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => WasteScannerScreen()),
+    );
+  }
+
+  // For create post bottom sheet
+  void _openPostScreen(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      builder: (context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.9,
+          child: PostScreen(
+          ),
+        );
+      },
+    );
+  }
+
   bool _isDialOpen = false;
   late AnimationController _controller;
 
@@ -45,19 +77,29 @@ class _MultiActionFabState extends State<MultiActionFab>
       SpeedDialItemData(
         icon: Icons.edit_note_outlined,
         color: Colors.green,
-        onTap: () => print('Edit button pressed'),
+        onTap: () {
+          print('Create post button pressed');
+          _openPostScreen(context);
+        },
         position: 0,
       ),
+
       SpeedDialItemData(
         icon: Icons.crop_free,
         color: Colors.green,
-        onTap: () => print('Scan button pressed'),
+        onTap: () {
+          print('Scan button pressed');
+          _openWasteScanenr(context);
+        },
         position: 1,
       ),
       SpeedDialItemData(
         icon: Icons.dashboard_customize,
         color: Colors.green,
-        onTap: () => print('Dashboard button pressed'),
+        onTap: () {
+          print('Dashboard button pressed');
+          _openLogDisposalScreen(context);
+        },
         position: 2,
       ),
     ];
@@ -80,7 +122,8 @@ class _MultiActionFabState extends State<MultiActionFab>
         animation: animation,
         builder: (context, child) {
           return Positioned(
-            bottom: 48 - y * animation.value, // Position relative to bottom nav bar
+            bottom: 48 - y * animation.value,
+            // Position relative to bottom nav bar
             left: 0,
             right: 0,
             child: Align(
@@ -136,11 +179,7 @@ class _MultiActionFabState extends State<MultiActionFab>
                 builder: (context, child) {
                   return Transform.rotate(
                     angle: _controller.value * math.pi * (3 / 4),
-                    child: Icon(
-                      Icons.add,
-                      color: Colors.white,
-                      size: 30,
-                    ),
+                    child: Icon(Icons.add, color: Colors.white, size: 30),
                   );
                 },
               ),
