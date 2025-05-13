@@ -157,7 +157,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
 
               SizedBox(height: 10),
 
-              DisposalLocationButton(onPressed: () {}),
+              DisposalLocationButton(),
 
               SizedBox(height: 23),
 
