@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:camera/camera.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
@@ -106,20 +108,40 @@ class _WasteScannerScreenState extends State<WasteScannerScreen> {
                       try {
                         final XFile picture = await controller.takePicture();
                         final bytes = await picture.readAsBytes();
+                        final file = File(picture.path);
 
-                        final result =
-                        await GeminiService().classifyWaste(bytes);
+                        // Upload to Firebase Storage
+                        final ref = FirebaseStorage.instance
+                            .ref()
+                            .child('scanned_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+                        await ref.putFile(file);
+                        final imageUrl = await ref.getDownloadURL();
+
+                        // Classify with Gemini
+                        final result = await GeminiService().classifyWaste(bytes);
+
+                        // Add imageUrl to ScanResult
+                        final resultWithImage = ScanResult(
+                          productName: result.productName,
+                          materials: result.materials,
+                          classification: result.classification,
+                          toDo: result.toDo,
+                          notToDo: result.notToDo,
+                          proTip: result.proTip,
+                          timestamp: result.timestamp,
+                          imageUrl: imageUrl,
+                        );
+
 
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                ScanResultScreen(scanResult: result),
+                            builder: (context) => ScanResultScreen(scanResult: resultWithImage),
                           ),
                         );
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error taking picture: $e')),
+                          SnackBar(content: Text('Error: $e')),
                         );
                       }
                     },

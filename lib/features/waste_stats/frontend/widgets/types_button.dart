@@ -16,7 +16,7 @@ class _TypesButtonState extends State<TypesButton> {
     'Type',
     'Recyclable',
     'Biodegradable',
-    'Non-Biodegradable',
+    'Non-biodegradable',
   ];
 
   @override

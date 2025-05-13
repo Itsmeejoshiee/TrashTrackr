@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:trashtrackr/features/waste_stats/frontend/widgets/graph_card.dart';
 import 'package:trashtrackr/features/waste_stats/frontend/widgets/graph_switch_tile.dart';
-
 import '../../../../core/utils/constants.dart';
 import '../../../../core/widgets/box/neo_box.dart';
 
@@ -34,7 +33,6 @@ class SummaryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
     final double imageSize = (screenWidth / 9);
 
     List<Color> colorList = [

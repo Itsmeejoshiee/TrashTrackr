@@ -11,12 +11,10 @@ import 'package:trashtrackr/features/badges/frontend/badge_screen.dart';
 import 'package:trashtrackr/features/dashboard/frontend/dashboard_screen.dart';
 import 'package:trashtrackr/features/faqs/frontend/faq_screen.dart';
 import 'package:trashtrackr/features/feed/frontend/feed_screen.dart';
-import 'package:trashtrackr/features/log_disposal/screens/log_disposal_screen.dart';
 import 'package:trashtrackr/features/notifs/frontend/notif_screen.dart';
 import 'package:trashtrackr/features/profile/frontend/profile_screen.dart';
 import 'package:trashtrackr/features/settings/frontend/edit_profile_screen.dart';
 import 'package:trashtrackr/features/settings/frontend/privacy_screen.dart';
-import 'package:trashtrackr/features/settings/frontend/settings_screen.dart';
 import 'package:trashtrackr/features/waste_scanner/frontend/scan_result_screen.dart';
 import 'package:trashtrackr/features/waste_scanner/frontend/waste_scanner_screen.dart';
 import 'package:trashtrackr/features/maps/frontend/map_screen.dart';
@@ -28,13 +26,11 @@ import 'package:trashtrackr/features/intro/frontend/intro_screen.dart';
 import 'package:trashtrackr/features/waste_stats/frontend/waste_stats_screen.dart';
 
 Future<void> main() async {
-  await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
 
-  runApp(
-    const TrashTrackr(),
-  );
+  runApp(const TrashTrackr());
 }
 
 class TrashTrackr extends StatelessWidget {
@@ -49,6 +45,7 @@ class TrashTrackr extends StatelessWidget {
         primaryColor: kAvocado,
         scaffoldBackgroundColor: kLightGray,
       ),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

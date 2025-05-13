@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/waste_stats/frontend/widgets/date_button.dart';
-import 'package:trashtrackr/features/waste_stats/frontend/widgets/log_card.dart';
+import 'package:trashtrackr/core/widgets/list_tiles/log_card.dart';
 import 'package:trashtrackr/features/waste_stats/frontend/widgets/types_button.dart';
 import '../../../../core/models/scan_result_model.dart';
 import '../../../../core/services/waste_entry_service.dart';
@@ -52,8 +52,10 @@ class _LogHistoryViewState extends State<LogHistoryView> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
+
     return FutureBuilder<List<ScanResult>>(
       future: _logsFuture,
       builder: (context, snapshot) {
@@ -141,11 +143,8 @@ class _LogHistoryViewState extends State<LogHistoryView> {
                   ),
                   for (final log in categorizedLogs[category]!)
                     LogCard(
-                      itemImage: Image.asset('assets/images/covers/log_image.png'),
-                      name: log.productName,
-                      dateTime: log.timestamp ?? DateTime.now(),
-                      type: log.classification,
-                    ),
+                        result: log
+                    )
                 ],
             ],
           ),

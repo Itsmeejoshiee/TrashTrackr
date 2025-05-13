@@ -11,23 +11,22 @@ class WasteEntryService {
     if (user == null) return;
 
     try {
-      // use uid as the document ID
+      // Use uid as the document ID
       final userDoc = FirebaseFirestore.instance.collection('waste_entries').doc(user.uid);
 
-      // et or update email
+      // Set or update email
       await userDoc.set({
         'uid': user.uid,
         'email': user.email,
       }, SetOptions(merge: true));
 
-      // add entry to subcollection
+      // Add entry to subcollection
       await userDoc.collection('log_disposal').add(entry.toMap());
     } catch (e) {
       print('Error adding waste entry: $e');
       rethrow;
     }
   }
-
 
   Future<List<ScanResult>> fetchWasteEntries() async {
     final user = FirebaseAuth.instance.currentUser;
@@ -47,5 +46,21 @@ class WasteEntryService {
     }
   }
 
+  Future<void> updateDisposal(User user, ScanResult entry) async {
+    if (entry.id == null) {
+      throw Exception('Entry id required for update');
+    }
+
+    try {
+      await wasteEntries
+          .doc(user.uid)
+          .collection('log_disposal')
+          .doc(entry.id)
+          .update(entry.toMap());
+    } catch (e) {
+      print('Failed to update disposal entry: $e');
+      rethrow;
+    }
+  }
 
 }
