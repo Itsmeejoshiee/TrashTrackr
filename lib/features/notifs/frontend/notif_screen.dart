@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/list_tiles/view_switch_tile.dart';
 import 'widgets/notif_card.dart';
 import 'views/updates_view.dart';
@@ -19,15 +20,23 @@ class _NotifScreenState extends State<NotifScreen> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double notifTitleOffset = screenHeight / 20;
     final double imageSize = (screenWidth / 3) + 60;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back_ios),
+        ),
+        title: Text(
+          'Dashboard',
+          style: kTitleMedium.copyWith(fontWeight: FontWeight.bold),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),
         child: Column(
           children: [
-            // Offset
-            SizedBox(height: notifTitleOffset),
 
             // Notif Title
             Image.asset('assets/images/titles/notifs_title.png', width: imageSize),
