@@ -17,8 +17,6 @@ import 'package:trashtrackr/features/settings/backend/edit_profile_bloc.dart';
 import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
 
 class UserService {
-
-
   final AuthService _authService = AuthService();
 
   Future<void> createUserAccount({
@@ -117,8 +115,8 @@ class UserService {
   }
 
   //delete user data and account
-  Future<void> deleteUser() async {
-    await _authService.deleteAccount();
+  Future<void> deleteUser(String email, String password) async {
+    await _authService.deleteAccount(email: email, password: password);
   }
 
   //TODO: Optimize this function, loads slowly. I think im using shared prefs wrong way.
