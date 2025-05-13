@@ -13,39 +13,52 @@ class StreakCalendar extends StatefulWidget {
 class _StreakCalendarState extends State<StreakCalendar> {
   @override
   Widget build(BuildContext context) {
-    return NeoBox(
-      child: Column(
-        children: [
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Text(
-              DateUtilsHelper().getMonthName(),
-              style: kTitleMedium.copyWith(fontWeight: FontWeight.w700),
+    return Column(
+      children: [
+        Row(
+          children: [
+            Text(
+              'Eco Streak',
+              style: kTitleLarge.copyWith(fontWeight: FontWeight.bold),
+              textAlign: TextAlign.left,
             ),
-          ),
-          SizedBox(height: 12),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: DateUtilsHelper().getNumberOfDaysInCurrentMonth(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 7,
-              crossAxisSpacing: 24,
-              mainAxisSpacing: 6,
-            ),
-            itemBuilder: (context, index) {
-              return Container(
-                width: 22,
-                height: 22,
-                foregroundDecoration: BoxDecoration(
-                  color: kGray.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(3),
+          ],
+        ),
+        NeoBox(
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.bottomLeft,
+                child: Text(
+                  DateUtilsHelper().getMonthName(),
+                  style: kTitleMedium.copyWith(fontWeight: FontWeight.w700),
                 ),
-              );
-            },
+              ),
+              SizedBox(height: 12),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: DateUtilsHelper().getNumberOfDaysInCurrentMonth(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 7,
+                  crossAxisSpacing: 24,
+                  mainAxisSpacing: 6,
+                ),
+                itemBuilder: (context, index) {
+                  return Container(
+                    width: 22,
+                    height: 22,
+                    foregroundDecoration: BoxDecoration(
+                      color: kGray.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

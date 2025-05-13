@@ -50,6 +50,9 @@ class UserService {
         email: emailController.text.trim(),
         firstName: firstNameController.text.trim(),
         lastName: lastNameController.text.trim(),
+        profilePicture: '',
+        followerCount: 0,
+        followingCount: 0,
       );
 
       // Save the new user to Firestore
@@ -80,6 +83,9 @@ class UserService {
       email: AuthService().currentUser?.email ?? '',
       firstName: firstName,
       lastName: lastName,
+      profilePicture: '',
+      followerCount: 0,
+      followingCount: 0,
     );
 
     await FirebaseFirestore.instance
@@ -119,11 +125,35 @@ class UserService {
     await _authService.deleteAccount(email: email, password: password);
   }
 
+  Stream<UserModel?> getUserStream() {
+    final uid = _authService.currentUser?.uid;
+
+    if (uid == null) {
+      print('UID is null, cannot fetch user stream');
+      return Stream.value(null);
+    }
+
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .snapshots()
+        .map((snapshot) {
+          if (snapshot.exists) {
+            print('Snapshot exists.');
+            print(snapshot.data());
+            return UserModel.fromMap(snapshot.data()!);
+          } else {
+            print('User document does not exist');
+            return null;
+          }
+        });
+  }
+
   //TODO: Optimize this function, loads slowly. I think im using shared prefs wrong way.
 
   Future<String?> getFullName() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final uid = AuthService().currentUser?.uid;
+    final uid = _authService.currentUser?.uid;
 
     if (uid == null) {
       print('UID is null, cannot fetch full name');
@@ -158,8 +188,17 @@ class UserService {
     }
   }
 
+  Future<void> logActivity(String activity) async {
+    final uid = _authService.currentUser?.uid;
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('activity_log')
+        .add({'activity': activity, 'timestamp': DateTime.now()});
+  }
+
   Future<void> createPost(String body, String? imageUrl) async {
-    final uid = AuthService().currentUser?.uid;
+    final uid = _authService.currentUser?.uid;
     if (uid == null) return;
 
     try {
