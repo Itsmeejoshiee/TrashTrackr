@@ -106,14 +106,22 @@ class AuthService {
 
   //To do: test this function
   //Delete account
-  Future<void> deleteAccount() async {
+  Future<void> deleteAccount({
+    required String email,
+    required String password,
+  }) async {
     try {
       final user = currentUser;
-
       if (user == null) {
         print('No user is currently signed in.');
         return;
       }
+      // Re-authenticate the user before deleting the account
+      AuthCredential credential = EmailAuthProvider.credential(
+        email: email,
+        password: password,
+      );
+      await currentUser!.reauthenticateWithCredential(credential);
 
       try {
         // Delete user data from Firestore
@@ -121,10 +129,14 @@ class AuthService {
             .collection('users')
             .doc(user.uid)
             .delete();
-        await FirebaseFirestore.instance
-            .collection('posts')
-            .doc(user.uid)
-            .delete();
+        final posts =
+            await FirebaseFirestore.instance
+                .collection('posts')
+                .where('uid', isEqualTo: user.uid)
+                .get();
+        for (final doc in posts.docs) {
+          await doc.reference.delete();
+        }
       } catch (e) {
         print('Error deleting user data: $e');
       }

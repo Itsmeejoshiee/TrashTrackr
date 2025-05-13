@@ -8,9 +8,9 @@ import 'package:trashtrackr/features/about/frontend/about_screen.dart';
 import 'package:trashtrackr/features/auth/backend/auth_manager.dart';
 import 'package:trashtrackr/features/faqs/frontend/faq_screen.dart';
 import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
-import 'package:trashtrackr/features/settings/frontend/edit_profile_screen.dart';
-import 'package:trashtrackr/features/settings/frontend/privacy_screen.dart';
-import 'package:trashtrackr/features/settings/frontend/widgets/buttons/edit_profile_picture_button.dart';
+import 'package:trashtrackr/features/settings/backend/frontend/edit_profile_screen.dart';
+import 'package:trashtrackr/features/settings/backend/frontend/privacy_screen.dart';
+import 'package:trashtrackr/features/settings/backend/frontend/widgets/buttons/edit_profile_picture_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/rounded_rectangle_button.dart';
 import 'widgets/list_tiles/setting_tile.dart';
 import 'widgets/list_tiles/switch_setting_tile.dart';
@@ -41,13 +41,52 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _deleteAccount() async {
-    final userService = UserService(context);
-    await userService.deleteUser();
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => AuthManager()),
-      (r) => false,
-    );
+    final TextEditingController emailController = TextEditingController();
+    final TextEditingController passwordController = TextEditingController();
+    final UserService userService = UserService();
+    Alert(
+      context: context,
+      style: AlertStyle(
+        titleStyle: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
+      ),
+      title: "Delete Account",
+
+      content: Column(
+        children: <Widget>[
+          TextField(
+            controller: emailController,
+            decoration: InputDecoration(
+              icon: Icon(Icons.account_circle),
+              labelText: 'Email',
+              labelStyle: kTitleMedium,
+            ),
+          ),
+          TextField(
+            controller: passwordController,
+            obscureText: true,
+            decoration: InputDecoration(
+              icon: Icon(Icons.lock),
+              labelText: 'Password',
+              labelStyle: kTitleMedium,
+            ),
+          ),
+        ],
+      ),
+      buttons: [
+        DialogButton(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          color: kRed,
+          radius: BorderRadius.circular(30),
+          onPressed: () {
+            _deleteAccountAlert(emailController.text, passwordController.text);
+          },
+          child: Text(
+            'Delete Account',
+            style: kTitleSmall.copyWith(color: Colors.white),
+          ),
+        ),
+      ],
+    ).show();
   }
 
   void _logoutAlert() {
@@ -90,7 +129,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ).show();
   }
 
-  void _deleteAccountAlert() {
+  void _deleteAccountAlert(String email, String password) {
+    final UserService userService = UserService();
     Alert(
       context: context,
       style: AlertStyle(
@@ -115,8 +155,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
           margin: EdgeInsets.symmetric(horizontal: 20),
           color: kRed,
           radius: BorderRadius.circular(30),
-          onPressed: () {
-            _deleteAccount();
+          onPressed: () async {
+            await userService.deleteUser(email, password);
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => AuthManager()),
+              (r) => false,
+            );
           },
           child: Text(
             'Delete',
@@ -239,7 +284,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               RoundedRectangleButton(
                 backgroundColor: kRed,
                 title: 'Delete Account',
-                onPressed: _deleteAccountAlert,
+                onPressed: _deleteAccount,
               ),
 
               // Offset
