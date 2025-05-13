@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
+import 'package:trashtrackr/features/maps/frontend/map_screen.dart';
 
 class DisposalLocationButton extends StatelessWidget {
-  const DisposalLocationButton({
-    super.key,
-    required this.onPressed,
-  });
-
-  final VoidCallback onPressed;
+  const DisposalLocationButton({super.key});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap:
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MapScreen()),
+          ),
       child: Container(
         width: double.infinity,
         height: 180,
