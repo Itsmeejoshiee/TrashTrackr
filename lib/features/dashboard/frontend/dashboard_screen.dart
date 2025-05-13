@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
-import 'package:trashtrackr/core/widgets/buttons/disposal_location_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/multi_action_fab.dart';
 import 'package:trashtrackr/features/badges/frontend/badge_screen.dart';
 import 'package:trashtrackr/features/feed/frontend/feed_screen.dart';
@@ -33,6 +32,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return BadgeScreen();
       case NavRoute.profile:
         return ProfileScreen();
+      default:
+        return Center(child: Text('Unknown route'));
     }
   }
 

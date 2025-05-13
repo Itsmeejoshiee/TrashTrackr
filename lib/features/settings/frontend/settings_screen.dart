@@ -29,7 +29,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final UserService _userService = UserService();
 
   Future<void> _logout() async {
-
     // Sign Out
     await _authService.signOut();
 
@@ -42,10 +41,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _deleteAccount() async {
-
     // TODO: Delete account(please use the deleteAccount method in AuthBloc)
 
     // Navigate back to AuthManager and clear navigation stack
+
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => AuthManager()),
@@ -137,7 +136,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         print(snapshot.data);
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator(color: kAvocado,));
+          return Center(child: CircularProgressIndicator(color: kAvocado));
         }
 
         if (!snapshot.hasData || snapshot.data == null) {
@@ -165,7 +164,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   // Edit Profile Picture
                   EditProfilePictureButton(
-                    image: (user!.profilePicture.isNotEmpty) ? NetworkImage(user.profilePicture) : AssetImage('assets/images/placeholder_profile.jpg'),
+                    image:
+                        (user!.profilePicture.isNotEmpty)
+                            ? NetworkImage(user.profilePicture)
+                            : AssetImage(
+                              'assets/images/placeholder_profile.jpg',
+                            ),
                     onPressed: () async {
                       final profilePicture = ProfilePicture();
                       await profilePicture.update(context);
@@ -173,7 +177,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
 
                   Text(
-                    'Ella Green',
+                    '${user.firstName} ${user.lastName}',
                     style: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
@@ -188,11 +192,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         iconData: Icons.edit,
                         onTap:
                             () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EditProfileScreen(),
-                          ),
-                        ),
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditProfileScreen(),
+                              ),
+                            ),
                       ),
 
                       SwitchSettingTile(
@@ -211,11 +215,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         iconData: Icons.shield,
                         onTap:
                             () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PrivacyScreen(),
-                          ),
-                        ),
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PrivacyScreen(),
+                              ),
+                            ),
                       ),
 
                       SettingTile(
@@ -223,9 +227,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         iconData: Icons.help,
                         onTap:
                             () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => FaqScreen()),
-                        ),
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FaqScreen(),
+                              ),
+                            ),
                       ),
 
                       SettingTile(
@@ -233,11 +239,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         iconData: Icons.info,
                         onTap:
                             () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AboutScreen(),
-                          ),
-                        ),
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AboutScreen(),
+                              ),
+                            ),
                       ),
 
                       SettingTile(

@@ -137,6 +137,7 @@ class UserService {
     await _authService.deleteAccount(email: email, password: password);
   }
 
+  //retrieves a stream of document
   Stream<UserModel?> getUserStream() {
     final uid = _authService.currentUser?.uid;
 
@@ -200,6 +201,53 @@ class UserService {
     }
   }
 
+  // fieldnames: first_name, last_name, email
+  Future<void> updateUserInfo(String fieldName, String value) async {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return;
+
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(uid).update({
+        fieldName: value,
+      });
+    } catch (e) {
+      print('Error updating user info: $e');
+    }
+  }
+
+  Future<void> logActivity(String activity) async {
+    final uid = _authService.currentUser?.uid;
+    final activityModel = ActivityModel(
+      activity: activity,
+      timestamp: Timestamp.now(),
+    );
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('activity_log')
+        .add(activityModel.toMap());
+  }
+
+  Stream<List<ActivityModel>> getActivityStream() {
+    final uid = _authService.currentUser?.uid;
+
+    if (uid == null) {
+      print('UID is null, cannot fetch activity stream');
+      return Stream.value([]);
+    }
+
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('activity_log')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return ActivityModel.fromMap(doc.data());
+      }).toList();
+    });
+  }
+
   Future<void> createPost(String body, String? imageUrl) async {
     final uid = _authService.currentUser?.uid;
     if (uid == null) return;
@@ -228,6 +276,23 @@ class UserService {
       });
     } catch (e) {
       print('Error creating post: $e');
+    }
+  }
+  Future<void> createEvent(String imageUrl, String eventType,
+      DateTimeRange dateRange, String eventDescription) async {
+    final uid = AuthService().currentUser?.uid;
+    if (uid == null) return;
+
+    try {
+      await FirebaseFirestore.instance.collection('events').add({
+        'uid': uid,
+        'image_url': imageUrl,
+        'event_type': eventType,
+        'date_range': dateRange,
+        'event_description': eventDescription,
+      });
+    } catch (e) {
+      print('Error creating event: $e');
     }
   }
 
@@ -265,6 +330,27 @@ class UserService {
       });
     } catch (e) {
       print('Error uploading image: $e');
+      return null;
+    }
+  }
+
+  Future<String?> getProfilePicture() async {
+    final uid = AuthService().currentUser?.uid;
+    if (uid == null) {
+      print('UID is null, cannot fetch profile picture');
+      return null;
+    }
+
+    try {
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final userData = userDoc.data();
+      if (userData == null) {
+        print('User document not found for UID: $uid');
+        return null;
+      }
+      return userData['profile_picture'] as String?;
+    } catch (e) {
+      print('Error fetching profile picture: $e');
       return null;
     }
   }

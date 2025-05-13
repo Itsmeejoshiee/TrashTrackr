@@ -6,6 +6,7 @@ import 'package:location/location.dart';
 import 'package:trashtrackr/core/services/location_service.dart';
 import 'package:trashtrackr/core/services/place_service.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/maps/frontend/widgets/place_cards.dart';
 
 class MapScreen extends StatefulWidget {
@@ -84,6 +85,17 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: Icon(Icons.arrow_back_ios),
+          ),
+          title: Text(
+            'Dashboard',
+            style: kTitleMedium.copyWith(fontWeight: FontWeight.bold),
+          ),
+        ),
         body: Stack(
           children: [
             _currentLocation == null
