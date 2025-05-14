@@ -3,8 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:trashtrackr/core/models/scan_result_model.dart';
 import 'package:trashtrackr/features/log_disposal/screens/log_details.dart';
 import '../../../features/log_disposal/models/log_entry.dart';
-import '../../../features/log_disposal/screens/log_details_screen.dart';
-import '../../../features/log_disposal/screens/log_details_screen.dart';
 import '../../utils/constants.dart';
 
 class LogCard extends StatelessWidget {
@@ -13,19 +11,17 @@ class LogCard extends StatelessWidget {
 
   const LogCard({super.key, required this.result, this.entry});
 
+  String getIconPath(String classification) {
+    if (classification == 'Biodegradable' || classification == 'biodegradable') {
+      return 'assets/images/icons/bio.png';
+    } else if (classification == 'Recyclable' || classification == 'recyclable') {
+      return 'assets/images/icons/recycling.png';
+    } else {
+      return 'assets/images/icons/nonbio.png';
+    }
+  }
   @override
   Widget build(BuildContext context) {
-    final Map<String, String> typeIconMap = {
-      'Recycle': 'assets/images/icons/recycling.png',
-      'Biodegradable': 'assets/images/icons/leaf_brown.png',
-      'Non-biodegradable': 'assets/images/icons/trashcan.png',
-    };
-
-    final String? iconPath = typeIconMap[result.classification];
-    final Widget icon = iconPath != null
-        ? Image.asset(iconPath, width: 16, height: 16)
-        : const SizedBox.shrink();
-
     final double screenWidth = MediaQuery.of(context).size.width;
 
     return GestureDetector(
@@ -43,9 +39,7 @@ class LogCard extends StatelessWidget {
           ),
         );
       },
-
-
-
+      
       child: Container(
         margin: const EdgeInsets.only(bottom: 8.0),
         width: screenWidth,
@@ -88,7 +82,7 @@ class LogCard extends StatelessWidget {
 
                 Row(
                   children: [
-                    icon,
+                    Image.asset(getIconPath(result.classification), width: 16, height: 16),
                     const SizedBox(width: 6),
                     Text(
                       result.classification,

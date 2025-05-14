@@ -29,8 +29,10 @@ class GeminiService {
             - 
             - 
             - [increase number of bullets if necessary]
+            
+            Product Info: [A short description what the item is in 15 words]
               
-            Classification: [biodegradable / non-biodegradable / recyclable]  
+            Classification: [Biodegradable / Non-biodegradable / Recyclable]  
             
             To Do: short to-do only, in 10 words
             -  
@@ -53,6 +55,7 @@ class GeminiService {
       return ScanResult(
         productName: 'Error',
         materials: [],
+        prodInfo: 'Error',
         classification: 'Non-Biodegradable',
         toDo: [],
         notToDo: [],

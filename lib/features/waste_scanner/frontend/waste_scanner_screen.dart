@@ -124,6 +124,7 @@ class _WasteScannerScreenState extends State<WasteScannerScreen> {
                         final resultWithImage = ScanResult(
                           productName: result.productName,
                           materials: result.materials,
+                          prodInfo: result.prodInfo,
                           classification: result.classification,
                           toDo: result.toDo,
                           notToDo: result.notToDo,

@@ -79,6 +79,7 @@ final class LogEntry {
   ScanResult toScanResult() {
     return ScanResult(
       productName: title,
+      prodInfo: productInfo,
       materials: productProperties
           .where((p) => p.startsWith('Material:'))
           .map((p) => p.replaceFirst('Material: ', ''))

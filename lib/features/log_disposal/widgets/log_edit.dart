@@ -25,6 +25,7 @@ class LogEdit extends StatefulWidget {
 class _LogEditState extends State<LogEdit> {
   // text controllers
   late TextEditingController _productNameController;
+  late TextEditingController _prodInfoController;
   late TextEditingController _proTipController;
   late TextEditingController _noteController;
   late TextEditingController _quantityController;
@@ -40,6 +41,7 @@ class _LogEditState extends State<LogEdit> {
     super.initState();
 
     _productNameController = TextEditingController(text: widget.scanResult.productName);
+    _prodInfoController = TextEditingController(text: widget.scanResult.prodInfo);
     _proTipController = TextEditingController(text: widget.scanResult.proTip);
     _noteController = TextEditingController(text: widget.scanResult.notes);
     _quantityController = TextEditingController(text: widget.scanResult.qty.toString());
@@ -59,6 +61,7 @@ class _LogEditState extends State<LogEdit> {
   @override
   void dispose() {
     _productNameController.dispose();
+    _prodInfoController.dispose();
     _noteController.dispose();
     _quantityController.dispose();
 
@@ -81,6 +84,7 @@ class _LogEditState extends State<LogEdit> {
       id: widget.scanResult.id,
       productName: _productNameController.text.trim(),
       materials: _materialControllers.map((c) => c.text.trim()).where((e) => e.isNotEmpty).toList(),
+      prodInfo: _prodInfoController.text.trim(),
       classification: _classificationValue ?? widget.scanResult.classification,
       toDo: _toDoControllers.map((c) => c.text.trim()).where((e) => e.isNotEmpty).toList(),
       notToDo: _notToDoControllers.map((c) => c.text.trim()).where((e) => e.isNotEmpty).toList(),
@@ -93,7 +97,7 @@ class _LogEditState extends State<LogEdit> {
     final service = WasteEntryService();
 
     try {
-      await service.updateDisposal(user, updated);
+      await service.updateWasteEntries(user, updated);
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Entry updated successfully')));
     } catch (e) {

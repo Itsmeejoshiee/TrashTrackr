@@ -16,7 +16,6 @@ class LogHistoryView extends StatefulWidget {
 
 class _LogHistoryViewState extends State<LogHistoryView> {
   final _service = WasteEntryService();
-  late Future<List<ScanResult>> _logsFuture;
   bool _isDateSortActive = false;
   bool _isDateAscending = false;
   String _selectedType = "Type";
@@ -24,7 +23,6 @@ class _LogHistoryViewState extends State<LogHistoryView> {
   @override
   void initState() {
     super.initState();
-    _logsFuture = _service.fetchWasteEntries();
   }
 
   void _toggleDateSortOrder() {
@@ -52,14 +50,16 @@ class _LogHistoryViewState extends State<LogHistoryView> {
     }
   }
 
+  Stream<List<ScanResult>> fetchWasteEntries() {
+    return _service.fetchWasteEntries();
+  }
 
   @override
   Widget build(BuildContext context) {
-
-    return FutureBuilder<List<ScanResult>>(
-      future: _logsFuture,
+    return StreamBuilder<List<ScanResult>>(
+      stream: fetchWasteEntries(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
+        if (snapshot.connectionState != ConnectionState.active) {
           return const Center(child: CircularProgressIndicator());
         }
 
@@ -142,9 +142,7 @@ class _LogHistoryViewState extends State<LogHistoryView> {
                     ],
                   ),
                   for (final log in categorizedLogs[category]!)
-                    LogCard(
-                        result: log
-                    )
+                    LogCard(result: log)
                 ],
             ],
           ),
