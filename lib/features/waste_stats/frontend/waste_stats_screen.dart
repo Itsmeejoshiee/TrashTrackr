@@ -15,13 +15,6 @@ class WasteStatsScreen extends StatefulWidget {
 }
 
 class _WasteStatsScreenState extends State<WasteStatsScreen> {
-  NavRoute _selectedRoute = NavRoute.badge;
-
-  void _selectRoute(NavRoute route) {
-    setState(() {
-      _selectedRoute = route;
-    });
-  }
 
   // Switch screen
   bool _updateView = true;
@@ -31,7 +24,6 @@ class _WasteStatsScreenState extends State<WasteStatsScreen> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double statsTitleOffset = screenHeight / 80;
     final double imageSize = (screenWidth / 2) + 60;
 
     return Scaffold(
@@ -52,8 +44,6 @@ class _WasteStatsScreenState extends State<WasteStatsScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 32),
         child: Column(
           children: [
-            // Offset
-            SizedBox(height: statsTitleOffset),
 
             // Waste Stats Title
             Center(
@@ -94,14 +84,6 @@ class _WasteStatsScreenState extends State<WasteStatsScreen> {
           ],
         ),
       ),
-
-      bottomNavigationBar: MainNavigationBar(
-        activeRoute: _selectedRoute,
-        onSelect: _selectRoute,
-      ),
-
-      floatingActionButton: MultiActionFab(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
