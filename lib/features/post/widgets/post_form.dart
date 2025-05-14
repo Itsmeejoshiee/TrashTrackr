@@ -1,22 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:trashtrackr/core/services/image_service.dart';
+import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/post/models/post_entry.dart';
-import 'dart:io';
-import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
-
-const kForestGreen = Color(0xFF819D39);
-const String kFontPoppins = 'Poppins';
-const String kFontUrbanist = 'Urbanist';
 
 class PostForm extends StatefulWidget {
   final PostEntry? postEntry;
   final TextEditingController? controller;
 
-  const PostForm({
-    super.key,
-    this.postEntry,
-    this.controller,
-  });
+  const PostForm({super.key, this.postEntry, this.controller});
 
   @override
   State<PostForm> createState() => _PostFormState();
@@ -26,7 +18,7 @@ class _PostFormState extends State<PostForm> {
   late TextEditingController _controller;
   late FocusNode _focusNode;
   String? _selectedEmotion;
-  File? _pickedImage;
+  Uint8List? _pickedImage;
   final FocusNode _keyboardFocusNode = FocusNode();
 
   final List<String> _emotions = [
@@ -40,7 +32,9 @@ class _PostFormState extends State<PostForm> {
   @override
   void initState() {
     super.initState();
-    _controller = widget.controller ?? TextEditingController(text: widget.postEntry?.body ?? '');
+    _controller =
+        widget.controller ??
+        TextEditingController(text: widget.postEntry?.body ?? '');
     _focusNode = FocusNode();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).requestFocus(_focusNode);
@@ -55,28 +49,31 @@ class _PostFormState extends State<PostForm> {
     super.dispose();
   }
 
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (picked != null) {
+  Future<void> _getImage() async {
+    try {
+      final image = await ImageService().getImage();
       setState(() {
-        _pickedImage = File(picked.path);
+        _pickedImage = image;
       });
+    } catch (e) {
+      print("Error getting image: $e");
     }
   }
 
-  Future<void> _pickImageFromCamera() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.camera);
-    if (picked != null) {
+  Future<void> _getCameraImage() async {
+    try {
+      final image = await ImageService().getCameraImage();
       setState(() {
-        _pickedImage = File(picked.path);
+        _pickedImage = image;
       });
+    } catch (e) {
+      print("Error getting camera image: $e");
     }
   }
 
   void _handleKeyEvent(RawKeyEvent event) {
-    if (event is RawKeyDownEvent && event.logicalKey == LogicalKeyboardKey.enter) {
+    if (event is RawKeyDownEvent &&
+        event.logicalKey == LogicalKeyboardKey.enter) {
       final text = _controller.text;
       final selection = _controller.selection;
       final lines = text.substring(0, selection.start).split('\n');
@@ -91,7 +88,9 @@ class _PostFormState extends State<PostForm> {
         final newSelectionIndex = selection.start + 4;
         setState(() {
           _controller.text = newText;
-          _controller.selection = TextSelection.collapsed(offset: newSelectionIndex);
+          _controller.selection = TextSelection.collapsed(
+            offset: newSelectionIndex,
+          );
         });
         // Prevent default behavior by unfocusing and refocusing
         FocusScope.of(context).requestFocus(_focusNode);
@@ -117,7 +116,9 @@ class _PostFormState extends State<PostForm> {
     final newSelectionIndex = selection.start + prefix.length + 3;
     setState(() {
       _controller.text = newText;
-      _controller.selection = TextSelection.collapsed(offset: newSelectionIndex);
+      _controller.selection = TextSelection.collapsed(
+        offset: newSelectionIndex,
+      );
     });
   }
 
@@ -129,10 +130,10 @@ class _PostFormState extends State<PostForm> {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: kForestGreen.withOpacity(0.13),
+          color: kForestGreenLight.withOpacity(0.13),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(icon, color: kForestGreen, size: 24),
+        child: Icon(icon, color: kForestGreenLight, size: 24),
       ),
     );
   }
@@ -140,7 +141,8 @@ class _PostFormState extends State<PostForm> {
   @override
   Widget build(BuildContext context) {
     final String fullname = widget.postEntry?.fullname ?? "Your Name";
-    final String userPfp = widget.postEntry?.userPfp ?? "assets/images/placeholder_profile.jpg";
+    final String userPfp =
+        widget.postEntry?.userPfp ?? "assets/images/placeholder_profile.jpg";
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,22 +151,16 @@ class _PostFormState extends State<PostForm> {
           children: [
             CircleAvatar(
               radius: 24,
-              backgroundImage: userPfp.startsWith('http')
-                  ? NetworkImage(userPfp)
-                  : AssetImage(userPfp) as ImageProvider,
+              backgroundImage:
+                  userPfp.startsWith('http')
+                      ? NetworkImage(userPfp)
+                      : AssetImage(userPfp) as ImageProvider,
             ),
             const SizedBox(width: 15),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  fullname,
-                  style: const TextStyle(
-                    fontFamily: kFontUrbanist,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18,
-                  ),
-                ),
+                Text(fullname, style: kNameTextStyle),
                 SizedBox(
                   width: 220,
                   child: DropdownButtonFormField<String>(
@@ -172,44 +168,36 @@ class _PostFormState extends State<PostForm> {
                     hint: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text(
-                          'Choose type',
-                          style: TextStyle(
-                            fontFamily: kFontPoppins,
-                            color: kForestGreen,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        Text('Choose type', style: kSmallGreenBoldText),
+                        Icon(
+                          Icons.arrow_drop_down,
+                          color: kForestGreenLight,
+                          size: 18,
                         ),
-                        Icon(Icons.arrow_drop_down, color: kForestGreen, size: 18),
                       ],
                     ),
                     icon: const SizedBox.shrink(),
-                    style: const TextStyle(
-                      fontFamily: kFontPoppins,
-                      color: kForestGreen,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: kSmallGreenBoldText,
                     isDense: true,
-                    items: _emotions
-                        .map((e) => DropdownMenuItem(
-                              value: e,
-                              child: Text(
-                                e.split(' ').take(2).join(' '),
-                                style: const TextStyle(
-                                  fontFamily: kFontPoppins,
-                                  fontSize: 14,
-                                  color: Color.fromARGB(255, 108, 131, 48),
-                                  fontWeight: FontWeight.w600,
+                    items:
+                        _emotions
+                            .map(
+                              (e) => DropdownMenuItem(
+                                value: e,
+                                child: Text(
+                                  e.split(' ').take(2).join(' '),
+                                  style: kDropDownTextStyle,
                                 ),
                               ),
-                            ))
-                        .toList(),
+                            )
+                            .toList(),
                     onChanged: (val) => setState(() => _selectedEmotion = val),
                     decoration: const InputDecoration(
                       isDense: true,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 0,
+                        vertical: 0,
+                      ),
                       border: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
@@ -230,22 +218,16 @@ class _PostFormState extends State<PostForm> {
             controller: _controller,
             focusNode: _focusNode,
             maxLines: 10,
-            cursorColor: kForestGreen,
-            style: const TextStyle(
-              fontFamily: kFontPoppins,
-              color: Colors.black,
-              fontSize: 16,
-            ),
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-            ),
+            cursorColor: kForestGreenLight,
+            style: kPostInputTextStyle,
+            decoration: const InputDecoration(border: InputBorder.none),
           ),
         ),
         if (_pickedImage != null) ...[
           const SizedBox(height: 12),
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.file(
+            child: Image.memory(
               _pickedImage!,
               width: double.infinity,
               height: 180,
@@ -256,9 +238,9 @@ class _PostFormState extends State<PostForm> {
         const SizedBox(height: 20),
         Row(
           children: [
-            _iconNeoButton(Icons.camera_alt, _pickImageFromCamera),
+            _iconNeoButton(Icons.camera_alt, _getCameraImage),
             const SizedBox(width: 12),
-            _iconNeoButton(Icons.image, _pickImage),
+            _iconNeoButton(Icons.image, _getImage),
             const SizedBox(width: 12),
             _iconNeoButton(Icons.list, _insertBullet),
           ],
