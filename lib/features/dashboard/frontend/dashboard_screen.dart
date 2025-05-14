@@ -39,16 +39,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0.0;
     return Scaffold(
       body: _routeBuilder(_selectedRoute),
 
-      bottomNavigationBar: MainNavigationBar(
+      bottomNavigationBar: (isKeyboardOpen) ? null : MainNavigationBar(
         activeRoute: _selectedRoute,
         onSelect: _selectRoute,
       ),
 
-      floatingActionButton: MultiActionFab(),
+      floatingActionButton: (isKeyboardOpen) ? null : MultiActionFab(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      resizeToAvoidBottomInset: false,
     );
   }
 }
