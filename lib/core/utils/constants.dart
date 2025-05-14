@@ -161,3 +161,8 @@ TextStyle kDropDownTextStyle = GoogleFonts.poppins(
   fontSize: 14,
   fontWeight: FontWeight.w600,
 );
+
+TextStyle kPostInputTextStyle = GoogleFonts.poppins(
+  color: Colors.black,
+  fontSize: 16,
+);
