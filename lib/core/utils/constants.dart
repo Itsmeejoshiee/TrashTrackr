@@ -15,9 +15,9 @@ const Color kRed = Color(0xFFEA4A57);
 const Color kLightOrange = Color(0xFFFAF1DC);
 const Color kDarkOrange = Color(0xFFEDB552);
 const Color kDisabledGreen = Color(0xFFD9D9D9);
-
-const Color kForestGreen =Color(0xFF3F5C00);
-const Color kDarkGrey =Color.fromRGBO(134, 134, 134, 1);
+const Color kForestGreenLight = Color(0xFF819D39);
+const Color kForestGreen = Color(0xFF3F5C00);
+const Color kDarkGrey = Color.fromRGBO(134, 134, 134, 1);
 
 // TEXT STYLES
 
@@ -113,6 +113,11 @@ TextStyle kBodySmall = GoogleFonts.urbanist(
   letterSpacing: 0.4,
 );
 
+TextStyle kNameTextStyle = GoogleFonts.urbanist(
+  fontWeight: FontWeight.w700,
+  fontSize: 18,
+);
+
 // Poppins
 
 TextStyle kPoppinsDisplayMedium = GoogleFonts.poppins(
@@ -143,4 +148,16 @@ TextStyle kPoppinsBodySmall = GoogleFonts.poppins(
   fontSize: 10,
   fontWeight: FontWeight.normal,
   letterSpacing: 0,
+);
+
+TextStyle kSmallGreenBoldText = GoogleFonts.poppins(
+  color: kForestGreenLight,
+  fontSize: 12,
+  fontWeight: FontWeight.w600,
+);
+
+TextStyle kDropDownTextStyle = GoogleFonts.poppins(
+  color: Color.fromARGB(255, 108, 131, 48),
+  fontSize: 14,
+  fontWeight: FontWeight.w600,
 );

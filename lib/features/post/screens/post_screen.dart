@@ -1,8 +1,8 @@
+//post_screen.dart for control and logic
 import 'package:flutter/material.dart';
-import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/features/post/models/post_entry.dart';
-import 'package:trashtrackr/features/post/widgets/event_form.dart';
-import 'package:trashtrackr/features/post/widgets/post_form.dart';
+import 'package:trashtrackr/features/post/widgets/event_form.dart'; // <-- Import event form here
+import 'package:trashtrackr/features/post/widgets/post_form.dart'; // new import
 
 // --- kForest theme colors ---
 const kForestGreen = Color(0xFF819D39);
@@ -26,12 +26,10 @@ class PostScreen extends StatefulWidget {
 class _PostScreenState extends State<PostScreen> {
   bool isPost = true;
 
-  final GlobalKey<PostFormState> _postKey = GlobalKey();
-  final GlobalKey<EventFormState> _eventKey = GlobalKey();
-
   @override
   void initState() {
     super.initState();
+    // If an event entry is passed, show event form by default
     if (widget.eventEntry != null) isPost = false;
   }
 
@@ -116,21 +114,8 @@ class _PostScreenState extends State<PostScreen> {
                       ),
                       _neoBoxToggle(),
                       ElevatedButton(
-                        onPressed: () async {
-                          if (isPost) {
-                            final post = _postKey.currentState?.getPostEntry();
-                            if (post != null) {
-                              await UserService().createPost(post);
-                              Navigator.pop(context);
-                            }
-                          } else {
-                            final event =
-                                _eventKey.currentState?.getEventEntry();
-                            if (event != null) {
-                              await UserService().createEvent(event);
-                              Navigator.pop(context);
-                            }
-                          }
+                        onPressed: () {
+                          // Add your post or event submission logic here
                         },
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
@@ -160,14 +145,8 @@ class _PostScreenState extends State<PostScreen> {
                     child: SingleChildScrollView(
                       child:
                           isPost
-                              ? PostForm(
-                                key: _postKey,
-                                postEntry: widget.postEntry,
-                              )
-                              : EventForm(
-                                key: _eventKey,
-                                eventEntry: widget.eventEntry,
-                              ),
+                              ? PostForm(postEntry: widget.postEntry)
+                              : EventForm(eventEntry: widget.eventEntry),
                     ),
                   ),
                 ],

@@ -13,10 +13,10 @@ class EventForm extends StatefulWidget {
   const EventForm({super.key, this.eventEntry});
 
   @override
-  EventFormState createState() => EventFormState();
+  State<EventForm> createState() => _EventFormState();
 }
 
-class EventFormState extends State<EventForm> {
+class _EventFormState extends State<EventForm> {
   late TextEditingController _eventNameController;
   late TextEditingController _eventDescController;
   String? _eventType;
@@ -99,18 +99,6 @@ class EventFormState extends State<EventForm> {
     );
   }
 
-  /// 🔹 This is the method PostScreen will call using the GlobalKey
-  EventEntry? getEventEntry() {
-    if (_eventType == null || _eventDateRange == null) return null;
-
-    return EventEntry(
-      imageUrl: '', // To be updated if uploading to storage
-      eventType: _eventType!,
-      dateRange: _eventDateRange!,
-      eventDescription: _eventDescController.text,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -126,7 +114,7 @@ class EventFormState extends State<EventForm> {
                   _pickedImage != null
                       ? Image.file(
                         _pickedImage!,
-                        width: double.infinity,
+                        width: double.infinity, // Make it wide
                         height: 180,
                         fit: BoxFit.cover,
                       )
@@ -134,12 +122,12 @@ class EventFormState extends State<EventForm> {
                           widget.eventEntry!.imageUrl.isNotEmpty
                       ? Image.network(
                         widget.eventEntry!.imageUrl,
-                        width: double.infinity,
+                        width: double.infinity, // Make it wide
                         height: 180,
                         fit: BoxFit.cover,
                       )
                       : Container(
-                        width: double.infinity,
+                        width: double.infinity, // Make it wide
                         height: 180,
                         color: kForestGreen.withOpacity(0.1),
                         child: const Icon(
@@ -166,7 +154,7 @@ class EventFormState extends State<EventForm> {
         TextField(
           controller: _eventNameController,
           style: const TextStyle(fontFamily: kFontPoppins),
-          cursorColor: kForestGreen,
+          cursorColor: kForestGreen, // <-- Add this line
           decoration: _customFieldDecoration(label: "Event Name"),
         ),
         const SizedBox(height: 12),
@@ -198,14 +186,19 @@ class EventFormState extends State<EventForm> {
                 return Theme(
                   data: Theme.of(context).copyWith(
                     colorScheme: ColorScheme.light(
-                      primary: kForestGreen,
-                      onPrimary: Colors.white,
+                      primary: kForestGreen, // header background color
+                      onPrimary: Colors.white, // header text color
                       onSurface: const Color(0xFF779235),
-                      onBackground: const Color(0xFFF6F6F6),
+                      onBackground: Color.fromARGB(
+                        255,
+                        246,
+                        246,
+                        246,
+                      ), // body text color
                     ),
                     textButtonTheme: TextButtonThemeData(
                       style: TextButton.styleFrom(
-                        foregroundColor: kForestGreen,
+                        foregroundColor: kForestGreen, // button text color
                       ),
                     ),
                   ),
@@ -218,7 +211,7 @@ class EventFormState extends State<EventForm> {
           child: AbsorbPointer(
             child: TextField(
               style: const TextStyle(fontFamily: kFontPoppins),
-              cursorColor: kForestGreen,
+              cursorColor: kForestGreen, // <-- Add this line
               readOnly: true,
               decoration: _customFieldDecoration(
                 label: "Select date and time",
@@ -251,7 +244,7 @@ class EventFormState extends State<EventForm> {
         TextField(
           controller: _eventDescController,
           style: const TextStyle(fontFamily: kFontPoppins),
-          cursorColor: kForestGreen,
+          cursorColor: kForestGreen, // <-- Add this line
           decoration: _customFieldDecoration(
             label: "Event description",
             borderColor: kForestGreen,
