@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/waste_stats/frontend/widgets/date_button.dart';
 import 'package:trashtrackr/core/widgets/list_tiles/log_card.dart';
@@ -111,6 +110,7 @@ class _LogHistoryViewState extends State<LogHistoryView> {
                   SizedBox(width: 8),
                   Expanded(
                     child: TypesButton(
+                      selectedType: _selectedType,
                       onTypeSelected: (String type) {
                         setState(() {
                           _selectedType = type;

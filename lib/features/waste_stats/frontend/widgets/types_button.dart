@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 
-class TypesButton extends StatefulWidget {
+class TypesButton extends StatelessWidget {
+  final String selectedType;
   final Function(String) onTypeSelected;
 
-  const TypesButton({super.key, required this.onTypeSelected});
+  const TypesButton({
+    super.key,
+    required this.selectedType,
+    required this.onTypeSelected,
+  });
 
-  @override
-  _TypesButtonState createState() => _TypesButtonState();
-}
-
-class _TypesButtonState extends State<TypesButton> {
-  String _selectedType = "Type";
-
-  final List<String> types = [
+  final List<String> types = const [
     'Type',
     'Recyclable',
     'Biodegradable',
@@ -21,7 +19,7 @@ class _TypesButtonState extends State<TypesButton> {
 
   @override
   Widget build(BuildContext context) {
-    final isDefault = _selectedType == "Type";
+    final isDefault = selectedType == "Type";
     final color = isDefault ? Colors.black38 : const Color(0xff558B2F);
     final borderColor = isDefault ? const Color(0xFFadadad) : const Color(0xff558B2F);
 
@@ -34,13 +32,10 @@ class _TypesButtonState extends State<TypesButton> {
       child: SizedBox(
         height: 40,
         child: DropdownButton<String>(
-          value: _selectedType,
+          value: selectedType,
           onChanged: (String? newValue) {
             if (newValue != null) {
-              setState(() {
-                _selectedType = newValue;
-              });
-              widget.onTypeSelected(newValue);
+              onTypeSelected(newValue);
             }
           },
           items: types.map((type) {
@@ -48,14 +43,19 @@ class _TypesButtonState extends State<TypesButton> {
               value: type,
               child: Text(
                 type,
-                style: TextStyle(color: type == 'Type' ? Colors.black38 : color),
+                style: TextStyle(
+                  color: type == 'Type' ? Colors.black38 : const Color(0xff558B2F),
+                ),
               ),
             );
           }).toList(),
           isExpanded: true,
-          style: TextStyle(color: color),
           iconEnabledColor: color,
           underline: Container(),
+          style: TextStyle(
+            color: color,
+            fontSize: 16,
+          ),
         ),
       ),
     );
