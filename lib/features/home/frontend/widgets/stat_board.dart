@@ -5,12 +5,12 @@ import 'package:trashtrackr/core/widgets/box/neo_box.dart';
 class StatBoard extends StatelessWidget {
   const StatBoard({
     super.key,
-    required this.plasticDisposals,
+    required this.wasteDisposals,
     required this.streak,
     required this.badges,
   });
 
-  final int plasticDisposals;
+  final int wasteDisposals;
   final int streak;
   final int badges;
 
@@ -28,23 +28,18 @@ class StatBoard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Image.asset(
-                      'assets/images/icons/plastic.png',
-                      height: 35,
-                    ),
+                    Image.asset('assets/images/icons/plastic.png', height: 35),
                     SizedBox(width: 12),
                     Text(
-                      'Plastic',
-                      style: kTitleLarge.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      'Waste',
+                      style: kTitleLarge.copyWith(fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
 
                 Center(
                   child: Text(
-                    '$plasticDisposals',
+                    '$wasteDisposals',
                     style: kPoppinsDisplayMedium.copyWith(
                       fontSize: 58,
                       fontWeight: FontWeight.bold,
@@ -90,10 +85,7 @@ class StatBoard extends StatelessWidget {
                       alignment: Alignment.bottomRight,
                       child: Transform.translate(
                         offset: Offset(-3, 0),
-                        child: Text(
-                          'Streak',
-                          style: kPoppinsBodyMedium,
-                        ),
+                        child: Text('Streak', style: kPoppinsBodyMedium),
                       ),
                     ),
                   ],
@@ -129,10 +121,7 @@ class StatBoard extends StatelessWidget {
                       alignment: Alignment.bottomRight,
                       child: Transform.translate(
                         offset: Offset(-3, 0),
-                        child: Text(
-                          'Badges',
-                          style: kPoppinsBodyMedium,
-                        ),
+                        child: Text('Badges', style: kPoppinsBodyMedium),
                       ),
                     ),
                   ],

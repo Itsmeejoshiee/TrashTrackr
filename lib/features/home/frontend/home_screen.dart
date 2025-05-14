@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:trashtrackr/core/services/activity_service.dart';
 import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
+import 'package:trashtrackr/core/utils/date_utils.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
 import 'package:trashtrackr/core/widgets/buttons/disposal_location_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/multi_action_fab.dart';
@@ -25,6 +27,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   NavRoute _selectedRoute = NavRoute.badge;
   final UserService _userService = UserService();
+  final ActivityService _activityService = ActivityService();
+  final DateUtilsHelper _dateUtilsHelper = DateUtilsHelper();
+  bool _statsLoading = true;
+  int? _currentStreak;
+  int? _activityCount;
+  int? _badgesCount;
 
   void _selectRoute(NavRoute route) {
     setState(() {
@@ -33,11 +41,31 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _loadCurrentStats();
+  }
+
+  Future<void> _loadCurrentStats() async {
+    final activities = await _activityService.getAllActivities(false);
+    final activityCount = await _activityService.getAllActivities(true);
+    final streak = _dateUtilsHelper.getCurrentStreakFromActivities(activities);
+    final badges = await _activityService.getEarnedBadges();
+    setState(() {
+      _currentStreak = streak;
+      _activityCount = activityCount;
+      _badgesCount = badges;
+      _statsLoading = false;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: _userService.getUserStream(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting ||
+            _statsLoading) {
           return Center(child: CircularProgressIndicator(color: kAvocado));
         }
         if (!snapshot.hasData || snapshot.data == null) {
@@ -143,9 +171,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             onShowMore: () {},
                           ),
                           StatBoard(
-                            plasticDisposals: 62,
-                            streak: 22,
-                            badges: 56,
+                            wasteDisposals: _activityCount ?? 0,
+                            streak: _currentStreak ?? 0,
+                            badges: _badgesCount ?? 0,
                           ),
                         ],
                       ),
@@ -155,7 +183,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       Column(
                         children: [
                           SectionLabel(label: 'Disposal Locations'),
-                          DisposalLocationButton(onPressed: () {}),
+                          DisposalLocationButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MapScreen(),
+                                ),
+                              );
+                            },
+                          ),
                         ],
                       ),
 
