@@ -10,9 +10,6 @@ const kNeoShadow = [
   BoxShadow(color: Color(0x1A819D39), blurRadius: 12, offset: Offset(0, 4)),
 ];
 
-const String kFontUrbanist = 'Urbanist';
-const String kFontPoppins = 'Poppins';
-
 class PostScreen extends StatefulWidget {
   final PostEntry? postEntry;
   final EventEntry? eventEntry;
