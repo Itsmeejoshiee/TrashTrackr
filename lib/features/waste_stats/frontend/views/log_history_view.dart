@@ -68,7 +68,7 @@ class _LogHistoryViewState extends State<LogHistoryView> {
 
         final logs = snapshot.data ?? [];
 
-        // Filter logs based on the selected type
+        // filter logs based on selected type
         final filteredLogs = _selectedType == "Type"
             ? logs
             : logs.where((log) => log.classification == _selectedType).toList();
@@ -85,13 +85,12 @@ class _LogHistoryViewState extends State<LogHistoryView> {
           categorizedLogs[category]?.add(log);
         }
 
-        // Sort each category by timestamp, using _isDateAscending
+        // sort each category by date, using _isDateAscending
         for (var category in categorizedLogs.keys) {
           categorizedLogs[category]!.sort((a, b) {
             final timeA = a.timestamp ?? DateTime.now();
             final timeB = b.timestamp ?? DateTime.now();
 
-            // Always sort, even if sort UI is inactive
             return _isDateAscending ? timeA.compareTo(timeB) : timeB.compareTo(timeA);
           });
         }

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
-import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
 import 'package:trashtrackr/features/waste_stats/frontend/views/log_history_view.dart';
 import 'package:trashtrackr/features/waste_stats/frontend/views/summary_view.dart';
-
-import '../../../core/widgets/buttons/multi_action_fab.dart';
 import '../../../core/widgets/list_tiles/view_switch_tile.dart';
 
 class WasteStatsScreen extends StatefulWidget {

@@ -55,7 +55,7 @@ class WasteEntryService {
   }
 
 
-  // Update an existing entry, then return updated list
+  // Update an existing entry
   Future<List<ScanResult>> updateWasteEntries(User user, ScanResult entry) async {
     if (entry.id == null) {
       throw Exception('Entry ID is required for update');

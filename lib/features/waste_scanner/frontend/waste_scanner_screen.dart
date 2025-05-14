@@ -1,5 +1,6 @@
-import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +10,7 @@ import 'package:trashtrackr/features/waste_scanner/backend/camera_module.dart';
 import 'package:trashtrackr/features/waste_scanner/backend/gemini_service.dart';
 import 'package:trashtrackr/features/waste_scanner/frontend/scan_result_screen.dart';
 import 'package:trashtrackr/core/models/scan_result_model.dart';
-import '../../../core/widgets/buttons/multi_action_fab.dart';
-import 'scan_result_screen.dart';
+import '../backend/image_compress.dart';
 
 class WasteScannerScreen extends StatefulWidget {
   const WasteScannerScreen({Key? key}) : super(key: key);
@@ -104,48 +104,52 @@ class _WasteScannerScreenState extends State<WasteScannerScreen> {
                       width: 55,
                       height: 55,
                     ),
-                    onPressed: () async {
-                      try {
-                        final XFile picture = await controller.takePicture();
-                        final bytes = await picture.readAsBytes();
-                        final file = File(picture.path);
+                      onPressed: () async {
+                        try {
+                          final XFile picture = await controller.takePicture();
+                          final file = File(picture.path);
 
-                        // Upload to Firebase Storage
-                        final ref = FirebaseStorage.instance
-                            .ref()
-                            .child('scanned_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
-                        await ref.putFile(file);
-                        final imageUrl = await ref.getDownloadURL();
+                          // Compress the image before uploading
+                          final File? compressedFile = await compressImage(file);
+                          if (compressedFile == null) {
+                            throw Exception("Image compression failed.");
+                          }
 
-                        // Classify with Gemini
-                        final result = await GeminiService().classifyWaste(bytes);
+                          final Uint8List compressedBytes = await compressedFile.readAsBytes();
 
-                        // Add imageUrl to ScanResult
-                        final resultWithImage = ScanResult(
-                          productName: result.productName,
-                          materials: result.materials,
-                          prodInfo: result.prodInfo,
-                          classification: result.classification,
-                          toDo: result.toDo,
-                          notToDo: result.notToDo,
-                          proTip: result.proTip,
-                          timestamp: result.timestamp,
-                          imageUrl: imageUrl,
-                        );
+                          final ref = FirebaseStorage.instance
+                              .ref()
+                              .child('scanned_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+                          await ref.putData(compressedBytes, SettableMetadata(contentType: 'image/jpeg'));
 
+                          final imageUrl = await ref.getDownloadURL();
 
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ScanResultScreen(scanResult: resultWithImage),
-                          ),
-                        );
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error: $e')),
-                        );
+                          final result = await GeminiService().classifyWaste(compressedBytes);
+
+                          final resultWithImage = ScanResult(
+                            productName: result.productName,
+                            materials: result.materials,
+                            prodInfo: result.prodInfo,
+                            classification: result.classification,
+                            toDo: result.toDo,
+                            notToDo: result.notToDo,
+                            proTip: result.proTip,
+                            timestamp: result.timestamp,
+                            imageUrl: imageUrl,
+                          );
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ScanResultScreen(scanResult: resultWithImage),
+                            ),
+                          );
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Error: $e')),
+                          );
+                        }
                       }
-                    },
                   ),
                   SizedBox(height: 60),
                 ],
