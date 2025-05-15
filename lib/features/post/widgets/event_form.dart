@@ -1,51 +1,73 @@
-import 'package:flutter/material.dart';
-import 'package:trashtrackr/features/post/models/post_entry.dart';
 import 'dart:io';
-import 'package:image_picker/image_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:trashtrackr/core/models/user_model.dart';
+import 'package:trashtrackr/core/utils/constants.dart';
+import 'package:trashtrackr/core/services/image_service.dart';
+import 'package:trashtrackr/core/utils/event_type.dart';
+import 'package:trashtrackr/core/utils/string_utils.dart';
+import 'package:trashtrackr/features/post/models/event_model.dart';
+import 'package:flutter/services.dart';
 
-const kForestGreen = Color(0xFF819D39);
-const String kFontUrbanist = 'Urbanist';
-const String kFontPoppins = 'Poppins';
+// const String kFontUrbanist = 'Urbanist';
 
 class EventForm extends StatefulWidget {
-  final EventEntry? eventEntry;
+  final EventModel? eventEntry;
+  final Function(String)? onTitleChanged;
+  final Function(String)? onDescChanged;
+  final Function(EventType?)? onTypeSelect;
+  final Function(DateTimeRange?)? onDateTimeRangeSelect;
+  final Function(Uint8List?)? onImageSelect;
 
-  const EventForm({super.key, this.eventEntry});
+  const EventForm({
+    super.key,
+    this.eventEntry,
+    this.onTitleChanged,
+    this.onDescChanged,
+    this.onTypeSelect,
+    this.onDateTimeRangeSelect,
+    this.onImageSelect,
+  });
 
   @override
   State<EventForm> createState() => _EventFormState();
 }
 
 class _EventFormState extends State<EventForm> {
-  late TextEditingController _eventNameController;
+  late TextEditingController _eventTitleController;
   late TextEditingController _eventDescController;
-  String? _eventType;
+  EventType? _eventType;
   DateTimeRange? _eventDateRange;
-  File? _pickedImage;
+  Uint8List? _pickedImage;
 
   @override
   void initState() {
     super.initState();
-    _eventNameController = TextEditingController(text: widget.eventEntry?.eventType ?? '');
-    _eventDescController = TextEditingController(text: widget.eventEntry?.eventDescription ?? '');
-    _eventType = widget.eventEntry?.eventType;
+    _eventTitleController = TextEditingController(
+      text: widget.eventEntry?.title ?? '',
+    );
+    _eventDescController = TextEditingController(
+      text: widget.eventEntry?.desc ?? '',
+    );
+    _eventType = widget.eventEntry?.type;
     _eventDateRange = widget.eventEntry?.dateRange;
   }
 
   @override
   void dispose() {
-    _eventNameController.dispose();
+    _eventTitleController.dispose();
     _eventDescController.dispose();
     super.dispose();
   }
 
   Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (picked != null) {
+    try {
+      final image = await ImageService().getImage();
       setState(() {
-        _pickedImage = File(picked.path);
+        _pickedImage = image;
       });
+      widget.onImageSelect!(_pickedImage);
+    } catch (e) {
+      print("Error getting image: $e");
     }
   }
 
@@ -57,10 +79,10 @@ class _EventFormState extends State<EventForm> {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: kForestGreen.withOpacity(0.13),
+          color: kForestGreenLight.withOpacity(0.13),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(icon, color: kForestGreen, size: 24),
+        child: Icon(icon, color: kForestGreenLight, size: 24),
       ),
     );
   }
@@ -73,7 +95,7 @@ class _EventFormState extends State<EventForm> {
   }) {
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(fontFamily: kFontPoppins, color: Colors.black87),
+      labelStyle: kPoppinsLabel,
       filled: true,
       fillColor: Colors.white,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -87,7 +109,7 @@ class _EventFormState extends State<EventForm> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: kForestGreen, width: 2),
+        borderSide: BorderSide(color: kForestGreenLight, width: 2),
       ),
     );
   }
@@ -103,26 +125,80 @@ class _EventFormState extends State<EventForm> {
             onTap: _pickImage,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: _pickedImage != null
-                  ? Image.file(
-                      _pickedImage!,
-                      width: double.infinity, // Make it wide
-                      height: 180,
-                      fit: BoxFit.cover,
-                    )
-                  : widget.eventEntry?.imageUrl != null && widget.eventEntry!.imageUrl.isNotEmpty
-                      ? Image.network(
-                          widget.eventEntry!.imageUrl,
-                          width: double.infinity, // Make it wide
-                          height: 180,
-                          fit: BoxFit.cover,
-                        )
+              child:
+                  _pickedImage != null
+                      ? Stack(
+                        children: [
+                          Image.memory(
+                            _pickedImage!,
+                            width: double.infinity, // Make it wide
+                            height: 180,
+                            fit: BoxFit.cover,
+                          ),
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: Container(
+                              margin: EdgeInsets.all(10),
+                              padding: EdgeInsets.all(3),
+                              decoration: BoxDecoration(
+                                color: kLightGray,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _pickedImage = null;
+                                  });
+                                  widget.onImageSelect!(_pickedImage);
+                                },
+                                child: Icon(Icons.close, color: Colors.black, size: 30),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                      : (widget.eventEntry?.imageUrl != null &&
+                          widget.eventEntry!.imageUrl.isNotEmpty)
+                      ? Stack(
+                        children: [
+                          Image.network(
+                            widget.eventEntry!.imageUrl,
+                            width: double.infinity, // Make it wide
+                            height: 180,
+                            fit: BoxFit.cover,
+                          ),
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: Container(
+                              margin: EdgeInsets.all(10),
+                              padding: EdgeInsets.all(3),
+                              decoration: BoxDecoration(
+                                color: kLightGray,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _pickedImage = null;
+                                  });
+                                  widget.onImageSelect!(_pickedImage);
+                                },
+                                child: Icon(Icons.close, color: Colors.black, size: 30),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
                       : Container(
-                          width: double.infinity, // Make it wide
-                          height: 180,
-                          color: kForestGreen.withOpacity(0.1),
-                          child: const Icon(Icons.add_a_photo, color: kForestGreen, size: 40),
+                        width: double.infinity, // Make it wide
+                        height: 180,
+                        color: kForestGreenLight.withOpacity(0.1),
+                        child: const Icon(
+                          Icons.add_a_photo,
+                          color: kForestGreenLight,
+                          size: 40,
                         ),
+                      ),
             ),
           ),
         ),
@@ -130,30 +206,39 @@ class _EventFormState extends State<EventForm> {
         Center(
           child: Text(
             "Event Details",
-            style: TextStyle(
-              fontFamily: kFontUrbanist,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
+            style: kTitleMedium,
           ),
         ),
         const SizedBox(height: 12),
         TextField(
-          controller: _eventNameController,
-          style: const TextStyle(fontFamily: kFontPoppins),
-          cursorColor: kForestGreen, // <-- Add this line
+          controller: _eventTitleController,
+          style: kPoppinsLabel,
+          cursorColor: kForestGreenLight,
+          // <-- Add this line
           decoration: _customFieldDecoration(label: "Event Name"),
+          onChanged: (value) {
+            widget.onTitleChanged!(_eventTitleController.text);
+          },
         ),
         const SizedBox(height: 12),
-        DropdownButtonFormField<String>(
+        DropdownButtonFormField<EventType>(
           value: _eventType,
-          items: ["Cleanup", "Workshop", "Donation"]
-              .map((e) => DropdownMenuItem(
-                    value: e,
-                    child: Text(e, style: const TextStyle(fontFamily: kFontPoppins)),
-                  ))
-              .toList(),
-          onChanged: (val) => setState(() => _eventType = val),
+          items:
+              EventType.values
+                  .map(
+                    (event) => DropdownMenuItem(
+                      value: event,
+                      child: Text(
+                        event.name.capitalize(),
+                        style: kPoppinsLabel,
+                      ),
+                    ),
+                  )
+                  .toList(),
+          onChanged: (val) {
+            setState(() => _eventType = val);
+            widget.onTypeSelect!(_eventType);
+          },
           decoration: _customFieldDecoration(label: "Event Type"),
         ),
         const SizedBox(height: 12),
@@ -166,15 +251,18 @@ class _EventFormState extends State<EventForm> {
               builder: (context, child) {
                 return Theme(
                   data: Theme.of(context).copyWith(
+                    datePickerTheme: DatePickerThemeData(
+                      rangeSelectionBackgroundColor: kAppleGreen.withOpacity(0.5),
+                    ),
                     colorScheme: ColorScheme.light(
-                      primary: kForestGreen, // header background color
+                      primary: kForestGreenLight, // header background color
                       onPrimary: Colors.white, // header text color
-                      onSurface: const Color(0xFF779235), 
-                      onBackground: Color.fromARGB(255, 246, 246, 246)// body text color
+                      onSurface: kAvocado,
+                      onBackground: kAppleGreen, // body text color
                     ),
                     textButtonTheme: TextButtonThemeData(
                       style: TextButton.styleFrom(
-                        foregroundColor: kForestGreen, // button text color
+                        foregroundColor: kForestGreenLight, // button text color
                       ),
                     ),
                   ),
@@ -182,31 +270,37 @@ class _EventFormState extends State<EventForm> {
                 );
               },
             );
-            if (picked != null) setState(() => _eventDateRange = picked);
+            if (picked != null) {
+              setState(() => _eventDateRange = picked);
+              widget.onDateTimeRangeSelect!(_eventDateRange);
+            }
           },
           child: AbsorbPointer(
             child: TextField(
-              style: const TextStyle(fontFamily: kFontPoppins),
-              cursorColor: kForestGreen, // <-- Add this line
+              style: kPoppinsLabel,
+              cursorColor: kForestGreenLight,
+              // <-- Add this line
               readOnly: true,
               decoration: _customFieldDecoration(
                 label: "Select date and time",
               ).copyWith(
-                suffixIcon: const Icon(Icons.calendar_today, color: kForestGreen),
-                hintText: _eventDateRange == null
-                    ? "Pick a date range"
-                    : "${_eventDateRange!.start.month}/${_eventDateRange!.start.day}/${_eventDateRange!.start.year} - "
-                      "${_eventDateRange!.end.month}/${_eventDateRange!.end.day}/${_eventDateRange!.end.year}",
-                hintStyle: const TextStyle(
-                  fontFamily: kFontPoppins,
-                  color: Colors.black54,
+                suffixIcon: const Icon(
+                  Icons.calendar_today,
+                  color: kForestGreenLight,
                 ),
+                hintText:
+                    _eventDateRange == null
+                        ? "Pick a date range"
+                        : "${_eventDateRange!.start.month}/${_eventDateRange!.start.day}/${_eventDateRange!.start.year} - "
+                            "${_eventDateRange!.end.month}/${_eventDateRange!.end.day}/${_eventDateRange!.end.year}",
+                hintStyle: kPoppinsLabel,
               ),
               controller: TextEditingController(
-                text: _eventDateRange == null
-                    ? ""
-                    : "${_eventDateRange!.start.month}/${_eventDateRange!.start.day}/${_eventDateRange!.start.year} - "
-                      "${_eventDateRange!.end.month}/${_eventDateRange!.end.day}/${_eventDateRange!.end.year}",
+                text:
+                    _eventDateRange == null
+                        ? ""
+                        : "${_eventDateRange!.start.month}/${_eventDateRange!.start.day}/${_eventDateRange!.start.year} - "
+                            "${_eventDateRange!.end.month}/${_eventDateRange!.end.day}/${_eventDateRange!.end.year}",
               ),
             ),
           ),
@@ -214,16 +308,19 @@ class _EventFormState extends State<EventForm> {
         const SizedBox(height: 12),
         TextField(
           controller: _eventDescController,
-          style: const TextStyle(fontFamily: kFontPoppins),
-          cursorColor: kForestGreen, // <-- Add this line
+          style: kPoppinsLabel,
+          cursorColor: kForestGreenLight,
+          // <-- Add this line
           decoration: _customFieldDecoration(
             label: "Event description",
-            borderColor: kForestGreen,
+            borderColor: kForestGreenLight,
           ),
           maxLines: 3,
+          onChanged: (value) {
+            widget.onDescChanged!(_eventDescController.text);
+          },
         ),
         const SizedBox(height: 16),
-        
       ],
     );
   }

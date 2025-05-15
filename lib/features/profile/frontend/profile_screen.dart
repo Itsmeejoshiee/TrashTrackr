@@ -31,7 +31,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   NavRoute _selectedRoute = NavRoute.profile;
   ProfileSection _selectedSection = ProfileSection.posts;
-  String? fullName;
 
   void _selectRoute(NavRoute route) {
     setState(() {
@@ -39,17 +38,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  void _loadFullName() async {
-    final name = await _userService.getFullName();
-    setState(() {
-      fullName = name;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
-    _loadFullName();
   }
 
   Widget _getSectionWidget() {
