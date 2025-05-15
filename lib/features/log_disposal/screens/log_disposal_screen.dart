@@ -7,6 +7,8 @@ import 'package:trashtrackr/core/widgets/text_fields/search_bar/filter_modal.dar
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/services/waste_entry_service.dart';
 
+import '../../dashboard/frontend/dashboard_screen.dart';
+
 class LogDisposalScreen extends StatefulWidget {
   const LogDisposalScreen({super.key});
 
@@ -122,12 +124,26 @@ class _LogDisposalScreenState extends State<LogDisposalScreen> {
     final query = searchQuery.toLowerCase();
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => DashboardScreen()),
+          ),
+          icon: Icon(Icons.arrow_back_ios),
+        ),
+        title: Text(
+          'Dashboard',
+          style: kTitleMedium.copyWith(fontWeight: FontWeight.bold),
+        ),
+      ),
       backgroundColor: const Color(0xFFF4F4F4),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),
         child: Column(
           children: [
-            const SizedBox(height: 73),
+
             Image.asset(
               'assets/images/titles/log_disposal.png',
               height: 100,
