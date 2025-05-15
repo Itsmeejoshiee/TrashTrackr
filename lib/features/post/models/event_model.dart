@@ -10,6 +10,7 @@ class EventModel {
   final String imageUrl;
   final String title;
   final EventType type;
+  final String address;
   final DateTimeRange dateRange;
   final String startTime;
   final String endTime;
@@ -23,6 +24,7 @@ class EventModel {
     required this.imageUrl,
     required this.title,
     required this.type,
+    required this.address,
     required this.dateRange,
     required this.startTime,
     required this.endTime,
@@ -38,6 +40,7 @@ class EventModel {
     imageUrl: map['image_url'] ?? '',
     title: map['title'] ?? '',
     type: EventType.fromString(map['type']),
+    address: map['address'] ?? '',
     dateRange: DateTimeRange(
       start: (map['date_start'] as Timestamp).toDate(),
       end: (map['date_end'] as Timestamp).toDate(),
@@ -55,6 +58,7 @@ class EventModel {
     'image_url': imageUrl,
     'title': title,
     'type': type.name,
+    'address': address,
     'date_start': dateRange.start,
     'date_end': dateRange.end,
     'start_time': startTime,
