@@ -11,8 +11,8 @@ import 'package:trashtrackr/core/utils/event_type.dart';
 import 'package:trashtrackr/core/utils/string_utils.dart';
 import 'package:trashtrackr/features/post/models/event_model.dart';
 import 'package:trashtrackr/features/post/models/post_model.dart';
-import 'package:trashtrackr/features/post/widgets/event_form.dart'; // <-- Import event form here
-import 'package:trashtrackr/features/post/widgets/post_form.dart'; // new import
+import 'package:trashtrackr/features/post/widgets/forms/event_form.dart'; // <-- Import event form here
+import 'package:trashtrackr/features/post/widgets/forms/post_form.dart'; // new import
 import 'package:flutter/services.dart';
 
 // --- kForest theme colors ---
@@ -48,6 +48,8 @@ class _PostScreenState extends State<PostScreen> {
   String? _eventTitle;
   EventType? _eventType;
   DateTimeRange? _eventDateRange;
+  TimeOfDay? _eventStartTime;
+  TimeOfDay? _eventEndTime;
   String? _eventDesc;
 
   @override
@@ -65,6 +67,7 @@ class _PostScreenState extends State<PostScreen> {
     });
   }
 
+  // Post or Event Toggle Box
   Widget _neoBoxToggle() {
     return Container(
       decoration: BoxDecoration(
@@ -76,16 +79,13 @@ class _PostScreenState extends State<PostScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           _neoTab("New Post", _isPost, () => setState(() => _isPost = true)),
-          _neoTab(
-            "New Event",
-            !_isPost,
-            () => setState(() => _isPost = false),
-          ),
+          _neoTab("New Event", !_isPost, () => setState(() => _isPost = false)),
         ],
       ),
     );
   }
 
+  // Post or Event Toggle Bar
   Widget _neoTab(String label, bool selected, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
@@ -104,6 +104,23 @@ class _PostScreenState extends State<PostScreen> {
         ),
       ),
     );
+  }
+
+  // Check if required post fields are met
+  bool _isPostComplete() {
+    if (_postBody == null || _postBody!.isEmpty) return false;
+    return true;
+  }
+
+  // Check if required event fields are met
+  bool _isEventComplete() {
+    if (_eventTitle == null || _eventTitle!.isEmpty) return false;
+    if (_eventType == null) return false;
+    if (_eventDateRange == null) return false;
+    if (_eventStartTime == null) return false;
+    if (_eventEndTime == null) return false;
+    if (_eventDesc == null || _eventDesc!.isEmpty) return false;
+    return true;
   }
 
   @override
@@ -153,38 +170,77 @@ class _PostScreenState extends State<PostScreen> {
                               _neoBoxToggle(),
                               ElevatedButton(
                                 onPressed: () async {
-                                  showDialog(
-                                    context: context,
-                                    builder:
-                                        (context) => Center(
+                                  if (_isPost) {
+                                    if (_isPostComplete()) {
+                                      showDialog(
+                                        context: context,
+                                        builder:
+                                            (context) => Center(
                                           child: CircularProgressIndicator(
                                             color: kAppleGreen,
                                           ),
                                         ),
-                                  );
-                                  if (_isPost) {
-                                    await _postService.createPost(
-                                      user: _user!,
-                                      body: _postBody!,
-                                      emotion: _postEmotion,
-                                      image: _postImage,
-                                    );
+                                      );
+                                      await _postService.createPost(
+                                        user: _user!,
+                                        body: _postBody!,
+                                        emotion: _postEmotion,
+                                        image: _postImage,
+                                      );
+                                      // Log post activity
+                                      _activityService.logActivity('post');
+                                      // Pop loading indicator
+                                      Navigator.pop(context);
+                                      // Pop post screen
+                                      Navigator.pop(context);
+                                    } else {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Include post caption.'),
+                                          backgroundColor: kRed,
+                                        ),
+                                      );
+                                    }
                                   } else {
-                                    await _postService.createEvent(
-                                      user: _user!,
-                                      image: _eventImage,
-                                      title: _eventTitle!,
-                                      type: _eventType!,
-                                      dateRange: _eventDateRange!,
-                                      desc: _eventDesc!,
-                                    );
+                                    if (_isEventComplete()) {
+                                      showDialog(
+                                        context: context,
+                                        builder:
+                                            (context) => Center(
+                                          child: CircularProgressIndicator(
+                                            color: kAppleGreen,
+                                          ),
+                                        ),
+                                      );
+                                      await _postService.createEvent(
+                                        user: _user!,
+                                        image: _eventImage,
+                                        title: _eventTitle!,
+                                        type: _eventType!,
+                                        dateRange: _eventDateRange!,
+                                        startTime: _eventStartTime!.format(context),
+                                        endTime: _eventEndTime!.format(context),
+                                        desc: _eventDesc!,
+                                      );
+                                      // Log post activity
+                                      _activityService.logActivity('event');
+                                      // Pop loading indicator
+                                      Navigator.pop(context);
+                                      // Pop post screen
+                                      Navigator.pop(context);
+                                    } else {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Incomplete Fields'),
+                                          backgroundColor: kRed,
+                                        ),
+                                      );
+                                    }
                                   }
-                                  // Log post activity
-                                  _activityService.logActivity('event');
-                                  // Pop loading indicator
-                                  Navigator.pop(context);
-                                  // Pop post screen
-                                  Navigator.pop(context);
                                 },
                                 style: ButtonStyle(
                                   backgroundColor:
@@ -263,6 +319,18 @@ class _PostScreenState extends State<PostScreen> {
                                           });
                                           print(
                                             'EVENT DATE RANGE: $_eventDateRange',
+                                          );
+                                        },
+                                        onTimeSelect: (start, end) {
+                                          setState(() {
+                                            _eventStartTime = start;
+                                            _eventEndTime = end;
+                                          });
+                                          print(
+                                            'EVENT START TIME: $_eventStartTime',
+                                          );
+                                          print(
+                                            'EVENT ENDd TIME: $_eventEndTime',
                                           );
                                         },
                                         onDescChanged: (desc) {
