@@ -51,56 +51,38 @@ class PostService {
     Uint8List? image,
     required String title,
     required EventType type,
+    required String address,
     required DateTimeRange dateRange,
     required String startTime,
     required String endTime,
     required String desc,
   }) async {
-    final uid = AuthService().currentUser?.uid;
-    if (uid == null) return;
-
-    final firstName = user.firstName;
-    final lastName = user.lastName;
-    final fullName = '$firstName $lastName'.trim();
-    final profilePicture = user.profilePicture;
-    final imageUrl = (image == null) ? '' : await uploadPostImage(image);
-
-    final event = EventModel(
-      uid: uid,
-      fullName: fullName,
-      profilePicture: profilePicture,
-      timestamp: Timestamp.now(),
-      imageUrl: imageUrl,
-      title: title,
-      type: type,
-      dateRange: dateRange,
-      startTime: startTime,
-      endTime: endTime,
-      desc: desc,
-    );
-
-    await FirebaseFirestore.instance.collection('events').add(event.toMap());
-
     try {
-      // final firstName = user.firstName;
-      // final lastName = user.lastName;
-      // final fullName = '$firstName $lastName'.trim();
-      // final profilePicture = user.profilePicture;
-      // final imageUrl = (image == null) ? '' : await uploadPostImage(image);
-      //
-      // final event = EventModel(
-      //   uid: uid,
-      //   fullName: fullName,
-      //   profilePicture: profilePicture,
-      //   timestamp: Timestamp.now(),
-      //   imageUrl: imageUrl,
-      //   title: title,
-      //   type: type,
-      //   dateRange: dateRange,
-      //   desc: desc,
-      // );
-      //
-      // await FirebaseFirestore.instance.collection('events').add(event.toMap());
+      final uid = AuthService().currentUser?.uid;
+      if (uid == null) return;
+
+      final firstName = user.firstName;
+      final lastName = user.lastName;
+      final fullName = '$firstName $lastName'.trim();
+      final profilePicture = user.profilePicture;
+      final imageUrl = (image == null) ? '' : await uploadPostImage(image);
+
+      final event = EventModel(
+        uid: uid,
+        fullName: fullName,
+        profilePicture: profilePicture,
+        timestamp: Timestamp.now(),
+        imageUrl: imageUrl,
+        title: title,
+        type: type,
+        address: address,
+        dateRange: dateRange,
+        startTime: startTime,
+        endTime: endTime,
+        desc: desc,
+      );
+
+      await FirebaseFirestore.instance.collection('events').add(event.toMap());
     } catch (e) {
       print('Error creating event: $e');
     }
@@ -122,5 +104,43 @@ class PostService {
       print('Error uploading image: $e');
       return null;
     }
+  }
+
+  Stream<List<PostModel>> getPostStream() {
+    final uid = _authService.currentUser?.uid;
+
+    if (uid == null) {
+      print('UID is null, cannot fetch post stream');
+      return Stream.value([]);
+    }
+
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .snapshots()
+        .map((snapshot) {
+          print(snapshot.docs);
+          return snapshot.docs.map((doc) {
+            return PostModel.fromMap(doc.data());
+          }).toList();
+        });
+  }
+
+  Stream<List<EventModel>> getEventStream() {
+    final uid = _authService.currentUser?.uid;
+
+    if (uid == null) {
+      print('UID is null, cannot fetch event stream');
+      return Stream.value([]);
+    }
+
+    return FirebaseFirestore.instance
+        .collection('events')
+        .snapshots()
+        .map((snapshot) {
+      print(snapshot.docs);
+      return snapshot.docs.map((doc) {
+        return EventModel.fromMap(doc.data());
+      }).toList();
+    });
   }
 }
