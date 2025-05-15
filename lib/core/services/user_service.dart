@@ -17,8 +17,8 @@ import 'package:trashtrackr/core/user_provider.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/post/models/event_model.dart';
 import 'package:trashtrackr/features/post/models/post_model.dart';
-import 'package:trashtrackr/features/settings/backend/edit_profile_bloc.dart';
 import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class UserService {
   final AuthService _authService = AuthService();
@@ -69,12 +69,18 @@ class UserService {
           .set(newUser.toMap());
 
       await _badgeService.initUserBadges();
-
     } catch (e) {
       setErrorMessage('An error occurred. Please try again.');
       print('Error: $e');
       return null;
     }
+  }
+
+  Future<bool> doesUserDocumentExist(String uid) async {
+    final docRef = FirebaseFirestore.instance.collection('users').doc(uid);
+    final docSnapshot = await docRef.get();
+
+    return docSnapshot.exists; // true if document exists, false otherwise
   }
 
   // Function to create a user account using Google Sign-In
@@ -89,13 +95,13 @@ class UserService {
 
     final firstName = nameParts.isNotEmpty ? nameParts[0] : '';
     final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
-
+    final profilePicture = getGUserProfilePicture();
     final newUser = UserModel(
       uid: uid ?? '',
       email: _authService.currentUser?.email ?? '',
       firstName: firstName,
       lastName: lastName,
-      profilePicture: '',
+      profilePicture: (await profilePicture) ?? '',
       followerCount: 0,
       followingCount: 0,
     );
@@ -108,9 +114,62 @@ class UserService {
         .set(newUser.toMap());
   }
 
+  Future<bool> isUserGoogle() async {
+    final user = _authService.currentUser;
+    if (user == null) {
+      return false;
+    } else {
+      return user.providerData.any((info) => info.providerId == 'google.com');
+    }
+  }
+
+  Future<String?> getGUserProfilePicture() async {
+    final uid = _authService.currentUser?.uid;
+    final user = _authService.currentUser;
+    if (uid == null) {
+      print('User is null, cannot fetch profile picture');
+      return '';
+    }
+
+    try {
+      final profilePicture = user!.photoURL;
+      return profilePicture;
+    } catch (e) {
+      print('Error fetching profile picture: $e');
+      return '';
+    }
+  }
+
   Future<void> signInWithGoogle() async {
     try {
       final userCredential = await _authService.signInWithGoogle();
+      final uid = _authService.currentUser?.uid;
+      final docExists = await doesUserDocumentExist(uid!);
+      if (!docExists) {
+        final displayName = _authService.currentUser?.displayName ?? '';
+        final nameParts = displayName.trim().split(RegExp(r'\s+'));
+
+        final firstName = nameParts.isNotEmpty ? nameParts[0] : '';
+        final lastName =
+            nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+        final profilePicture = getGUserProfilePicture();
+        final newUser = UserModel(
+          uid: uid,
+          email: _authService.currentUser?.email ?? '',
+          firstName: firstName,
+          lastName: lastName,
+          profilePicture: (await profilePicture) ?? '',
+          followerCount: 0,
+          followingCount: 0,
+        );
+
+        await _badgeService.initUserBadges();
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(newUser.uid)
+            .set(newUser.toMap());
+      }
     } catch (e) {
       print('Error: $e');
     }
@@ -164,46 +223,6 @@ class UserService {
         });
   }
 
-  //TODO: Optimize this function, loads slowly. I think im using shared prefs wrong way.
-
-  // Future<String?> getFullName() async {
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   final uid = _authService.currentUser?.uid;
-  //
-  //   if (uid == null) {
-  //     print('UID is null, cannot fetch full name');
-  //     return null;
-  //   }
-  //
-  //   try {
-  //     final userDoc =
-  //         await FirebaseFirestore.instance.collection('users').doc(uid).get();
-  //     final userData = userDoc.data();
-  //
-  //     if (userData == null) {
-  //       print('User document not found for UID: $uid');
-  //       return null;
-  //     }
-  //
-  //     final firstName = userData['first_name'] ?? '';
-  //     final lastName = userData['last_name'] ?? '';
-  //     final fullName = '$firstName $lastName'.trim();
-  //
-  //     final cachedFullName = prefs.getString('fullName');
-  //     if (cachedFullName != fullName) {
-  //       await prefs.setString('fullName', fullName);
-  //       print('Full name updated in SharedPreferences: $fullName');
-  //     } else {
-  //       print('No Updates in SharedPreferences.');
-  //     }
-  //     return cachedFullName;
-  //   } catch (e) {
-  //     print('Error fetching user document: $e');
-  //     return null;
-  //   }
-  // }
-
-  // fieldnames: first_name, last_name, email
   Future<void> updateUserInfo(String fieldName, String value) async {
     final uid = _authService.currentUser?.uid;
     if (uid == null) return;

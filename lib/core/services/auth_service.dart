@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:trashtrackr/core/services/user_service.dart';
 
 class AuthService {
   //initialize firebase auth
@@ -63,20 +61,27 @@ class AuthService {
   }
 
   Future<UserCredential> signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
-
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
+    final GoogleSignIn googleSignIn = GoogleSignIn(
+      scopes: ['email', 'profile'],
     );
 
-    // Once signed in, return the UserCredential
+    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+    if (googleUser == null) {
+      throw FirebaseAuthException(
+        code: 'ERROR_ABORTED_BY_USER',
+        message: 'Sign in aborted by user',
+      );
+    }
+
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
@@ -152,6 +157,59 @@ class AuthService {
       await firebaseAuth.signOut();
     } catch (e) {
       rethrow;
+    }
+  }
+
+  //Delete Google account
+  Future<void> deleteGUser() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    final AuthService authService = AuthService();
+    try {
+      final googleUser = await googleSignIn.signIn();
+      final googleAuth = await googleUser?.authentication;
+
+      if (googleUser == null || googleAuth == null) {
+        print('Google reauthentication failed or was cancelled.');
+        return;
+      }
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final user = authService.currentUser;
+      await user?.reauthenticateWithCredential(credential);
+
+      try {
+        // Delete user data from Firestore
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user?.uid)
+            .delete();
+        final posts =
+            await FirebaseFirestore.instance
+                .collection('posts')
+                .where('uid', isEqualTo: user?.uid)
+                .get();
+        final events =
+            await FirebaseFirestore.instance
+                .collection('events')
+                .where('uid', isEqualTo: user?.uid)
+                .get();
+        final allDocs = [...posts.docs, ...events.docs];
+
+        for (final doc in allDocs) {
+          await doc.reference.delete();
+        }
+      } catch (e) {
+        print('Error deleting user data: $e');
+      }
+
+      await user?.delete();
+      print('User successfully reauthenticated and deleted.');
+    } catch (e) {
+      print('Error during reauthentication or deletion: $e');
     }
   }
 

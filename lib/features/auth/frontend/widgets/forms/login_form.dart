@@ -155,10 +155,7 @@ class _LoginFormState extends State<LoginForm> {
               AuthProviderButton(
                 padding: EdgeInsets.all(14),
                 onPressed: () async {
-                  final userService = Provider.of<UserService>(
-                    context,
-                    listen: false,
-                  );
+                  final userService = UserService();
                   await userService.signInWithGoogle();
                 },
                 child: Image.asset('assets/images/icons/google_green.png'),

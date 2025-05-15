@@ -30,6 +30,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final AuthService _authService = AuthService();
   final UserService _userService = UserService();
 
+  Future<bool> checkUser() async {
+    bool accountType = await _userService.isUserGoogle();
+
+    return accountType;
+  }
+
   Future<void> _logout() async {
     // Sign Out
     await _authService.signOut();
@@ -51,6 +57,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await Future.delayed(Duration(milliseconds: 300));
 
     await _userService.deleteUser(email, password);
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => AuthManager()),
+      (r) => false,
+    );
+  }
+
+  Future<void> _deleteGAccount() async {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const DeleteTransitionScreen()),
+    );
+
+    await Future.delayed(Duration(milliseconds: 300));
+
+    await _authService.deleteGUser();
 
     Navigator.pushAndRemoveUntil(
       context,
@@ -92,6 +115,44 @@ class _SettingsScreenState extends State<SettingsScreen> {
           onPressed: _logout,
           child: Text(
             'Logout',
+            style: kTitleSmall.copyWith(color: Colors.white),
+          ),
+        ),
+      ],
+    ).show();
+  }
+
+  void _deleteGAccountAlert() {
+    TextEditingController passwordController = TextEditingController();
+    Alert(
+      context: context,
+      style: AlertStyle(
+        animationType: AnimationType.grow,
+        isCloseButton: false,
+        titleStyle: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
+        descStyle: kTitleMedium,
+      ),
+      title: "Are you sure you want\nto delete your account?",
+      desc:
+          "We're sad to see you leave! Deleting your TrashTrackr account will permanently erase your data, including your streaks, badges, posts, and waste log.",
+      image: Image.asset("assets/images/icons/red_delete_icon.png", width: 110),
+      buttons: [
+        DialogButton(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          color: Color(0xFFE6E6E6),
+          radius: BorderRadius.circular(30),
+          onPressed: () => Navigator.pop(context),
+          child: Text('Cancel', style: kTitleSmall),
+        ),
+        DialogButton(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          color: kRed,
+          radius: BorderRadius.circular(30),
+          onPressed: () {
+            _deleteGAccount();
+          },
+          child: Text(
+            'Delete',
             style: kTitleSmall.copyWith(color: Colors.white),
           ),
         ),
@@ -271,7 +332,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     RoundedRectangleButton(
                       backgroundColor: kRed,
                       title: 'Delete Account',
-                      onPressed: () => _deleteAccountAlert(user.email),
+                      onPressed: () async {
+                        if (await checkUser()) {
+                          _deleteGAccountAlert();
+                        } else {
+                          _deleteAccountAlert(user.email);
+                        }
+                      },
                     ),
                     // Offset
                     SizedBox(height: 15),
