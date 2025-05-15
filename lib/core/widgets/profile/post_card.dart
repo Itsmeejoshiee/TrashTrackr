@@ -1,34 +1,74 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
+import 'package:trashtrackr/core/utils/date_utils.dart';
+import 'package:trashtrackr/core/utils/string_utils.dart';
 import 'package:trashtrackr/core/widgets/box/neo_box.dart';
+import 'package:trashtrackr/core/widgets/buttons/bookmark_button.dart';
+import 'package:trashtrackr/core/widgets/buttons/comment_button.dart';
+import 'package:trashtrackr/core/widgets/buttons/like_button.dart';
+import 'package:trashtrackr/features/post/models/post_model.dart';
 
-class PostCard extends StatelessWidget {
-  const PostCard({
-    super.key,
-    required this.profilePath,
-    required this.username,
-    required this.timestamp,
-    required this.desc,
-    this.image,
-  });
+class PostCard extends StatefulWidget {
+  const PostCard({super.key, required this.post});
 
-  final String profilePath;
-  final ImageProvider? image;
-  final String username;
-  final String timestamp;
-  final String desc;
+  final PostModel post;
+
+  @override
+  State<PostCard> createState() => _PostCardState();
+}
+
+class _PostCardState extends State<PostCard> {
+  bool _isLiked = false;
+  bool _isCommented = false;
+  bool _isBookmarked = false;
+
+  Widget _buildEmotionLabel() {
+    final emotionName = widget.post.emotion.name;
+    return Row(
+      spacing: 3,
+      children: [
+        Image.asset('assets/images/emotions/$emotionName.png', width: 24),
+        Text(
+          emotionName.capitalize(),
+          style: kBodySmall.copyWith(fontSize: 9, fontWeight: FontWeight.bold),
+        ),
+      ],
+    );
+  }
+
+  String _formatTimestamp(Timestamp timestamp) {
+    final DateUtilsHelper _dateUtilsHelpers = DateUtilsHelper();
+    DateTime dateTime = timestamp.toDate();
+
+    // Format date
+    String month = _dateUtilsHelpers.getMonthName(dateTime.month);
+    int day = dateTime.day;
+    int year = dateTime.year;
+    String date = '$month $day, $year';
+
+    // Format time
+    int hour = dateTime.hour % 12;
+    int minutes = dateTime.minute;
+    String meridian = (dateTime.hour > 12) ? 'pm' : 'am';
+    String time = '$hour:$minutes $meridian';
+
+    return '$date @ $time';
+  }
 
   @override
   Widget build(BuildContext context) {
     return NeoBox(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               CircleAvatar(
-                foregroundImage: AssetImage(
-                  profilePath,
-                ),
+                foregroundImage:
+                    (widget.post.profilePicture.isNotEmpty)
+                        ? NetworkImage(widget.post.profilePicture)
+                        : AssetImage('assets/images/placeholder_profile.jpg'),
               ),
               SizedBox(width: 10),
               Wrap(
@@ -36,7 +76,7 @@ class PostCard extends StatelessWidget {
                 children: [
                   //User Name
                   Text(
-                    username,
+                    widget.post.fullName,
                     style: kBodySmall.copyWith(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -44,7 +84,7 @@ class PostCard extends StatelessWidget {
                   ),
                   //Date Posted
                   Text(
-                    timestamp,
+                    _formatTimestamp(widget.post.timestamp),
                     style: kPoppinsBodyMedium.copyWith(
                       fontSize: 9.95,
                       fontWeight: FontWeight.w500,
@@ -54,34 +94,67 @@ class PostCard extends StatelessWidget {
                 ],
               ),
               Spacer(),
+              _buildEmotionLabel(),
+              SizedBox(width: 15),
               IconButton(onPressed: () {}, icon: Icon(Icons.more_horiz)),
             ],
           ),
           SizedBox(height: 10),
 
           Text(
-            desc,
+            widget.post.body,
             style: kPoppinsBodyMedium.copyWith(fontSize: 12),
           ),
 
-          (image != null) ? Container(
-            width: double.infinity,
-            height: 212,
-            margin: EdgeInsets.symmetric(vertical: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(5),
-                topRight: Radius.circular(5),
-              ),
-              image: DecorationImage(image: image!, fit: BoxFit.cover)
-            ),
-          ) : SizedBox(),
+          (widget.post.imageUrl.isNotEmpty)
+              ? Container(
+                width: double.infinity,
+                height: 212,
+                margin: EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(5),
+                    topRight: Radius.circular(5),
+                  ),
+                  image: DecorationImage(
+                    image: NetworkImage(widget.post.imageUrl),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              )
+              : SizedBox(),
+
+          // Offset
+          SizedBox(height: 15),
 
           Row(
             children: [
-              IconButton(onPressed: () {}, icon: Icon(Icons.thumb_up)),
-              IconButton(onPressed: () {}, icon: Icon(Icons.comment)),
-              IconButton(onPressed: () {}, icon: Icon(Icons.bookmark)),
+              LikeButton(
+                isActive: _isLiked,
+                onPressed: () {
+                  setState(() {
+                    _isLiked = !_isLiked;
+                  });
+                },
+              ),
+
+              CommentButton(
+                isActive: _isCommented,
+                onPressed: () {
+                  setState(() {
+                    _isCommented = !_isCommented;
+                  });
+                },
+              ),
+
+              BookmarkButton(
+                isActive: _isBookmarked,
+                onPressed: () {
+                  setState(() {
+                    _isBookmarked = !_isBookmarked;
+                  });
+                },
+              ),
             ],
           ),
         ],
