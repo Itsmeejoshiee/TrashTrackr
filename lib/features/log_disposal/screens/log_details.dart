@@ -177,7 +177,8 @@ class _LogDetailsState extends State<LogDetails> {
                 style: kBodyLarge.copyWith(fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
-              DisposalLocationButton(onPressed: () {}),
+
+              DisposalLocationButton(),
 
               SizedBox(height: 20),
 
