@@ -1,33 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:trashtrackr/core/models/user_model.dart';
 import 'package:trashtrackr/core/services/image_service.dart';
+import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
-import 'package:trashtrackr/features/post/models/post_entry.dart';
+import 'package:trashtrackr/core/utils/emotion.dart';
+import 'package:trashtrackr/core/utils/string_utils.dart';
+import 'package:trashtrackr/features/post/models/post_model.dart';
 import 'package:flutter/services.dart';
 
 class PostForm extends StatefulWidget {
-  final PostEntry? postEntry;
+  final UserModel user;
+  final PostModel? postEntry;
   final TextEditingController? controller;
+  final Function(String?)? onChange;
+  final Function(Emotion?)? onEmotionSelect;
+  final Function(Uint8List?)? onImageSelect;
 
-  const PostForm({super.key, this.postEntry, this.controller});
+  const PostForm({
+    super.key,
+    required this.user,
+    this.postEntry,
+    this.controller,
+    this.onChange,
+    this.onImageSelect,
+    this.onEmotionSelect,
+  });
 
   @override
   State<PostForm> createState() => _PostFormState();
 }
 
 class _PostFormState extends State<PostForm> {
+
+  final UserService _userService = UserService();
+
   late TextEditingController _controller;
   late FocusNode _focusNode;
-  String? _selectedEmotion;
+  Emotion? _selectedEmotion;
   Uint8List? _pickedImage;
   final FocusNode _keyboardFocusNode = FocusNode();
-
-  final List<String> _emotions = [
-    "💪 Empowered — Feeling capable and motivated to make a change.",
-    "🙏 Grateful — Appreciating nature, community, or the chance to help.",
-    "🌅 Hopeful — Optimistic about the future and the planet.",
-    "💡 Inspired — Motivated by others or your own eco-action.",
-    "😊 Joyful — Simply happy doing your part for the Earth",
-  ];
 
   @override
   void initState() {
@@ -55,6 +66,7 @@ class _PostFormState extends State<PostForm> {
       setState(() {
         _pickedImage = image;
       });
+      widget.onImageSelect!(_pickedImage);
     } catch (e) {
       print("Error getting image: $e");
     }
@@ -66,6 +78,7 @@ class _PostFormState extends State<PostForm> {
       setState(() {
         _pickedImage = image;
       });
+      widget.onImageSelect!(_pickedImage);
     } catch (e) {
       print("Error getting camera image: $e");
     }
@@ -120,6 +133,7 @@ class _PostFormState extends State<PostForm> {
         offset: newSelectionIndex,
       );
     });
+    widget.onChange!(_controller.text);
   }
 
   Widget _iconNeoButton(IconData icon, VoidCallback onTap) {
@@ -140,9 +154,8 @@ class _PostFormState extends State<PostForm> {
 
   @override
   Widget build(BuildContext context) {
-    final String fullname = widget.postEntry?.fullname ?? "Your Name";
-    final String userPfp =
-        widget.postEntry?.userPfp ?? "assets/images/placeholder_profile.jpg";
+    final String fullName = '${widget.user.firstName} ${widget.user.lastName}';
+    final String profilePicture = widget.user.profilePicture;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,18 +165,18 @@ class _PostFormState extends State<PostForm> {
             CircleAvatar(
               radius: 24,
               backgroundImage:
-                  userPfp.startsWith('http')
-                      ? NetworkImage(userPfp)
-                      : AssetImage(userPfp) as ImageProvider,
+              (profilePicture.isNotEmpty)
+                      ? NetworkImage(profilePicture)
+                      : AssetImage('assets/images/placeholder_profile.jpg'),
             ),
             const SizedBox(width: 15),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(fullname, style: kNameTextStyle),
+                Text(fullName, style: kNameTextStyle),
                 SizedBox(
                   width: 220,
-                  child: DropdownButtonFormField<String>(
+                  child: DropdownButtonFormField<Emotion>(
                     value: _selectedEmotion,
                     hint: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -180,18 +193,30 @@ class _PostFormState extends State<PostForm> {
                     style: kSmallGreenBoldText,
                     isDense: true,
                     items:
-                        _emotions
+                        Emotion.values
                             .map(
-                              (e) => DropdownMenuItem(
-                                value: e,
-                                child: Text(
-                                  e.split(' ').take(2).join(' '),
-                                  style: kDropDownTextStyle,
+                              (emotion) => DropdownMenuItem(
+                                value: emotion,
+                                child: Row(
+                                  spacing: 8,
+                                  children: [
+                                    Image.asset(
+                                      'assets/images/emotions/${emotion.name}.png',
+                                      width: 24,
+                                    ),
+                                    Text(
+                                      emotion.name.capitalize(),
+                                      style: kDropDownTextStyle,
+                                    ),
+                                  ],
                                 ),
                               ),
                             )
                             .toList(),
-                    onChanged: (val) => setState(() => _selectedEmotion = val),
+                    onChanged: (val) {
+                      setState(() => _selectedEmotion = val);
+                      widget.onEmotionSelect!(_selectedEmotion!);
+                    },
                     decoration: const InputDecoration(
                       isDense: true,
                       contentPadding: EdgeInsets.symmetric(
@@ -221,18 +246,45 @@ class _PostFormState extends State<PostForm> {
             cursorColor: kForestGreenLight,
             style: kPostInputTextStyle,
             decoration: const InputDecoration(border: InputBorder.none),
+            onChanged: (value) {
+              widget.onChange!(_controller.text);
+            },
           ),
         ),
         if (_pickedImage != null) ...[
           const SizedBox(height: 12),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.memory(
-              _pickedImage!,
-              width: double.infinity,
-              height: 180,
-              fit: BoxFit.cover,
-            ),
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.memory(
+                  _pickedImage!,
+                  width: double.infinity,
+                  height: 180,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Align(
+                alignment: Alignment.topRight,
+                child: Container(
+                  margin: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    color: kLightGray,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _pickedImage = null;
+                      });
+                      widget.onImageSelect!(_pickedImage);
+                    },
+                    child: Icon(Icons.close, color: Colors.black, size: 30),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
         const SizedBox(height: 20),
