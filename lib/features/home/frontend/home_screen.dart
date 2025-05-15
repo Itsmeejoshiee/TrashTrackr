@@ -210,10 +210,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           DisposalLocationButton(),
                         ],
                       ),
-
-                      SizedBox(height: 20),
-
-                      SectionLabel(label: 'Earned Badges'),
                     ],
                   ),
                 ),
