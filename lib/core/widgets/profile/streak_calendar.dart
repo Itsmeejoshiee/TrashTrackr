@@ -55,7 +55,7 @@ class _StreakCalendarState extends State<StreakCalendar> {
                     Align(
                       alignment: Alignment.bottomLeft,
                       child: Text(
-                        _dateUtilsHelper.getMonthName(),
+                        _dateUtilsHelper.getMonthName(DateTime.now().month),
                         style: kTitleMedium.copyWith(fontWeight: FontWeight.w700),
                       ),
                     ),
@@ -99,7 +99,7 @@ class _StreakCalendarState extends State<StreakCalendar> {
                   Align(
                     alignment: Alignment.bottomLeft,
                     child: Text(
-                      _dateUtilsHelper.getMonthName(),
+                      _dateUtilsHelper.getMonthName(DateTime.now().month),
                       style: kTitleMedium.copyWith(fontWeight: FontWeight.w700),
                     ),
                   ),

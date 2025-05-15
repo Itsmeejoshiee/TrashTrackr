@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'cleanup_card.dart';
+import 'event_card.dart';
 
 class CleanupView extends StatelessWidget {
   const CleanupView({
@@ -7,7 +7,7 @@ class CleanupView extends StatelessWidget {
     required this.posts,
   });
 
-  final List<CleanupCard> posts;
+  final List<EventCard> posts;
 
   @override
   Widget build(BuildContext context) {

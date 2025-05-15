@@ -20,6 +20,7 @@ class EventForm extends StatefulWidget {
   final Function(String)? onTitleChanged;
   final Function(String)? onDescChanged;
   final Function(EventType?)? onTypeSelect;
+  final Function(String?)? onAddressChanged;
   final Function(DateTimeRange?)? onDateTimeRangeSelect;
   final Function(TimeOfDay?, TimeOfDay?)? onTimeSelect;
   final Function(Uint8List?)? onImageSelect;
@@ -30,6 +31,7 @@ class EventForm extends StatefulWidget {
     this.onTitleChanged,
     this.onDescChanged,
     this.onTypeSelect,
+    this.onAddressChanged,
     this.onDateTimeRangeSelect,
     this.onTimeSelect,
     this.onImageSelect,
@@ -43,6 +45,7 @@ class _EventFormState extends State<EventForm> {
   late TextEditingController _eventTitleController;
   late TextEditingController _eventDescController;
   EventType? _eventType;
+  late TextEditingController _eventAddressController;
   DateTimeRange? _eventDateRange;
   TimeOfDay? _startTime;
   TimeOfDay? _endTime;
@@ -56,6 +59,9 @@ class _EventFormState extends State<EventForm> {
     );
     _eventDescController = TextEditingController(
       text: widget.eventEntry?.desc ?? '',
+    );
+    _eventAddressController = TextEditingController(
+      text: widget.eventEntry?.address ?? '',
     );
     _eventType = widget.eventEntry?.type;
     _eventDateRange = widget.eventEntry?.dateRange;
@@ -259,7 +265,7 @@ class _EventFormState extends State<EventForm> {
           style: kPoppinsLabel,
           cursorColor: kForestGreenLight,
           // <-- Add this line
-          decoration: _customFieldDecoration(label: "Event Name"),
+          decoration: _customFieldDecoration(label: "Event Title"),
           onChanged: (value) {
             widget.onTitleChanged!(_eventTitleController.text);
           },
@@ -276,6 +282,21 @@ class _EventFormState extends State<EventForm> {
             widget.onTypeSelect!(_eventType);
           },
           decoration: _customFieldDecoration(label: "Event Type"),
+        ),
+
+        // Offset
+        const SizedBox(height: 12),
+
+        // Event Title Field
+        TextField(
+          controller: _eventAddressController,
+          style: kPoppinsLabel,
+          cursorColor: kForestGreenLight,
+          // <-- Add this line
+          decoration: _customFieldDecoration(label: "Event Address"),
+          onChanged: (value) {
+            widget.onAddressChanged!(_eventAddressController.text);
+          },
         ),
 
         // Offset

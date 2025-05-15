@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:trashtrackr/core/services/post_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
+import 'package:trashtrackr/core/utils/emotion.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
 import 'package:trashtrackr/core/widgets/buttons/multi_action_fab.dart';
 import 'package:trashtrackr/core/widgets/text_fields/dashboard_search_bar.dart';
@@ -7,6 +9,7 @@ import 'package:trashtrackr/features/home/frontend/widgets/section_label.dart';
 import 'package:trashtrackr/features/feed/frontend/widgets/recycling_guide_card.dart';
 import 'package:trashtrackr/features/feed/frontend/widgets/recycling_guide_carousel.dart';
 import 'package:trashtrackr/core/widgets/profile/post_card.dart';
+import 'package:trashtrackr/features/post/models/post_model.dart';
 
 class FeedScreen extends StatefulWidget {
   const FeedScreen({super.key});
@@ -18,33 +21,15 @@ class FeedScreen extends StatefulWidget {
 class _FeedScreenState extends State<FeedScreen> {
   final TextEditingController _searchController = TextEditingController();
 
-  NavRoute _selectedRoute = NavRoute.feed;
+  final PostService _postService = PostService();
 
-  void _selectRoute(NavRoute route) {
-    setState(() {
-      _selectedRoute = route;
-    });
-  }
-
-  List<Widget> _postBuilder() {
-    List<Widget> posts = [
-      PostCard(
-        profilePath: 'assets/images/placeholder_profile.jpg',
-        username: 'Makyismynickname',
-        timestamp: 'Today @ 10:42 am',
-        desc:
-            'Logged 5 disposals today! Finally getting the hang of sorting my waste without checking the label every time 😅\nToday’s highlight: discovering my shampoo bottle is recyclable. Score! ♻️🧴',
-      ),
-      PostCard(
-        profilePath: 'assets/images/placeholder_profile.jpg',
-        username: 'Makyismynickname',
-        timestamp: 'Today @ 10:42 am',
-        desc:
-            'Logged 5 disposals today! Finally getting the hang of sorting my waste without checking the label every time 😅\nToday’s highlight: discovering my shampoo bottle is recyclable. Score! ♻️🧴',
-        image: AssetImage('assets/images/intro/intro0.png'),
-      ),
-    ];
-    return posts;
+  List<Widget> _postBuilder(List<PostModel> posts) {
+    List<Widget> postCards = [];
+    for (PostModel post in posts) {
+      final postCard = PostCard(post: post);
+      postCards.add(postCard);
+    }
+    return postCards;
   }
 
   @override
@@ -99,7 +84,29 @@ class _FeedScreenState extends State<FeedScreen> {
 
                   SizedBox(height: 13),
 
-                  ..._postBuilder(),
+                  StreamBuilder(
+                    stream: _postService.getPostStream(),
+                    builder: (context, snapshot) {
+
+                      print('POST STREAM: ${snapshot.data}');
+
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator(color: kAvocado,));
+                      }
+
+                      if (!snapshot.hasData || snapshot.data == null) {
+                        return Center(child: Text('Post data is not available.'));
+                      }
+
+                      return Column(
+                        children: _postBuilder(snapshot.data!),
+                      );
+
+                    },
+                  ),
+
+                  // Offset
+                  SizedBox(height: 15),
                 ],
               ),
             ),

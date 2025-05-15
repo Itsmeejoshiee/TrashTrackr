@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 
-enum ProfileSection { posts, wasteLog, cleanup }
+enum ProfileSection { posts, wasteLog, events }
 
 class ProfileSwitchTile extends StatelessWidget {
   const ProfileSwitchTile({
@@ -51,11 +51,10 @@ class ProfileSwitchTile extends StatelessWidget {
           TextButton(
             onPressed: onCleanup,
             child: Text(
-              'Clean-up',
-
+              'Events',
               style: kTitleSmall.copyWith(
                 color:
-                (selected == ProfileSection.cleanup)
+                (selected == ProfileSection.events)
                     ? kAvocado
                     : kGray.withOpacity(0.3),
               ),

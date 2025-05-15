@@ -6,7 +6,7 @@ class DateUtilsHelper {
     return DateTime(now.year, now.month + 1, 0).day;
   }
 
-  String getMonthName() {
+  String getMonthName(int month) {
     const List<String> monthNames = [
       'January',
       'February',
@@ -21,8 +21,7 @@ class DateUtilsHelper {
       'November',
       'December',
     ];
-    final currentDate = DateTime.now();
-    return monthNames[currentDate.month - 1];
+    return monthNames[month - 1];
   }
 
   int getCurrentStreakFromActivities(List<ActivityModel> activities) {

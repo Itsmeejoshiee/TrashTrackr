@@ -2,19 +2,23 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
+import 'package:trashtrackr/core/services/post_service.dart';
 import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
+import 'package:trashtrackr/core/utils/emotion.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
 import 'package:trashtrackr/core/widgets/buttons/multi_action_fab.dart';
 import 'package:trashtrackr/core/widgets/profile/profile_header.dart';
 import 'package:trashtrackr/core/widgets/profile/profile_switch_tile.dart';
 import 'package:trashtrackr/core/widgets/profile/post_view.dart';
 import 'package:trashtrackr/core/widgets/profile/post_card.dart';
-import 'package:trashtrackr/core/widgets/profile/cleanup_view.dart';
-import 'package:trashtrackr/core/widgets/profile/cleanup_card.dart';
+import 'package:trashtrackr/core/widgets/profile/events_view.dart';
+import 'package:trashtrackr/core/widgets/profile/event_card.dart';
 import 'package:trashtrackr/core/widgets/profile/streak_calendar.dart';
 import 'package:trashtrackr/core/widgets/profile/badge_grid.dart';
 import 'package:trashtrackr/core/widgets/profile/wastelog_board.dart';
+import 'package:trashtrackr/features/post/models/event_model.dart';
+import 'package:trashtrackr/features/post/models/post_model.dart';
 import 'package:trashtrackr/features/settings/frontend/settings_screen.dart';
 import 'package:trashtrackr/features/post/screens/post_screen.dart';
 
@@ -26,17 +30,10 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final AuthService _authService = AuthService();
+  final PostService _postService = PostService();
   final UserService _userService = UserService();
 
-  NavRoute _selectedRoute = NavRoute.profile;
   ProfileSection _selectedSection = ProfileSection.posts;
-
-  void _selectRoute(NavRoute route) {
-    setState(() {
-      _selectedRoute = route;
-    });
-  }
 
   @override
   void initState() {
@@ -46,24 +43,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _getSectionWidget() {
     switch (_selectedSection) {
       case ProfileSection.posts:
-        return PostsView(
-          posts: [
-            PostCard(
-              profilePath: 'assets/images/placeholder_profile.jpg',
-              username: 'Ella Green',
-              timestamp: 'Today @ 10:42 am',
-              desc:
-                  "Logged 5 disposals today! Finally getting the hang of sorting my waste without checking the label every time.",
-            ),
-            PostCard(
-              profilePath: 'assets/images/placeholder_profile.jpg',
-              username: 'Makyismynickname',
-              timestamp: 'Today @ 10:42 am',
-              desc:
-                  "Logged 5 disposals today! Finally getting the hang of sorting my waste without checking the label every time 😅 \n\n Today’s highlight: discovering my shampoo bottle is recyclable. Score! ♻️🧴",
-              image: AssetImage('assets/images/intro/intro0.png'),
-            ),
-          ],
+        return StreamBuilder(
+          stream: _postService.getPostStream(),
+          builder: (context, snapshot) {
+            print('POST STREAM: ${snapshot.data}');
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator(color: kAvocado));
+            }
+
+            if (!snapshot.hasData || snapshot.data == null) {
+              return Center(child: Text('Post data is not available.'));
+            }
+
+            return Column(children: _postBuilder(snapshot.data!));
+          },
         );
       case ProfileSection.wasteLog:
         return WastelogBoard(
@@ -71,31 +65,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
           biodegradable: 80,
           nonbiodegradable: 12,
         );
-      case ProfileSection.cleanup:
-        return CleanupView(
-          posts: [
-            CleanupCard(
-              username: 'Makyismynickname',
-              profilePath: 'assets/images/placeholder_profile.jpg',
-              timestamp: 'Today @ 10:42 am',
-              title: 'Eco Walk: Clean & Collect',
-              scheduledDate: 'Saturday, May 4, 2025 UTC',
-              scheduledTime: '9:00 AM - 12:00 PM',
-              address: 'Central Riverside Park, EcoZone Area B',
-            ),
-            CleanupCard(
-              username: 'Makyismynickname',
-              profilePath: 'assets/images/placeholder_profile.jpg',
-              timestamp: 'Today @ 10:42 am',
-              image: AssetImage('assets/images/intro/intro0.png'),
-              title: 'Eco Walk: Clean & Collect',
-              scheduledDate: 'Saturday, May 4, 2025 UTC',
-              scheduledTime: '9:00 AM - 12:00 PM',
-              address: 'Central Riverside Park, EcoZone Area B',
-            ),
-          ],
+      case ProfileSection.events:
+        return StreamBuilder(
+          stream: _postService.getEventStream(),
+          builder: (context, snapshot) {
+            print('POST STREAM: ${snapshot.data}');
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator(color: kAvocado));
+            }
+
+            if (!snapshot.hasData || snapshot.data == null) {
+              return Center(child: Text('Post data is not available.'));
+            }
+
+            return Column(children: _eventBuilder(snapshot.data!));
+          },
         );
     }
+  }
+
+  List<Widget> _postBuilder(List<PostModel> posts) {
+    List<Widget> postCards = [];
+    for (PostModel post in posts) {
+      final postCard = PostCard(post: post);
+      postCards.add(postCard);
+    }
+    return postCards;
+  }
+
+  List<Widget> _eventBuilder(List<EventModel> events) {
+    List<Widget> eventCards = [];
+    for (EventModel event in events) {
+      final postCard = EventCard(event: event);
+      eventCards.add(postCard);
+    }
+    return eventCards;
   }
 
   @override
@@ -108,7 +113,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         print(snapshot.data);
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator(color: kAvocado,));
+          return Center(child: CircularProgressIndicator(color: kAvocado));
         }
 
         if (!snapshot.hasData || snapshot.data == null) {
@@ -149,11 +154,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: IconButton(
                             onPressed:
                                 () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SettingsScreen(),
-                              ),
-                            ),
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SettingsScreen(),
+                                  ),
+                                ),
                             icon: Icon(Icons.settings),
                           ),
                         ),
@@ -161,9 +166,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         // Profile Header
                         ProfileHeader(
                           username: '${user!.firstName} ${user.lastName}',
-                          image: (user.profilePicture.isNotEmpty) ? NetworkImage(
-                            user.profilePicture,
-                          ) : AssetImage('assets/images/placeholder_profile.jpg'),
+                          image:
+                              (user.profilePicture.isNotEmpty)
+                                  ? NetworkImage(user.profilePicture)
+                                  : AssetImage(
+                                    'assets/images/placeholder_profile.jpg',
+                                  ),
                           followers: user.followerCount,
                           following: user.followingCount,
                         ),
@@ -194,7 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           },
                           onCleanup: () {
                             setState(() {
-                              _selectedSection = ProfileSection.cleanup;
+                              _selectedSection = ProfileSection.events;
                             });
                           },
                         ),
@@ -206,9 +214,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           duration: Duration(milliseconds: 300),
                           transitionBuilder:
                               (child, animation) => FadeTransition(
-                            opacity: animation,
-                            child: child,
-                          ),
+                                opacity: animation,
+                                child: child,
+                              ),
                           child: _getSectionWidget(),
                         ),
 
@@ -221,7 +229,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
         );
-
       },
     );
   }
