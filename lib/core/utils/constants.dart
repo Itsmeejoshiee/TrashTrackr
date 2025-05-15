@@ -150,6 +150,11 @@ TextStyle kPoppinsBodySmall = GoogleFonts.poppins(
   letterSpacing: 0,
 );
 
+TextStyle kPoppinsLabel = GoogleFonts.poppins(
+  color: Colors.black87,
+  fontSize: 10,
+);
+
 //POST FORM TEXT STYLES
 TextStyle kPostInputTextStyle = GoogleFonts.poppins(
   color: Colors.black,
@@ -168,7 +173,3 @@ TextStyle kDropDownTextStyle = GoogleFonts.poppins(
   fontWeight: FontWeight.w600,
 );
 
-TextStyle kPostInputTextStyle = GoogleFonts.poppins(
-  color: Colors.black,
-  fontSize: 16,
-);
