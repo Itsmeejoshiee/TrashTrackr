@@ -11,6 +11,8 @@ class EventModel {
   final String title;
   final EventType type;
   final DateTimeRange dateRange;
+  final String startTime;
+  final String endTime;
   final String desc;
 
   EventModel({
@@ -22,6 +24,8 @@ class EventModel {
     required this.title,
     required this.type,
     required this.dateRange,
+    required this.startTime,
+    required this.endTime,
     required this.desc,
   });
 
@@ -38,6 +42,8 @@ class EventModel {
       start: (map['date_start'] as Timestamp).toDate(),
       end: (map['date_end'] as Timestamp).toDate(),
     ),
+    startTime: map['start_time'] ?? '',
+    endTime: map['end_time'] ?? '',
     desc: map['desc'] ?? '',
   );
 
@@ -51,6 +57,8 @@ class EventModel {
     'type': type.name,
     'date_start': dateRange.start,
     'date_end': dateRange.end,
+    'start_time': startTime,
+    'end_time': endTime,
     'desc': desc,
   };
 
