@@ -117,9 +117,11 @@ class _SignupFormState extends State<SignupForm> {
                 firstNameController: _firstNameController,
                 lastNameController: _lastNameController,
                 setErrorMessage: (message) {
-                  setState(() {
-                    _errorMessage = message;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      _errorMessage = message;
+                    });
+                  }
                 },
               );
             },

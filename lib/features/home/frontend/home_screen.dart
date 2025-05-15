@@ -10,7 +10,7 @@ import 'package:trashtrackr/core/widgets/text_fields/dashboard_search_bar.dart';
 import 'package:trashtrackr/features/log_disposal/screens/log_disposal_screen.dart';
 import 'package:trashtrackr/features/maps/frontend/map_screen.dart';
 import 'package:trashtrackr/features/notifs/frontend/notif_screen.dart';
-import 'package:trashtrackr/features/placeholder/placeholder.dart';
+import 'package:trashtrackr/features/placeholder/placeholder_screen.dart';
 import 'package:trashtrackr/features/waste_scanner/frontend/waste_scanner_screen.dart';
 import 'package:trashtrackr/features/waste_stats/frontend/waste_stats_screen.dart';
 import 'widgets/badge_carousel.dart';

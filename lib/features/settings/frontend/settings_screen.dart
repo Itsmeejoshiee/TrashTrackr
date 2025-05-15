@@ -8,6 +8,7 @@ import 'package:trashtrackr/core/widgets/text_fields/profile_text_field.dart';
 import 'package:trashtrackr/features/about/frontend/about_screen.dart';
 import 'package:trashtrackr/features/auth/backend/auth_manager.dart';
 import 'package:trashtrackr/features/faqs/frontend/faq_screen.dart';
+import 'package:trashtrackr/features/placeholder/delete_transition_screen.dart';
 import 'package:trashtrackr/features/settings/frontend/edit_profile_screen.dart';
 import 'package:trashtrackr/features/settings/frontend/privacy_screen.dart';
 import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
@@ -37,18 +38,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => AuthManager()),
-          (r) => false,
+      (r) => false,
     );
   }
 
   Future<void> _deleteAccount(String email, String password) async {
-    // TODO: Delete account(please use the deleteAccount method in AuthBloc)
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const DeleteTransitionScreen()),
+    );
+
+    await Future.delayed(Duration(milliseconds: 300));
+
     await _userService.deleteUser(email, password);
-    // Navigate back to AuthManager and clear navigation stack
+
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => AuthManager()),
-          (r) => false,
+      (r) => false,
     );
   }
 
@@ -92,8 +99,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ).show();
   }
 
-  void _deleteAccountAlert() {
-    TextEditingController emailController = TextEditingController();
+  void _deleteAccountAlert(String email) {
     TextEditingController passwordController = TextEditingController();
     Alert(
       context: context,
@@ -105,15 +111,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       title: "Are you sure you want\nto delete your account?",
       desc:
-      "We're sad to see you leave! Deleting your TrashTrackr account will permanently erase your data, including your streaks, badges, posts, and waste log.",
+          "We're sad to see you leave! Deleting your TrashTrackr account will permanently erase your data, including your streaks, badges, posts, and waste log.",
       image: Image.asset("assets/images/icons/red_delete_icon.png", width: 110),
       content: Column(
         children: [
-          ProfileTextField(
-            controller: emailController,
-            hintText: 'Email',
-            iconData: Icons.person,
-          ),
           ProfileTextField(
             controller: passwordController,
             hintText: 'Password',
@@ -135,10 +136,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           color: kRed,
           radius: BorderRadius.circular(30),
           onPressed: () {
-            _deleteAccount(
-              emailController.text.trim(),
-              passwordController.text.trim(),
-            );
+            _deleteAccount(email.trim(), passwordController.text.trim());
           },
           child: Text(
             'Delete',
@@ -273,7 +271,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     RoundedRectangleButton(
                       backgroundColor: kRed,
                       title: 'Delete Account',
-                      onPressed: _deleteAccountAlert,
+                      onPressed: () => _deleteAccountAlert(user.email),
                     ),
                     // Offset
                     SizedBox(height: 15),
