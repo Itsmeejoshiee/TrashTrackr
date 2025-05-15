@@ -1,5 +1,7 @@
 // ignore_for_file: unused_field
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -29,23 +31,23 @@ class _MapScreenState extends State<MapScreen> {
 
   final _locationService = LocationService();
   late final PlacesService _placesService;
+  StreamSubscription<LocationData>? _locationSubscription;
 
   @override
   void initState() {
+    super.initState();
+
     rootBundle.loadString('assets/map/map_config.txt').then((string) {
       _mapStyle = string;
     });
 
-    super.initState();
     _placesService = PlacesService();
     _initialize();
   }
 
-  // Fetch current location initially and set markers
   Future<void> _initialize() async {
     final location = await _locationService.getCurrentLocation();
 
-    // ignore: non_constant_identifier_names, deprecated_member_use
     final BitmapDescriptor customMarker = await BitmapDescriptor.fromAssetImage(
       const ImageConfiguration(size: Size(12, 12)),
       'assets/images/marker.png',
@@ -56,6 +58,7 @@ class _MapScreenState extends State<MapScreen> {
         location.latitude!,
         location.longitude!,
         (name, address) {
+          if (!mounted) return;
           setState(() {
             _isCardVisible = true;
             _name = name;
@@ -67,18 +70,29 @@ class _MapScreenState extends State<MapScreen> {
         customMarker: customMarker,
       );
 
-      setState(() {
-        _currentLocation = location;
-        _markers.addAll(markers);
-      });
+      if (mounted) {
+        setState(() {
+          _currentLocation = location;
+          _markers.addAll(markers);
+        });
+      }
     }
 
-    // Start streaming location updates
-    _locationService.locationStream.listen((newLocation) {
+    // ✅ Save and manage the subscription
+    _locationSubscription = _locationService.locationStream.listen((
+      newLocation,
+    ) {
+      if (!mounted) return;
       setState(() {
         _currentLocation = newLocation;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _locationSubscription?.cancel();
+    super.dispose();
   }
 
   @override
@@ -117,6 +131,7 @@ class _MapScreenState extends State<MapScreen> {
                   zoomControlsEnabled: false,
                   markers: _markers,
                   onTap: (_) {
+                    if (!mounted) return;
                     setState(() {
                       _isCardVisible = false;
                     });

@@ -51,12 +51,14 @@ class _HomeScreenState extends State<HomeScreen> {
     final activityCount = await _activityService.getAllActivities(true);
     final streak = _dateUtilsHelper.getCurrentStreakFromActivities(activities);
     final badges = await _activityService.getEarnedBadges();
-    setState(() {
-      _currentStreak = streak;
-      _activityCount = activityCount;
-      _badgesCount = badges;
-      _statsLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _currentStreak = streak;
+        _activityCount = activityCount;
+        _badgesCount = badges;
+        _statsLoading = false;
+      });
+    }
   }
 
   @override
