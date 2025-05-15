@@ -181,12 +181,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         // Eco Streak Section
                         StreakCalendar(),
 
-                        SizedBox(height: 31),
-
                         // Badges
                         BadgeGrid(),
 
-                        SizedBox(height: 33),
+                        SizedBox(height: 30),
 
                         ProfileSwitchTile(
                           selected: _selectedSection,
