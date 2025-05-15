@@ -1,41 +1,30 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/utils/date_utils.dart';
-import 'package:trashtrackr/core/utils/string_utils.dart';
 import 'package:trashtrackr/core/widgets/box/neo_box.dart';
 import 'package:trashtrackr/core/widgets/buttons/bookmark_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/comment_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/like_button.dart';
-import 'package:trashtrackr/features/post/models/post_model.dart';
+import 'package:trashtrackr/features/post/models/event_model.dart';
 
-class PostCard extends StatefulWidget {
-  const PostCard({super.key, required this.post});
+class EventCard extends StatefulWidget {
+  const EventCard({
+    super.key,
+    required this.event,
+  });
 
-  final PostModel post;
+  final EventModel event;
 
   @override
-  State<PostCard> createState() => _PostCardState();
+  State<EventCard> createState() => _EventCardState();
 }
 
-class _PostCardState extends State<PostCard> {
+class _EventCardState extends State<EventCard> {
   bool _isLiked = false;
   bool _isCommented = false;
   bool _isBookmarked = false;
-
-  Widget _buildEmotionLabel() {
-    final emotionName = widget.post.emotion.name;
-    return Row(
-      spacing: 3,
-      children: [
-        Image.asset('assets/images/emotions/$emotionName.png', width: 24),
-        Text(
-          emotionName.capitalize(),
-          style: kBodySmall.copyWith(fontSize: 9, fontWeight: FontWeight.bold),
-        ),
-      ],
-    );
-  }
 
   String _formatTimestamp(Timestamp timestamp) {
     final DateUtilsHelper _dateUtilsHelpers = DateUtilsHelper();
@@ -56,6 +45,17 @@ class _PostCardState extends State<PostCard> {
     return '$date @ $time';
   }
 
+  String _formatDate(DateTimeRange dateRange) {
+    final DateUtilsHelper _dateUtilsHelpers = DateUtilsHelper();
+
+    final startDate = dateRange.start;
+    final dayName = DateFormat('EEEE').format(startDate);
+    final month = _dateUtilsHelpers.getMonthName(startDate.month);
+    final day = startDate.day;
+    final year = startDate.year;
+    return '$dayName, $month $day, $year';
+  }
+  
   @override
   Widget build(BuildContext context) {
     return NeoBox(
@@ -64,19 +64,17 @@ class _PostCardState extends State<PostCard> {
         children: [
           Row(
             children: [
-              CircleAvatar(
-                foregroundImage:
-                    (widget.post.profilePicture.isNotEmpty)
-                        ? NetworkImage(widget.post.profilePicture)
-                        : AssetImage('assets/images/placeholder_profile.jpg'),
-              ),
+              CircleAvatar(foregroundImage:
+              (widget.event.profilePicture.isNotEmpty)
+                  ? NetworkImage(widget.event.profilePicture)
+                  : AssetImage('assets/images/placeholder_profile.jpg'),),
               SizedBox(width: 10),
               Wrap(
                 direction: Axis.vertical,
                 children: [
                   //User Name
                   Text(
-                    widget.post.fullName,
+                    widget.event.fullName,
                     style: kBodySmall.copyWith(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -84,7 +82,7 @@ class _PostCardState extends State<PostCard> {
                   ),
                   //Date Posted
                   Text(
-                    _formatTimestamp(widget.post.timestamp),
+                    _formatTimestamp(widget.event.timestamp),
                     style: kPoppinsBodyMedium.copyWith(
                       fontSize: 9.95,
                       fontWeight: FontWeight.w500,
@@ -94,19 +92,13 @@ class _PostCardState extends State<PostCard> {
                 ],
               ),
               Spacer(),
-              _buildEmotionLabel(),
-              SizedBox(width: 15),
               IconButton(onPressed: () {}, icon: Icon(Icons.more_horiz)),
             ],
           ),
           SizedBox(height: 10),
 
-          Text(
-            widget.post.body,
-            style: kPoppinsBodyMedium.copyWith(fontSize: 12),
-          ),
-
-          (widget.post.imageUrl.isNotEmpty)
+          // Optional Image
+          (widget.event.imageUrl.isNotEmpty)
               ? Container(
                 width: double.infinity,
                 height: 212,
@@ -117,15 +109,24 @@ class _PostCardState extends State<PostCard> {
                     topRight: Radius.circular(5),
                   ),
                   image: DecorationImage(
-                    image: NetworkImage(widget.post.imageUrl),
+                    image: NetworkImage(widget.event.imageUrl),
                     fit: BoxFit.cover,
                   ),
                 ),
               )
               : SizedBox(),
 
+          Text(widget.event.title, style: kTitleLarge.copyWith(fontWeight: FontWeight.bold)),
+
+          Text(
+            '${_formatDate(widget.event.dateRange)}   •   ${widget.event.startTime.toString()} - ${widget.event.startTime.toString()}',
+            style: kPoppinsBodySmall.copyWith(color: kGray.withOpacity(0.5)),
+          ),
+
+          Text(widget.event.address, style: kPoppinsBodyMedium.copyWith(color: kAvocado)),
+
           // Offset
-          SizedBox(height: 15),
+          SizedBox(height: 10),
 
           Row(
             children: [

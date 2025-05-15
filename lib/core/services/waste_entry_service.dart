@@ -3,7 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:trashtrackr/core/models/scan_result_model.dart';
 
 class WasteEntryService {
-  final CollectionReference wasteEntries = FirebaseFirestore.instance.collection("waste_entries");
+  final CollectionReference wasteEntries = FirebaseFirestore.instance.collection("users");
+
 
   // Add a new waste entry
   Future<void> addWasteEntry(ScanResult entry) async {
@@ -12,11 +13,6 @@ class WasteEntryService {
 
     try {
       final userDoc = wasteEntries.doc(user.uid);
-
-      await userDoc.set({
-        'uid': user.uid,
-        'email': user.email,
-      }, SetOptions(merge: true));
 
       final logRef = userDoc.collection('log_disposal').doc();
       entry.id = logRef.id;

@@ -96,11 +96,15 @@ class _LogDetailsState extends State<LogDetails> {
               // Item name
               Row(
                 children: [
-                  Text(
-                    result.productName,
-                    style: kTitleLarge.copyWith(
-                      color: kAvocado,
-                      fontWeight: FontWeight.bold,
+                  Flexible(
+                    child: Text(
+                      result.productName,
+                      style: kTitleLarge.copyWith(
+                        color: kAvocado,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                   ),
                   SizedBox(width: 8),
@@ -110,14 +114,13 @@ class _LogDetailsState extends State<LogDetails> {
                     height: 24,
                     fit: BoxFit.contain,
                   ),
-                  Expanded(child: Container()),
+                  SizedBox(width: 8),
                   GestureDetector(
                     onTap: () {
                       setState(() {
                         _isEditing = !_isEditing;
                       });
 
-                      // scroll to bottom => notes & qty
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         _scrollController.animateTo(
                           _scrollController.position.maxScrollExtent,
@@ -218,11 +221,13 @@ class _LogDetailsState extends State<LogDetails> {
                     final updatedResult = widget.scanResult.copyWith(
                       notes: updatedNotes,
                       qty: int.tryParse(updatedQty) ?? 1,
+                      imageUrl: _updatedImageUrl ?? widget.scanResult.imageUrl,
                     );
 
                     try {
                       await _wasteEntryService.updateWasteEntries(user, updatedResult);
                       widget.onDetailsUpdated(updatedNotes, updatedQty);
+                      Navigator.pop(context);
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Failed to update entry for ID: ${updatedResult.id ?? "unknown"} & ${user.uid ?? "unknown"}')),

@@ -23,6 +23,7 @@ class _WasteScannerScreenState extends State<WasteScannerScreen> {
   late final Future<CameraController> _controllerFuture;
   final _service = CameraModule();
   NavRoute _selectedRoute = NavRoute.badge;
+  bool _isProcessing = false;
 
   void _selectRoute(NavRoute route) {
     setState(() {
@@ -52,7 +53,7 @@ class _WasteScannerScreenState extends State<WasteScannerScreen> {
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const Scaffold(
-            body: Center(child: CircularProgressIndicator(color: kAvocado,)),
+            body: Center(child: CircularProgressIndicator(color: kAvocado)),
           );
         }
         if (snapshot.hasError) {
@@ -68,8 +69,9 @@ class _WasteScannerScreenState extends State<WasteScannerScreen> {
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             leading: IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(Icons.arrow_back_ios)),
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(Icons.arrow_back_ios),
+            ),
             title: Text(
               'Dashboard',
               style: kTitleMedium.copyWith(fontWeight: FontWeight.bold),
@@ -98,58 +100,71 @@ class _WasteScannerScreenState extends State<WasteScannerScreen> {
                     child: CameraPreview(controller),
                   ),
                   SizedBox(height: 10),
-                  IconButton(
+
+                  _isProcessing
+                      ? CircularProgressIndicator(color: kAvocado)
+                      : IconButton(
                     icon: Image.asset(
                       'assets/images/icons/capture.png',
                       width: 55,
                       height: 55,
                     ),
-                      onPressed: () async {
-                        try {
-                          final XFile picture = await controller.takePicture();
-                          final file = File(picture.path);
+                    onPressed: () async {
+                      setState(() {
+                        _isProcessing = true;
+                      });
+                      try {
+                        final XFile picture = await controller.takePicture();
+                        final file = File(picture.path);
 
-                          // Compress the image before uploading
-                          final File? compressedFile = await compressImage(file);
-                          if (compressedFile == null) {
-                            throw Exception("Image compression failed.");
-                          }
+                        final File? compressedFile = await compressImage(file);
+                        if (compressedFile == null) {
+                          throw Exception("Image compression failed.");
+                        }
 
-                          final Uint8List compressedBytes = await compressedFile.readAsBytes();
+                        final Uint8List compressedBytes = await compressedFile.readAsBytes();
 
-                          final ref = FirebaseStorage.instance
-                              .ref()
-                              .child('scanned_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
-                          await ref.putData(compressedBytes, SettableMetadata(contentType: 'image/jpeg'));
+                        final ref = FirebaseStorage.instance
+                            .ref()
+                            .child('scanned_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+                        await ref.putData(compressedBytes, SettableMetadata(contentType: 'image/jpeg'));
 
-                          final imageUrl = await ref.getDownloadURL();
+                        final imageUrl = await ref.getDownloadURL();
 
-                          final result = await GeminiService().classifyWaste(compressedBytes);
+                        final result = await GeminiService().classifyWaste(compressedBytes);
 
-                          final resultWithImage = ScanResult(
-                            productName: result.productName,
-                            materials: result.materials,
-                            prodInfo: result.prodInfo,
-                            classification: result.classification,
-                            toDo: result.toDo,
-                            notToDo: result.notToDo,
-                            proTip: result.proTip,
-                            timestamp: result.timestamp,
-                            imageUrl: imageUrl,
-                          );
+                        final resultWithImage = ScanResult(
+                          productName: result.productName,
+                          materials: result.materials,
+                          prodInfo: result.prodInfo,
+                          classification: result.classification,
+                          toDo: result.toDo,
+                          notToDo: result.notToDo,
+                          proTip: result.proTip,
+                          timestamp: result.timestamp,
+                          imageUrl: imageUrl,
+                        );
 
+                        if (mounted) {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => ScanResultScreen(scanResult: resultWithImage),
                             ),
                           );
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Error: $e')),
-                          );
+                        }
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error: $e')),
+                        );
+                      } finally {
+                        if (mounted) {
+                          setState(() {
+                            _isProcessing = false;
+                          });
                         }
                       }
+                    },
                   ),
                   SizedBox(height: 60),
                 ],
@@ -161,3 +176,4 @@ class _WasteScannerScreenState extends State<WasteScannerScreen> {
     );
   }
 }
+

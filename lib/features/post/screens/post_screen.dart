@@ -47,6 +47,7 @@ class _PostScreenState extends State<PostScreen> {
   Uint8List? _eventImage;
   String? _eventTitle;
   EventType? _eventType;
+  String? _eventAddress;
   DateTimeRange? _eventDateRange;
   TimeOfDay? _eventStartTime;
   TimeOfDay? _eventEndTime;
@@ -176,10 +177,10 @@ class _PostScreenState extends State<PostScreen> {
                                         context: context,
                                         builder:
                                             (context) => Center(
-                                          child: CircularProgressIndicator(
-                                            color: kAppleGreen,
-                                          ),
-                                        ),
+                                              child: CircularProgressIndicator(
+                                                color: kAppleGreen,
+                                              ),
+                                            ),
                                       );
                                       await _postService.createPost(
                                         user: _user!,
@@ -198,7 +199,9 @@ class _PostScreenState extends State<PostScreen> {
                                         context,
                                       ).showSnackBar(
                                         SnackBar(
-                                          content: Text('Include post caption.'),
+                                          content: Text(
+                                            'Include post caption.',
+                                          ),
                                           backgroundColor: kRed,
                                         ),
                                       );
@@ -209,18 +212,21 @@ class _PostScreenState extends State<PostScreen> {
                                         context: context,
                                         builder:
                                             (context) => Center(
-                                          child: CircularProgressIndicator(
-                                            color: kAppleGreen,
-                                          ),
-                                        ),
+                                              child: CircularProgressIndicator(
+                                                color: kAppleGreen,
+                                              ),
+                                            ),
                                       );
                                       await _postService.createEvent(
                                         user: _user!,
                                         image: _eventImage,
                                         title: _eventTitle!,
                                         type: _eventType!,
+                                        address: _eventAddress!,
                                         dateRange: _eventDateRange!,
-                                        startTime: _eventStartTime!.format(context),
+                                        startTime: _eventStartTime!.format(
+                                          context,
+                                        ),
                                         endTime: _eventEndTime!.format(context),
                                         desc: _eventDesc!,
                                       );
@@ -312,6 +318,12 @@ class _PostScreenState extends State<PostScreen> {
                                             _eventType = type;
                                           });
                                           print('EVENT TYPE: $_eventType');
+                                        },
+                                        onAddressChanged: (address) {
+                                          setState(() {
+                                            _eventAddress = address;
+                                          });
+                                          print('EVENT ADDRESS: $_eventAddress');
                                         },
                                         onDateTimeRangeSelect: (range) {
                                           setState(() {
