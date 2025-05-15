@@ -18,19 +18,6 @@ class _BadgeGridState extends State<BadgeGrid> {
   bool _isExpanded = false;
   int _visibleBadges = 3;
 
-  List<Widget> _badgeTileBuilder(List<BadgeModel> badges) {
-    List<Widget> badgeTiles = [];
-    if (badges.length < _visibleBadges) {
-      _visibleBadges = badges.length;
-    }
-    for (int i = 0; i < _visibleBadges; i++) {
-      final BadgeModel currentBadge = badges[i];
-      print(currentBadge.title);
-      badgeTiles.add(BadgeTile(badge: currentBadge));
-    }
-    return badgeTiles;
-  }
-
   List<BadgeModel> _buildEarnedBadgeList(List<BadgeModel> badges) {
     List<BadgeModel> earnedBadges = [];
     for (BadgeModel badge in badges) {
@@ -55,8 +42,11 @@ class _BadgeGridState extends State<BadgeGrid> {
         }
 
         final badges = _buildEarnedBadgeList(snapshot.data!);
+        if (badges.isEmpty) return SizedBox();
+
         return Column(
           children: [
+            SizedBox(height: 32),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
