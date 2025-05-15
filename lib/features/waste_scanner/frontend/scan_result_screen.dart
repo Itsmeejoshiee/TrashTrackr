@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/buttons/disposal_location_button.dart';
+import 'package:trashtrackr/features/dashboard/frontend/dashboard_screen.dart';
 import 'package:trashtrackr/features/waste_scanner/frontend/waste_scanner_screen.dart';
 import 'widgets/properties_tile.dart';
 import 'widgets/disposal_guide.dart';
@@ -107,11 +108,14 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => DashboardScreen()),
+          ),
           icon: Icon(Icons.arrow_back_ios),
         ),
         title: Text(
-          'Waste Scanner',
+          'Dashboard',
           style: kTitleMedium.copyWith(fontWeight: FontWeight.bold),
         ),
       ),
