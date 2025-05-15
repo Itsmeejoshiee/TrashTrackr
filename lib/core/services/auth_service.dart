@@ -134,7 +134,14 @@ class AuthService {
                 .collection('posts')
                 .where('uid', isEqualTo: user.uid)
                 .get();
-        for (final doc in posts.docs) {
+        final events =
+            await FirebaseFirestore.instance
+                .collection('events')
+                .where('uid', isEqualTo: user.uid)
+                .get();
+        final allDocs = [...posts.docs, ...events.docs];
+
+        for (final doc in allDocs) {
           await doc.reference.delete();
         }
       } catch (e) {

@@ -4,6 +4,7 @@ import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/buttons/rounded_rectangle_button.dart';
+import 'package:trashtrackr/core/widgets/text_fields/profile_text_field.dart';
 import 'package:trashtrackr/features/about/frontend/about_screen.dart';
 import 'package:trashtrackr/features/auth/backend/auth_manager.dart';
 import 'package:trashtrackr/features/faqs/frontend/faq_screen.dart';
@@ -40,11 +41,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Future<void> _deleteAccount() async {
+  Future<void> _deleteAccount(String email, String password) async {
     // TODO: Delete account(please use the deleteAccount method in AuthBloc)
-
+    await _userService.deleteUser(email, password);
     // Navigate back to AuthManager and clear navigation stack
-
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => AuthManager()),
@@ -93,6 +93,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _deleteAccountAlert() {
+    TextEditingController emailController = TextEditingController();
+    TextEditingController passwordController = TextEditingController();
     Alert(
       context: context,
       style: AlertStyle(
@@ -105,6 +107,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
       desc:
           "We're sad to see you leave! Deleting your TrashTrackr account will permanently erase your data, including your streaks, badges, posts, and waste log.",
       image: Image.asset("assets/images/icons/red_delete_icon.png", width: 110),
+      content: Column(
+        children: [
+          ProfileTextField(
+            controller: emailController,
+            hintText: 'Email',
+            iconData: Icons.person,
+          ),
+          ProfileTextField(
+            controller: passwordController,
+            hintText: 'Password',
+            iconData: Icons.lock,
+            obscureText: true,
+          ),
+        ],
+      ),
       buttons: [
         DialogButton(
           margin: EdgeInsets.symmetric(horizontal: 20),
@@ -117,7 +134,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
           margin: EdgeInsets.symmetric(horizontal: 20),
           color: kRed,
           radius: BorderRadius.circular(30),
-          onPressed: () {},
+          onPressed: () {
+            _deleteAccount(
+              emailController.text.trim(),
+              passwordController.text.trim(),
+            );
+          },
           child: Text(
             'Delete',
             style: kTitleSmall.copyWith(color: Colors.white),
@@ -160,114 +182,105 @@ class _SettingsScreenState extends State<SettingsScreen> {
           body: SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: Column(
-                children: [
-                  // Edit Profile Picture
-                  EditProfilePictureButton(
-                    image:
-                        (user!.profilePicture.isNotEmpty)
-                            ? NetworkImage(user.profilePicture)
-                            : AssetImage(
-                              'assets/images/placeholder_profile.jpg',
-                            ),
-                    onPressed: () async {
-                      final profilePicture = ProfilePicture();
-                      await profilePicture.update(context);
-                    },
-                  ),
-
-                  Text(
-                    '${user.firstName} ${user.lastName}',
-                    style: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-
-                  // Offset
-                  Flexible(child: SizedBox(height: 35)),
-
-                  SettingTileGroup(
-                    children: [
-                      SettingTile(
-                        title: 'Edit Profile Details',
-                        iconData: Icons.edit,
-                        onTap:
-                            () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EditProfileScreen(),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    // Edit Profile Picture
+                    EditProfilePictureButton(
+                      image:
+                          (user!.profilePicture.isNotEmpty)
+                              ? NetworkImage(user.profilePicture)
+                              : AssetImage(
+                                'assets/images/placeholder_profile.jpg',
                               ),
-                            ),
-                      ),
+                      onPressed: () async {
+                        final profilePicture = ProfilePicture();
+                        await profilePicture.update(context);
+                      },
+                    ),
 
-                      SwitchSettingTile(
-                        title: 'Notifications',
-                        iconData: Icons.notifications,
-                        value: _notifsEnabled,
-                        onChanged: (value) {
-                          setState(() {
-                            _notifsEnabled = value;
-                          });
-                        },
+                    Text(
+                      '${user.firstName} ${user.lastName}',
+                      style: kHeadlineSmall.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
+                      textAlign: TextAlign.center,
+                    ),
 
-                      SettingTile(
-                        title: 'Privacy Options',
-                        iconData: Icons.shield,
-                        onTap:
-                            () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PrivacyScreen(),
+                    // Offset
+                    SizedBox(height: 35),
+
+                    SettingTileGroup(
+                      children: [
+                        SettingTile(
+                          title: 'Edit Profile Details',
+                          iconData: Icons.edit,
+                          onTap:
+                              () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditProfileScreen(),
+                                ),
                               ),
-                            ),
-                      ),
+                        ),
 
-                      SettingTile(
-                        title: 'Help & FAQs',
-                        iconData: Icons.help,
-                        onTap:
-                            () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => FaqScreen(),
+                        SwitchSettingTile(
+                          title: 'Notifications',
+                          iconData: Icons.notifications,
+                          value: _notifsEnabled,
+                          onChanged: (value) {
+                            setState(() {
+                              _notifsEnabled = value;
+                            });
+                          },
+                        ),
+
+                        // Deleted Privacy Policy: PrivacyScreen()
+                        SettingTile(
+                          title: 'Help & FAQs',
+                          iconData: Icons.help,
+                          onTap:
+                              () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FaqScreen(),
+                                ),
                               ),
-                            ),
-                      ),
+                        ),
 
-                      SettingTile(
-                        title: 'About TrashTrackr',
-                        iconData: Icons.info,
-                        onTap:
-                            () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AboutScreen(),
+                        SettingTile(
+                          title: 'About TrashTrackr',
+                          iconData: Icons.info,
+                          onTap:
+                              () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AboutScreen(),
+                                ),
                               ),
-                            ),
-                      ),
+                        ),
 
-                      SettingTile(
-                        title: 'Logout',
-                        iconData: Icons.logout,
-                        color: kRed,
-                        onTap: _logoutAlert,
-                      ),
-                    ],
-                  ),
+                        SettingTile(
+                          title: 'Logout',
+                          iconData: Icons.logout,
+                          color: kRed,
+                          onTap: _logoutAlert,
+                        ),
+                      ],
+                    ),
 
-                  // Flexible Offset
-                  Flexible(child: SizedBox(height: 120)),
+                    SizedBox(height: 120),
 
-                  // Delete Account Butotn
-                  RoundedRectangleButton(
-                    backgroundColor: kRed,
-                    title: 'Delete Account',
-                    onPressed: _deleteAccountAlert,
-                  ),
-
-                  // Offset
-                  SizedBox(height: 15),
-                ],
+                    // Delete Account Butotn
+                    RoundedRectangleButton(
+                      backgroundColor: kRed,
+                      title: 'Delete Account',
+                      onPressed: _deleteAccountAlert,
+                    ),
+                    // Offset
+                    SizedBox(height: 15),
+                  ],
+                ),
               ),
             ),
           ),
