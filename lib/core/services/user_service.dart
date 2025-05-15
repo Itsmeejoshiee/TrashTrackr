@@ -15,7 +15,8 @@ import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:trashtrackr/core/services/badge_service.dart';
 import 'package:trashtrackr/core/user_provider.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
-import 'package:trashtrackr/features/post/models/post_entry.dart';
+import 'package:trashtrackr/features/post/models/event_model.dart';
+import 'package:trashtrackr/features/post/models/post_model.dart';
 import 'package:trashtrackr/features/settings/backend/edit_profile_bloc.dart';
 import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
 
@@ -165,42 +166,42 @@ class UserService {
 
   //TODO: Optimize this function, loads slowly. I think im using shared prefs wrong way.
 
-  Future<String?> getFullName() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final uid = _authService.currentUser?.uid;
-
-    if (uid == null) {
-      print('UID is null, cannot fetch full name');
-      return null;
-    }
-
-    try {
-      final userDoc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
-      final userData = userDoc.data();
-
-      if (userData == null) {
-        print('User document not found for UID: $uid');
-        return null;
-      }
-
-      final firstName = userData['first_name'] ?? '';
-      final lastName = userData['last_name'] ?? '';
-      final fullName = '$firstName $lastName'.trim();
-
-      final cachedFullName = prefs.getString('fullName');
-      if (cachedFullName != fullName) {
-        await prefs.setString('fullName', fullName);
-        print('Full name updated in SharedPreferences: $fullName');
-      } else {
-        print('No Updates in SharedPreferences.');
-      }
-      return cachedFullName;
-    } catch (e) {
-      print('Error fetching user document: $e');
-      return null;
-    }
-  }
+  // Future<String?> getFullName() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   final uid = _authService.currentUser?.uid;
+  //
+  //   if (uid == null) {
+  //     print('UID is null, cannot fetch full name');
+  //     return null;
+  //   }
+  //
+  //   try {
+  //     final userDoc =
+  //         await FirebaseFirestore.instance.collection('users').doc(uid).get();
+  //     final userData = userDoc.data();
+  //
+  //     if (userData == null) {
+  //       print('User document not found for UID: $uid');
+  //       return null;
+  //     }
+  //
+  //     final firstName = userData['first_name'] ?? '';
+  //     final lastName = userData['last_name'] ?? '';
+  //     final fullName = '$firstName $lastName'.trim();
+  //
+  //     final cachedFullName = prefs.getString('fullName');
+  //     if (cachedFullName != fullName) {
+  //       await prefs.setString('fullName', fullName);
+  //       print('Full name updated in SharedPreferences: $fullName');
+  //     } else {
+  //       print('No Updates in SharedPreferences.');
+  //     }
+  //     return cachedFullName;
+  //   } catch (e) {
+  //     print('Error fetching user document: $e');
+  //     return null;
+  //   }
+  // }
 
   // fieldnames: first_name, last_name, email
   Future<void> updateUserInfo(String fieldName, String value) async {
@@ -249,57 +250,7 @@ class UserService {
         });
   }
 
-  /*
-  Future<void> createPost(String body, String? imageUrl, String? emotion) async {
-    final uid = _authService.currentUser?.uid;
-    if (uid == null) return;
-
-    try {
-      // Fetch user document from Firestore
-      final userDoc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
-
-      if (!userDoc.exists) {
-        print('User document not found');
-        return;
-      }
-
-      final userData = userDoc.data()!;
-      final firstName = userData['first_name'] ?? '';
-      final lastName = userData['last_name'] ?? '';
-      final fullName = '$firstName $lastName'.trim();
-
-      await FirebaseFirestore.instance.collection('posts').add({
-        'uid': uid,
-        'full_name': fullName,
-        'date': DateTime.now(),
-        'body': body,
-        'image_url': imageUrl,
-        'emotion': emotion
-      });
-    } catch (e) {
-      print('Error creating post: $e');
-    }
-  }
-  Future<void> createEvent(String imageUrl, String eventType,
-      DateTimeRange dateRange, String eventDescription) async {
-    final uid = AuthService().currentUser?.uid;
-    if (uid == null) return;
-
-    try {
-      await FirebaseFirestore.instance.collection('events').add({
-        'uid': uid,
-        'image_url': imageUrl,
-        'event_type': eventType,
-        'date_range': dateRange,
-        'event_description': eventDescription,
-      });
-    } catch (e) {
-      print('Error creating event: $e');
-    }
-  }
-*/
-  Future<void> createPost(PostEntry post) async {
+  Future<void> createPost(PostModel post) async {
     final uid = _authService.currentUser?.uid;
     await FirebaseFirestore.instance
         .collection('posts')
@@ -307,26 +258,8 @@ class UserService {
         .set(post.toMap());
   }
 
-  Future<void> createEvent(EventEntry event) async {
+  Future<void> createEvent(EventModel event) async {
     await FirebaseFirestore.instance.collection('events').add(event.toMap());
-  }
-
-  Future uploadPostImage(Uint8List? image) async {
-    if (image == null) return;
-
-    final storageRef = FirebaseStorage.instance.ref();
-    final imageRef = storageRef.child(
-      'posts/${DateTime.now().millisecondsSinceEpoch}.jpg',
-    );
-
-    try {
-      await imageRef.putData(image);
-      final downloadUrl = await imageRef.getDownloadURL();
-      return downloadUrl;
-    } catch (e) {
-      print('Error uploading image: $e');
-      return null;
-    }
   }
 
   Future uploadProfileImage(Uint8List? image) async {
@@ -349,8 +282,8 @@ class UserService {
     }
   }
 
-  Future<String?> getProfilePicture() async {
-    final uid = AuthService().currentUser?.uid;
+  Future<UserModel?> getUser() async {
+    final uid = _authService.currentUser?.uid;
     if (uid == null) {
       print('UID is null, cannot fetch profile picture');
       return null;
@@ -359,12 +292,8 @@ class UserService {
     try {
       final userDoc =
           await FirebaseFirestore.instance.collection('users').doc(uid).get();
-      final userData = userDoc.data();
-      if (userData == null) {
-        print('User document not found for UID: $uid');
-        return null;
-      }
-      return userData['profile_picture'] as String?;
+      final user = UserModel.fromMap(userDoc.data()!);
+      return user;
     } catch (e) {
       print('Error fetching profile picture: $e');
       return null;
