@@ -61,6 +61,8 @@ dependencies:
   shared_preferences: ^2.5.3
   #hashtag
   extended_text_field: ^10.0.0
+  #webview
+  webview_flutter: ^4.11.0
 
 
 
