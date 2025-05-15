@@ -1,10 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:trashtrackr/core/models/scan_result_model.dart';
 import 'package:trashtrackr/core/services/waste_entry_service.dart';
+import 'package:trashtrackr/features/log_disposal/screens/log_disposal_screen.dart';
 import 'package:trashtrackr/features/log_disposal/widgets/log_edit.dart'; // No longer used
 import 'package:trashtrackr/features/waste_scanner/frontend/widgets/log_button.dart';
 import 'package:trashtrackr/features/waste_scanner/frontend/widgets/properties_tile.dart';
+import 'package:trashtrackr/features/waste_stats/frontend/views/log_history_view.dart';
+import 'package:trashtrackr/features/waste_stats/frontend/waste_stats_screen.dart';
 
 import '../../../core/utils/constants.dart';
 import '../../../core/widgets/buttons/disposal_location_button.dart';
@@ -16,6 +20,9 @@ import '../widgets/log_image.dart';
 class LogDetails extends StatefulWidget {
   final ScanResult scanResult;
   final Function(String) onImageUpdated;
+  final VoidCallback? onDelete;
+  final String fromScreen;
+
   final Function(String notes, String quantity) onDetailsUpdated;
 
   const LogDetails({
@@ -23,6 +30,8 @@ class LogDetails extends StatefulWidget {
     required this.scanResult,
     required this.onImageUpdated,
     required this.onDetailsUpdated,
+    this.onDelete,
+    required this.fromScreen,
   });
 
   @override
@@ -51,6 +60,74 @@ class _LogDetailsState extends State<LogDetails> {
 
   String? _updatedImageUrl;
   bool _isEditing = false;
+
+
+  void _delDisposal() {
+    Alert(
+      context: context,
+      style: AlertStyle(
+        animationType: AnimationType.grow,
+        isCloseButton: false,
+        titleStyle: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
+        descStyle: kTitleMedium,
+      ),
+      title: "Want to delete this log?",
+      desc: "You can’t undo this!",
+      image: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 100),
+        child: Image.asset(
+          "assets/images/icons/logDelete.png",
+          width: 90,
+        ),
+      ),
+      buttons: [
+        DialogButton(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          color: Color(0xFFE6E6E6),
+          radius: BorderRadius.circular(30),
+          onPressed: () => Navigator.pop(context),
+          child: Text('Cancel', style: kTitleSmall),
+        ),
+        DialogButton(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          color: Color(0xffEA4A57),
+          radius: BorderRadius.circular(30),
+          onPressed: () async {
+            if (widget.scanResult.id != null) {
+              await WasteEntryService().deleteWasteEntry(widget.scanResult.id!);
+            } else {
+              print('No ID found on entry, cannot delete.');
+            }
+            Navigator.pop(context);
+
+            if (widget.fromScreen == 'history') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WasteStatsScreen(updateView: false),
+                ),
+              );
+            } else if (widget.fromScreen == 'disposal') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LogDisposalScreen(),
+                ),
+              );
+              widget.onDelete?.call();
+            }
+          },
+          child: Align(
+            alignment: Alignment.center,
+            child: Text(
+              'Delete',
+              style: kTitleSmall.copyWith(color: Colors.white),
+            ),
+          ),
+        ),
+      ],
+    ).show();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +173,8 @@ class _LogDetailsState extends State<LogDetails> {
               // Item name
               Row(
                 children: [
-                  Flexible(
+                  result.productName.length > 30
+                      ? Flexible(
                     child: Text(
                       result.productName,
                       style: kTitleLarge.copyWith(
@@ -106,6 +184,13 @@ class _LogDetailsState extends State<LogDetails> {
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
+                  )
+                      : Text(
+                    result.productName,
+                    style: kTitleLarge.copyWith(
+                      color: kAvocado,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   SizedBox(width: 8),
                   Image.asset(
@@ -114,7 +199,7 @@ class _LogDetailsState extends State<LogDetails> {
                     height: 24,
                     fit: BoxFit.contain,
                   ),
-                  SizedBox(width: 8),
+                  Spacer(),
                   GestureDetector(
                     onTap: () {
                       setState(() {
@@ -203,39 +288,50 @@ class _LogDetailsState extends State<LogDetails> {
               SizedBox(height: 10),
               ScanResultField(controller: _quantityController, width: 80),
 
-              SizedBox(height: 20),
+              SizedBox(height: 30),
 
-              Align(
-                alignment: Alignment.centerRight,
-                child: LogButton(
-                  title: 'Save',
-                  onPressed: () async {
-                    final user = FirebaseAuth.instance.currentUser;
-                    final _wasteEntryService = WasteEntryService();
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  LogButton(
+                      title: 'Delete',
+                      backgroundColor: Colors.white,
+                      textColor: Colors.grey.shade800,
+                      onPressed: () {
+                        _delDisposal();
+                      },
+                  ),
 
-                    if (user == null) return;
+                  LogButton(
+                    title: 'Save',
+                    onPressed: () async {
+                      final user = FirebaseAuth.instance.currentUser;
+                      final _wasteEntryService = WasteEntryService();
 
-                    final updatedNotes = _noteController.text.trim();
-                    final updatedQty = _quantityController.text.trim();
+                      if (user == null) return;
 
-                    final updatedResult = widget.scanResult.copyWith(
-                      notes: updatedNotes,
-                      qty: int.tryParse(updatedQty) ?? 1,
-                      imageUrl: _updatedImageUrl ?? widget.scanResult.imageUrl,
-                    );
+                      final updatedNotes = _noteController.text.trim();
+                      final updatedQty = _quantityController.text.trim();
 
-                    try {
-                      await _wasteEntryService.updateWasteEntries(user, updatedResult);
-                      widget.onDetailsUpdated(updatedNotes, updatedQty);
-                      Navigator.pop(context);
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Failed to update entry for ID: ${updatedResult.id ?? "unknown"} & ${user.uid ?? "unknown"}')),
+                      final updatedResult = widget.scanResult.copyWith(
+                        notes: updatedNotes,
+                        qty: int.tryParse(updatedQty) ?? 1,
+                        imageUrl: _updatedImageUrl ?? widget.scanResult.imageUrl,
                       );
-                    }
 
-                  },
-                ),
+                      try {
+                        await _wasteEntryService.updateWasteEntries(user, updatedResult);
+                        widget.onDetailsUpdated(updatedNotes, updatedQty);
+                        Navigator.pop(context);
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Failed to update entry for ID: ${updatedResult.id ?? "unknown"} & ${user.uid ?? "unknown"}')),
+                        );
+                      }
+
+                    },
+                  ),
+                ],
               ),
 
 
