@@ -3,6 +3,7 @@ import 'package:trashtrackr/core/models/badge_model.dart';
 import 'package:trashtrackr/core/services/badge_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/box/badge_box.dart';
+import 'package:trashtrackr/features/home/frontend/widgets/section_label.dart';
 
 
 class BadgeCarousel extends StatefulWidget {
@@ -15,6 +16,8 @@ class BadgeCarousel extends StatefulWidget {
 class _BadgeCarouselState extends State<BadgeCarousel> {
 
   final BadgeService _badgeService = BadgeService();
+
+  bool isEmpty = false;
 
   List<Widget> _badgeBoxBuilder(List<BadgeModel> badges) {
     List<Widget> badgeBoxes = [];
@@ -46,9 +49,20 @@ class _BadgeCarouselState extends State<BadgeCarousel> {
           return Center(child: Text('Badge data is not available.'));
         }
 
-        final badges = snapshot.data;
+        final badges = _badgeBoxBuilder(snapshot.data!);
+
+        if (badges.isEmpty) return SizedBox();
+
         return Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 32),
+              child: SectionLabel(label: 'Earned Badges'),
+            ),
+
+            SizedBox(height: 20),
+
+
             SizedBox(
               width: double.infinity,
               height: 130,
@@ -57,7 +71,7 @@ class _BadgeCarouselState extends State<BadgeCarousel> {
                 children: [
                   SizedBox(width: 32),
 
-                  ..._badgeBoxBuilder(badges!),
+                  ...badges,
                 ],
               ),
             ),
