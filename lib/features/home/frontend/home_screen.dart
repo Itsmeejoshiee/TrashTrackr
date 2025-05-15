@@ -71,12 +71,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return StreamBuilder(
       stream: _userService.getUserStream(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting ||
+        if (snapshot.connectionState == ConnectionState.waiting &&
             _dataLoading) {
           return Center(child: CircularProgressIndicator(color: kAvocado));
         }
         if (!snapshot.hasData || snapshot.data == null) {
-          return Center(child: Text('User data is not available.'));
+          return Center(child: CircularProgressIndicator(color: kAvocado));
         }
         final user = snapshot.data;
         return Scaffold(
