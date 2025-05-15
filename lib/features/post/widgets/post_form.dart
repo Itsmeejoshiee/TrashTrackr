@@ -1,21 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:trashtrackr/features/post/models/post_entry.dart';
-import 'dart:io';
-import 'package:image_picker/image_picker.dart';
+import 'package:trashtrackr/core/models/user_model.dart';
+import 'package:trashtrackr/core/services/image_service.dart';
+import 'package:trashtrackr/core/services/user_service.dart';
+import 'package:trashtrackr/core/utils/constants.dart';
+import 'package:trashtrackr/core/utils/emotion.dart';
+import 'package:trashtrackr/core/utils/string_utils.dart';
+import 'package:trashtrackr/features/post/models/post_model.dart';
 import 'package:flutter/services.dart';
 
-const kForestGreen = Color(0xFF819D39);
-const String kFontPoppins = 'Poppins';
-const String kFontUrbanist = 'Urbanist';
-
 class PostForm extends StatefulWidget {
-  final PostEntry? postEntry;
+  final UserModel user;
+  final PostModel? postEntry;
   final TextEditingController? controller;
+  final Function(String?)? onChange;
+  final Function(Emotion?)? onEmotionSelect;
+  final Function(Uint8List?)? onImageSelect;
 
   const PostForm({
     super.key,
+    required this.user,
     this.postEntry,
     this.controller,
+    this.onChange,
+    this.onImageSelect,
+    this.onEmotionSelect,
   });
 
   @override
@@ -23,24 +31,21 @@ class PostForm extends StatefulWidget {
 }
 
 class _PostFormState extends State<PostForm> {
+
+  final UserService _userService = UserService();
+
   late TextEditingController _controller;
   late FocusNode _focusNode;
-  String? _selectedEmotion;
-  File? _pickedImage;
+  Emotion? _selectedEmotion;
+  Uint8List? _pickedImage;
   final FocusNode _keyboardFocusNode = FocusNode();
-
-  final List<String> _emotions = [
-    "💪 Empowered — Feeling capable and motivated to make a change.",
-    "🙏 Grateful — Appreciating nature, community, or the chance to help.",
-    "🌅 Hopeful — Optimistic about the future and the planet.",
-    "💡 Inspired — Motivated by others or your own eco-action.",
-    "😊 Joyful — Simply happy doing your part for the Earth",
-  ];
 
   @override
   void initState() {
     super.initState();
-    _controller = widget.controller ?? TextEditingController(text: widget.postEntry?.body ?? '');
+    _controller =
+        widget.controller ??
+        TextEditingController(text: widget.postEntry?.body ?? '');
     _focusNode = FocusNode();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).requestFocus(_focusNode);
@@ -55,28 +60,33 @@ class _PostFormState extends State<PostForm> {
     super.dispose();
   }
 
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (picked != null) {
+  Future<void> _getImage() async {
+    try {
+      final image = await ImageService().getImage();
       setState(() {
-        _pickedImage = File(picked.path);
+        _pickedImage = image;
       });
+      widget.onImageSelect!(_pickedImage);
+    } catch (e) {
+      print("Error getting image: $e");
     }
   }
 
-  Future<void> _pickImageFromCamera() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.camera);
-    if (picked != null) {
+  Future<void> _getCameraImage() async {
+    try {
+      final image = await ImageService().getCameraImage();
       setState(() {
-        _pickedImage = File(picked.path);
+        _pickedImage = image;
       });
+      widget.onImageSelect!(_pickedImage);
+    } catch (e) {
+      print("Error getting camera image: $e");
     }
   }
 
   void _handleKeyEvent(RawKeyEvent event) {
-    if (event is RawKeyDownEvent && event.logicalKey == LogicalKeyboardKey.enter) {
+    if (event is RawKeyDownEvent &&
+        event.logicalKey == LogicalKeyboardKey.enter) {
       final text = _controller.text;
       final selection = _controller.selection;
       final lines = text.substring(0, selection.start).split('\n');
@@ -91,7 +101,9 @@ class _PostFormState extends State<PostForm> {
         final newSelectionIndex = selection.start + 4;
         setState(() {
           _controller.text = newText;
-          _controller.selection = TextSelection.collapsed(offset: newSelectionIndex);
+          _controller.selection = TextSelection.collapsed(
+            offset: newSelectionIndex,
+          );
         });
         // Prevent default behavior by unfocusing and refocusing
         FocusScope.of(context).requestFocus(_focusNode);
@@ -117,8 +129,11 @@ class _PostFormState extends State<PostForm> {
     final newSelectionIndex = selection.start + prefix.length + 3;
     setState(() {
       _controller.text = newText;
-      _controller.selection = TextSelection.collapsed(offset: newSelectionIndex);
+      _controller.selection = TextSelection.collapsed(
+        offset: newSelectionIndex,
+      );
     });
+    widget.onChange!(_controller.text);
   }
 
   Widget _iconNeoButton(IconData icon, VoidCallback onTap) {
@@ -129,18 +144,18 @@ class _PostFormState extends State<PostForm> {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: kForestGreen.withOpacity(0.13),
+          color: kForestGreenLight.withOpacity(0.13),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(icon, color: kForestGreen, size: 24),
+        child: Icon(icon, color: kForestGreenLight, size: 24),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final String fullname = widget.postEntry?.fullname ?? "Your Name";
-    final String userPfp = widget.postEntry?.userPfp ?? "assets/images/placeholder_profile.jpg";
+    final String fullName = '${widget.user.firstName} ${widget.user.lastName}';
+    final String profilePicture = widget.user.profilePicture;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,67 +164,65 @@ class _PostFormState extends State<PostForm> {
           children: [
             CircleAvatar(
               radius: 24,
-              backgroundImage: userPfp.startsWith('http')
-                  ? NetworkImage(userPfp)
-                  : AssetImage(userPfp) as ImageProvider,
+              backgroundImage:
+              (profilePicture.isNotEmpty)
+                      ? NetworkImage(profilePicture)
+                      : AssetImage('assets/images/placeholder_profile.jpg'),
             ),
             const SizedBox(width: 15),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  fullname,
-                  style: const TextStyle(
-                    fontFamily: kFontUrbanist,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18,
-                  ),
-                ),
+                Text(fullName, style: kNameTextStyle),
                 SizedBox(
                   width: 220,
-                  child: DropdownButtonFormField<String>(
+                  child: DropdownButtonFormField<Emotion>(
                     value: _selectedEmotion,
                     hint: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text(
-                          'Choose type',
-                          style: TextStyle(
-                            fontFamily: kFontPoppins,
-                            color: kForestGreen,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        Text('Choose type', style: kSmallGreenBoldText),
+                        Icon(
+                          Icons.arrow_drop_down,
+                          color: kForestGreenLight,
+                          size: 18,
                         ),
-                        Icon(Icons.arrow_drop_down, color: kForestGreen, size: 18),
                       ],
                     ),
                     icon: const SizedBox.shrink(),
-                    style: const TextStyle(
-                      fontFamily: kFontPoppins,
-                      color: kForestGreen,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: kSmallGreenBoldText,
                     isDense: true,
-                    items: _emotions
-                        .map((e) => DropdownMenuItem(
-                              value: e,
-                              child: Text(
-                                e.split(' ').take(2).join(' '),
-                                style: const TextStyle(
-                                  fontFamily: kFontPoppins,
-                                  fontSize: 14,
-                                  color: Color.fromARGB(255, 108, 131, 48),
-                                  fontWeight: FontWeight.w600,
+                    items:
+                        Emotion.values
+                            .map(
+                              (emotion) => DropdownMenuItem(
+                                value: emotion,
+                                child: Row(
+                                  spacing: 8,
+                                  children: [
+                                    Image.asset(
+                                      'assets/images/emotions/${emotion.name}.png',
+                                      width: 24,
+                                    ),
+                                    Text(
+                                      emotion.name.capitalize(),
+                                      style: kDropDownTextStyle,
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ))
-                        .toList(),
-                    onChanged: (val) => setState(() => _selectedEmotion = val),
+                            )
+                            .toList(),
+                    onChanged: (val) {
+                      setState(() => _selectedEmotion = val);
+                      widget.onEmotionSelect!(_selectedEmotion!);
+                    },
                     decoration: const InputDecoration(
                       isDense: true,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 0,
+                        vertical: 0,
+                      ),
                       border: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
@@ -230,35 +243,56 @@ class _PostFormState extends State<PostForm> {
             controller: _controller,
             focusNode: _focusNode,
             maxLines: 10,
-            cursorColor: kForestGreen,
-            style: const TextStyle(
-              fontFamily: kFontPoppins,
-              color: Colors.black,
-              fontSize: 16,
-            ),
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-            ),
+            cursorColor: kForestGreenLight,
+            style: kPostInputTextStyle,
+            decoration: const InputDecoration(border: InputBorder.none),
+            onChanged: (value) {
+              widget.onChange!(_controller.text);
+            },
           ),
         ),
         if (_pickedImage != null) ...[
           const SizedBox(height: 12),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.file(
-              _pickedImage!,
-              width: double.infinity,
-              height: 180,
-              fit: BoxFit.cover,
-            ),
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.memory(
+                  _pickedImage!,
+                  width: double.infinity,
+                  height: 180,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Align(
+                alignment: Alignment.topRight,
+                child: Container(
+                  margin: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    color: kLightGray,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _pickedImage = null;
+                      });
+                      widget.onImageSelect!(_pickedImage);
+                    },
+                    child: Icon(Icons.close, color: Colors.black, size: 30),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
         const SizedBox(height: 20),
         Row(
           children: [
-            _iconNeoButton(Icons.camera_alt, _pickImageFromCamera),
+            _iconNeoButton(Icons.camera_alt, _getCameraImage),
             const SizedBox(width: 12),
-            _iconNeoButton(Icons.image, _pickImage),
+            _iconNeoButton(Icons.image, _getImage),
             const SizedBox(width: 12),
             _iconNeoButton(Icons.list, _insertBullet),
           ],
