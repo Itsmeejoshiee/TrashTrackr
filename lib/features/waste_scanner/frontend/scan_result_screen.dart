@@ -65,6 +65,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
           child: Text(
             'Log Another?',
             style: kTitleSmall.copyWith(color: Colors.white),
+            textAlign: TextAlign.center,
           ),
         ),
       ],

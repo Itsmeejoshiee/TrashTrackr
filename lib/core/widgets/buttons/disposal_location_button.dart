@@ -3,7 +3,9 @@ import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/maps/frontend/map_screen.dart';
 
 class DisposalLocationButton extends StatelessWidget {
+
   const DisposalLocationButton({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +15,7 @@ class DisposalLocationButton extends StatelessWidget {
             context,
             MaterialPageRoute(builder: (context) => MapScreen()),
           ),
+
       child: Container(
         width: double.infinity,
         height: 180,

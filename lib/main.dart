@@ -45,6 +45,7 @@ class TrashTrackr extends StatelessWidget {
         primaryColor: kAvocado,
         scaffoldBackgroundColor: kLightGray,
       ),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
