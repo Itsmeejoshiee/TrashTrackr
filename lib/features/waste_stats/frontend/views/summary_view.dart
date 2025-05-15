@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:trashtrackr/features/waste_stats/frontend/views/summary_view_content.dart';
 import '../../../../core/models/scan_result_model.dart';
 import '../../../../core/services/waste_entry_service.dart';
+import '../../../../core/utils/constants.dart';
 
 
 class SummaryView extends StatelessWidget {
@@ -29,7 +30,7 @@ class SummaryView extends StatelessWidget {
       stream: service.fetchWasteEntries(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(color: kAvocado));
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: \${snapshot.error}'));
         }

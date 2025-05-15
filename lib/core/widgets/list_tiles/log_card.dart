@@ -10,8 +10,9 @@ import '../../utils/constants.dart';
 class LogCard extends StatelessWidget {
   final ScanResult result;
   final LogEntry? entry;
+  final String fromScreen;
 
-  const LogCard({super.key, required this.result, this.entry});
+  const LogCard({super.key, required this.result, this.entry, required this.fromScreen,});
 
   String getIconPath(String classification) {
     if (classification == 'Biodegradable' || classification == 'biodegradable') {
@@ -33,6 +34,7 @@ class LogCard extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => LogDetails(
+              fromScreen: fromScreen,
               scanResult: result,
               onImageUpdated: (newImageURL) {
                 newImageURL = result.imageUrl ?? "";
