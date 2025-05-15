@@ -9,6 +9,10 @@ class DashboardSearchBar extends StatelessWidget {
     this.iconData = Icons.person,
     this.obscureText = false,
     this.margin,
+    required this.onSearch,
+    this.onFilterTap,
+    this.onChanged,
+    this.onSubmit,
   });
 
   final TextEditingController controller;
@@ -16,6 +20,10 @@ class DashboardSearchBar extends StatelessWidget {
   final IconData iconData;
   final bool obscureText;
   final EdgeInsets? margin;
+  final VoidCallback onSearch;
+  final VoidCallback? onFilterTap;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmit;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +54,8 @@ class DashboardSearchBar extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
+        onChanged: onChanged,
+        onSubmitted: onSubmit,
         style: kTitleMedium.copyWith(
           color: Color(0xFF616468),
           fontWeight: FontWeight.bold,
@@ -54,9 +64,12 @@ class DashboardSearchBar extends StatelessWidget {
         cursorHeight: 20,
         decoration: InputDecoration(
           border: InputBorder.none,
-          prefixIcon: Icon(Icons.search, color: Color(0xFF616468), size: 23),
+          prefixIcon: IconButton(
+            icon: Icon(Icons.search, color: Color(0xFF616468), size: 23),
+            onPressed: onSearch,
+          ),
           suffixIcon: IconButton(
-            onPressed: () {},
+            onPressed: onFilterTap,
             icon: Icon(Icons.tune_outlined, color: Color(0xFF616468)),
           ),
           contentPadding: EdgeInsets.only(top: 11),

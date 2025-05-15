@@ -164,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           // Tips n Tricks & Show more
                           SectionLabel(
-                            label: 'Tips n Tricks',
+                            label: 'Tips & Tricks',
                             onShowMore: () {},
                           ),
 

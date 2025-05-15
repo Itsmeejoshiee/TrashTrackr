@@ -52,7 +52,11 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: const [
           BoxShadow(color: Colors.white, offset: Offset(-4, -4), blurRadius: 8),
-          BoxShadow(color: Color(0xFFD6D6D6), offset: Offset(4, 4), blurRadius: 8),
+          BoxShadow(
+            color: Color(0xFFD6D6D6),
+            offset: Offset(4, 4),
+            blurRadius: 8,
+          ),
         ],
       ),
       child: Row(
@@ -64,7 +68,9 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
               controller: widget.controller,
               onChanged: widget.onChanged,
               cursorColor: kForestGreen, // Set the blinking cursor color
-              style: kTitleMedium.copyWith(color: Colors.black), // Use Urbanist font from constants
+              style: kTitleMedium.copyWith(
+                color: Colors.black,
+              ), // Use Urbanist font from constants
               decoration: InputDecoration(
                 hintText: 'Search logs...',
                 hintStyle: kTitleSmall, // Use Urbanist font for the hint text
@@ -78,7 +84,9 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
               onTap: () {
                 widget.controller.clear(); // Clear the search bar
                 if (widget.onChanged != null) {
-                  widget.onChanged!(''); // Notify the parent widget of the reset
+                  widget.onChanged!(
+                    '',
+                  ); // Notify the parent widget of the reset
                 }
               },
               child: const Icon(
@@ -102,4 +110,3 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
     );
   }
 }
-

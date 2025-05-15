@@ -114,15 +114,14 @@ class PostService {
       return Stream.value([]);
     }
 
-    return FirebaseFirestore.instance
-        .collection('posts')
-        .snapshots()
-        .map((snapshot) {
-          print(snapshot.docs);
-          return snapshot.docs.map((doc) {
-            return PostModel.fromMap(doc.data());
-          }).toList();
-        });
+    return FirebaseFirestore.instance.collection('posts').snapshots().map((
+      snapshot,
+    ) {
+      print(snapshot.docs);
+      return snapshot.docs.map((doc) {
+        return PostModel.fromMap(doc.data());
+      }).toList();
+    });
   }
 
   Stream<List<EventModel>> getEventStream() {
@@ -133,14 +132,28 @@ class PostService {
       return Stream.value([]);
     }
 
-    return FirebaseFirestore.instance
-        .collection('events')
-        .snapshots()
-        .map((snapshot) {
+    return FirebaseFirestore.instance.collection('events').snapshots().map((
+      snapshot,
+    ) {
       print(snapshot.docs);
       return snapshot.docs.map((doc) {
         return EventModel.fromMap(doc.data());
       }).toList();
     });
+  }
+
+  Stream<List<PostModel>> getPostResultStream({required String searchKeyword}) {
+    final keywordLower = searchKeyword.toLowerCase();
+
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => PostModel.fromMap(doc.data()))
+              .where((post) => post.body.toLowerCase().contains(keywordLower))
+              .toList();
+        });
   }
 }

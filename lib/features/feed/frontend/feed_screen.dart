@@ -5,6 +5,7 @@ import 'package:trashtrackr/core/utils/emotion.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
 import 'package:trashtrackr/core/widgets/buttons/multi_action_fab.dart';
 import 'package:trashtrackr/core/widgets/text_fields/dashboard_search_bar.dart';
+import 'package:trashtrackr/features/feed/frontend/feed_results.dart';
 import 'package:trashtrackr/features/home/frontend/widgets/section_label.dart';
 import 'package:trashtrackr/features/feed/frontend/widgets/recycling_guide_card.dart';
 import 'package:trashtrackr/features/feed/frontend/widgets/recycling_guide_carousel.dart';
@@ -19,10 +20,9 @@ class FeedScreen extends StatefulWidget {
 }
 
 class _FeedScreenState extends State<FeedScreen> {
+  String userSearch = '';
   final TextEditingController _searchController = TextEditingController();
-
   final PostService _postService = PostService();
-
   List<Widget> _postBuilder(List<PostModel> posts) {
     List<Widget> postCards = [];
     for (PostModel post in posts) {
@@ -53,7 +53,39 @@ class _FeedScreenState extends State<FeedScreen> {
                     width: imageSize,
                   ),
 
-                  DashboardSearchBar(controller: _searchController),
+                  DashboardSearchBar(
+                    controller: _searchController,
+                    onFilterTap: () {},
+                    onChanged: (value) {
+                      setState(() {
+                        userSearch = value.trim();
+                      });
+                    },
+                    onSearch: () {
+                      if (userSearch.isNotEmpty) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) =>
+                                    FeedResults(searchKeyword: userSearch),
+                          ),
+                        );
+                      }
+                    },
+                    onSubmit: (value) {
+                      if (userSearch.isNotEmpty) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) =>
+                                    FeedResults(searchKeyword: userSearch),
+                          ),
+                        );
+                      }
+                    },
+                  ),
 
                   SectionLabel(label: 'Recycling Guide'),
 
@@ -87,21 +119,21 @@ class _FeedScreenState extends State<FeedScreen> {
                   StreamBuilder(
                     stream: _postService.getPostStream(),
                     builder: (context, snapshot) {
-
                       print('POST STREAM: ${snapshot.data}');
 
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator(color: kAvocado,));
+                        return Center(
+                          child: CircularProgressIndicator(color: kAvocado),
+                        );
                       }
 
                       if (!snapshot.hasData || snapshot.data == null) {
-                        return Center(child: Text('Post data is not available.'));
+                        return Center(
+                          child: Text('Post data is not available.'),
+                        );
                       }
 
-                      return Column(
-                        children: _postBuilder(snapshot.data!),
-                      );
-
+                      return Column(children: _postBuilder(snapshot.data!));
                     },
                   ),
 
