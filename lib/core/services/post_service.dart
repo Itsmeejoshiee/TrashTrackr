@@ -52,6 +52,8 @@ class PostService {
     required String title,
     required EventType type,
     required DateTimeRange dateRange,
+    required String startTime,
+    required String endTime,
     required String desc,
   }) async {
     final uid = AuthService().currentUser?.uid;
@@ -72,6 +74,8 @@ class PostService {
       title: title,
       type: type,
       dateRange: dateRange,
+      startTime: startTime,
+      endTime: endTime,
       desc: desc,
     );
 

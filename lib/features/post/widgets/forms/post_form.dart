@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:trashtrackr/core/models/user_model.dart';
 import 'package:trashtrackr/core/services/image_service.dart';
 import 'package:trashtrackr/core/services/user_service.dart';
@@ -6,7 +7,10 @@ import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/utils/emotion.dart';
 import 'package:trashtrackr/core/utils/string_utils.dart';
 import 'package:trashtrackr/features/post/models/post_model.dart';
-import 'package:flutter/services.dart';
+import 'package:trashtrackr/features/post/widgets/emotion_dropdown.dart';
+import 'package:trashtrackr/features/post/widgets/post_header.dart';
+import 'package:trashtrackr/features/post/widgets/post_image_preview.dart';
+import 'package:trashtrackr/features/post/widgets/post_input_field.dart';
 
 class PostForm extends StatefulWidget {
   final UserModel user;
@@ -31,7 +35,6 @@ class PostForm extends StatefulWidget {
 }
 
 class _PostFormState extends State<PostForm> {
-
   final UserService _userService = UserService();
 
   late TextEditingController _controller;
@@ -156,138 +159,64 @@ class _PostFormState extends State<PostForm> {
   Widget build(BuildContext context) {
     final String fullName = '${widget.user.firstName} ${widget.user.lastName}';
     final String profilePicture = widget.user.profilePicture;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            CircleAvatar(
-              radius: 24,
-              backgroundImage:
-              (profilePicture.isNotEmpty)
-                      ? NetworkImage(profilePicture)
-                      : AssetImage('assets/images/placeholder_profile.jpg'),
-            ),
-            const SizedBox(width: 15),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(fullName, style: kNameTextStyle),
-                SizedBox(
-                  width: 220,
-                  child: DropdownButtonFormField<Emotion>(
-                    value: _selectedEmotion,
-                    hint: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('Choose type', style: kSmallGreenBoldText),
-                        Icon(
-                          Icons.arrow_drop_down,
-                          color: kForestGreenLight,
-                          size: 18,
+        PostHeader(
+          fullName: fullName,
+          profilePicture: profilePicture,
+          dropdown: EmotionDropdown(
+            value: _selectedEmotion,
+            items:
+                Emotion.values
+                    .map(
+                      (emotion) => DropdownMenuItem(
+                        value: emotion,
+                        child: Row(
+                          spacing: 8,
+                          children: [
+                            Image.asset(
+                              'assets/images/emotions/${emotion.name}.png',
+                              width: 24,
+                            ),
+                            Text(
+                              emotion.name.capitalize(),
+                              style: kDropDownTextStyle,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    icon: const SizedBox.shrink(),
-                    style: kSmallGreenBoldText,
-                    isDense: true,
-                    items:
-                        Emotion.values
-                            .map(
-                              (emotion) => DropdownMenuItem(
-                                value: emotion,
-                                child: Row(
-                                  spacing: 8,
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/emotions/${emotion.name}.png',
-                                      width: 24,
-                                    ),
-                                    Text(
-                                      emotion.name.capitalize(),
-                                      style: kDropDownTextStyle,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                            .toList(),
-                    onChanged: (val) {
-                      setState(() => _selectedEmotion = val);
-                      widget.onEmotionSelect!(_selectedEmotion!);
-                    },
-                    decoration: const InputDecoration(
-                      isDense: true,
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 0,
-                        vertical: 0,
                       ),
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      filled: false,
-                    ),
-                    dropdownColor: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-        RawKeyboardListener(
-          focusNode: _keyboardFocusNode,
-          onKey: _handleKeyEvent,
-          child: TextField(
-            controller: _controller,
-            focusNode: _focusNode,
-            maxLines: 10,
-            cursorColor: kForestGreenLight,
-            style: kPostInputTextStyle,
-            decoration: const InputDecoration(border: InputBorder.none),
-            onChanged: (value) {
-              widget.onChange!(_controller.text);
+                    )
+                    .toList(),
+            onChanged: (val) {
+              setState(() => _selectedEmotion = val);
+              widget.onEmotionSelect!(_selectedEmotion!);
             },
           ),
         ),
-        if (_pickedImage != null) ...[
-          const SizedBox(height: 12),
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.memory(
-                  _pickedImage!,
-                  width: double.infinity,
-                  height: 180,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Align(
-                alignment: Alignment.topRight,
-                child: Container(
-                  margin: EdgeInsets.all(10),
-                  padding: EdgeInsets.all(3),
-                  decoration: BoxDecoration(
-                    color: kLightGray,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _pickedImage = null;
-                      });
-                      widget.onImageSelect!(_pickedImage);
-                    },
-                    child: Icon(Icons.close, color: Colors.black, size: 30),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
         const SizedBox(height: 20),
+        // Post Input Field
+        PostInputField(
+          controller: _controller,
+          focusNode: _focusNode,
+          onChange: widget.onChange,
+        ),
+
+        // Image Picker
+        if (_pickedImage != null)
+          PostImagePreview(
+            image: _pickedImage!,
+            onRemove: () {
+              setState(() {
+                _pickedImage = null;
+              });
+              widget.onImageSelect!(_pickedImage);
+            },
+          ),
+
+        const SizedBox(height: 20),
+
+        // Action Buttons
         Row(
           children: [
             _iconNeoButton(Icons.camera_alt, _getCameraImage),
