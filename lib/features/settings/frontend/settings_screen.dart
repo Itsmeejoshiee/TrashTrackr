@@ -37,7 +37,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => AuthManager()),
-      (r) => false,
+          (r) => false,
     );
   }
 
@@ -48,7 +48,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => AuthManager()),
-      (r) => false,
+          (r) => false,
     );
   }
 
@@ -105,7 +105,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       title: "Are you sure you want\nto delete your account?",
       desc:
-          "We're sad to see you leave! Deleting your TrashTrackr account will permanently erase your data, including your streaks, badges, posts, and waste log.",
+      "We're sad to see you leave! Deleting your TrashTrackr account will permanently erase your data, including your streaks, badges, posts, and waste log.",
       image: Image.asset("assets/images/icons/red_delete_icon.png", width: 110),
       content: Column(
         children: [
@@ -198,7 +198,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         await profilePicture.update(context);
                       },
                     ),
-
                     Text(
                       '${user.firstName} ${user.lastName}',
                       style: kHeadlineSmall.copyWith(
@@ -247,7 +246,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                               ),
                         ),
-
                         SettingTile(
                           title: 'About TrashTrackr',
                           iconData: Icons.info,

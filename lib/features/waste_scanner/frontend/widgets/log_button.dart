@@ -4,7 +4,7 @@ import 'package:trashtrackr/core/utils/constants.dart';
 class LogButton extends StatelessWidget {
   LogButton({
     super.key,
-    this.title = 'Log This',
+    required this.title,
     required this.onPressed,
   });
 
