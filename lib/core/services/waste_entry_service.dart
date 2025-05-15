@@ -72,4 +72,20 @@ class WasteEntryService {
       rethrow;
     }
   }
+
+  // Delete an existing entry
+  Future<void> deleteWasteEntry(String entryId) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    try {
+      final userDoc = wasteEntries.doc(user.uid);
+      await userDoc.collection('log_disposal').doc(entryId).delete();
+
+      print('Waste entry deleted with ID: $entryId');
+    } catch (e) {
+      print('Error deleting waste entry: $e');
+      rethrow;
+    }
+  }
 }

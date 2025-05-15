@@ -59,7 +59,7 @@ class _LogHistoryViewState extends State<LogHistoryView> {
       stream: fetchWasteEntries(),
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.active) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(color: kAvocado));
         }
 
         if (snapshot.hasError) {
@@ -141,7 +141,7 @@ class _LogHistoryViewState extends State<LogHistoryView> {
                     ],
                   ),
                   for (final log in categorizedLogs[category]!)
-                    LogCard(result: log)
+                    LogCard(result: log, fromScreen: 'history')
                 ],
             ],
           ),
