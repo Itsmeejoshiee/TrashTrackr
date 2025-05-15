@@ -36,7 +36,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => AuthManager()),
-      (r) => false,
+          (r) => false,
     );
   }
 
@@ -48,7 +48,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => AuthManager()),
-      (r) => false,
+          (r) => false,
     );
   }
 
@@ -103,7 +103,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       title: "Are you sure you want\nto delete your account?",
       desc:
-          "We're sad to see you leave! Deleting your TrashTrackr account will permanently erase your data, including your streaks, badges, posts, and waste log.",
+      "We're sad to see you leave! Deleting your TrashTrackr account will permanently erase your data, including your streaks, badges, posts, and waste log.",
       image: Image.asset("assets/images/icons/red_delete_icon.png", width: 110),
       buttons: [
         DialogButton(
@@ -165,11 +165,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   // Edit Profile Picture
                   EditProfilePictureButton(
                     image:
-                        (user!.profilePicture.isNotEmpty)
-                            ? NetworkImage(user.profilePicture)
-                            : AssetImage(
-                              'assets/images/placeholder_profile.jpg',
-                            ),
+                    (user!.profilePicture.isNotEmpty)
+                        ? NetworkImage(user.profilePicture)
+                        : AssetImage(
+                      'assets/images/placeholder_profile.jpg',
+                    ),
                     onPressed: () async {
                       final profilePicture = ProfilePicture();
                       await profilePicture.update(context);
@@ -192,11 +192,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         iconData: Icons.edit,
                         onTap:
                             () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EditProfileScreen(),
-                              ),
-                            ),
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditProfileScreen(),
+                          ),
+                        ),
                       ),
 
                       SwitchSettingTile(
@@ -215,11 +215,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         iconData: Icons.shield,
                         onTap:
                             () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PrivacyScreen(),
-                              ),
-                            ),
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PrivacyScreen(),
+                          ),
+                        ),
                       ),
 
                       SettingTile(
@@ -227,11 +227,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         iconData: Icons.help,
                         onTap:
                             () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => FaqScreen(),
-                              ),
-                            ),
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FaqScreen(),
+                          ),
+                        ),
                       ),
 
                       SettingTile(
@@ -239,11 +239,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         iconData: Icons.info,
                         onTap:
                             () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AboutScreen(),
-                              ),
-                            ),
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AboutScreen(),
+                          ),
+                        ),
                       ),
 
                       SettingTile(

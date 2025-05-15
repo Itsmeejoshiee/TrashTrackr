@@ -72,13 +72,13 @@ class _LogEditableFieldsState extends State<LogEditableFields> {
         controller: controller,
         keyboardType: type,
         maxLines: maxLines,
-        cursorColor: kForestGreen, 
+        cursorColor: kForestGreen,
         decoration: InputDecoration(
           labelText: label,
           labelStyle: const TextStyle(color: kForestGreen), // <-- Set label color
           border: const OutlineInputBorder(),
           focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Color(0xFF228B22), width: 2), 
+            borderSide: BorderSide(color: Color(0xFF228B22), width: 2),
           ),
         ),
         onChanged: (_) => _notifyUpdate(),
@@ -94,10 +94,10 @@ class _LogEditableFieldsState extends State<LogEditableFields> {
         dropdownColor: const Color(0xFFF4F4F4),
         decoration: const InputDecoration(
           labelText: 'Classification',
-          labelStyle: TextStyle(color: kForestGreen), 
+          labelStyle: TextStyle(color: kForestGreen),
           border: OutlineInputBorder(),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: kForestGreen, width: 2), 
+            borderSide: BorderSide(color: kForestGreen, width: 2),
           ),
         ),
         items: [
@@ -122,7 +122,7 @@ class _LogEditableFieldsState extends State<LogEditableFields> {
             ),
           ),
           DropdownMenuItem(
-            value: 'Non-Biodegradable',
+            value: 'Non-biodegradable',
             child: Row(
               children: [
                 Image.asset('assets/images/icons/trashcan.png', width: 24, height: 24),

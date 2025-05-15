@@ -1,5 +1,8 @@
-import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:camera/camera.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
@@ -7,8 +10,7 @@ import 'package:trashtrackr/features/waste_scanner/backend/camera_module.dart';
 import 'package:trashtrackr/features/waste_scanner/backend/gemini_service.dart';
 import 'package:trashtrackr/features/waste_scanner/frontend/scan_result_screen.dart';
 import 'package:trashtrackr/core/models/scan_result_model.dart';
-import '../../../core/widgets/buttons/multi_action_fab.dart';
-import 'scan_result_screen.dart';
+import '../backend/image_compress.dart';
 
 class WasteScannerScreen extends StatefulWidget {
   const WasteScannerScreen({Key? key}) : super(key: key);
@@ -102,27 +104,52 @@ class _WasteScannerScreenState extends State<WasteScannerScreen> {
                       width: 55,
                       height: 55,
                     ),
-                    onPressed: () async {
-                      try {
-                        final XFile picture = await controller.takePicture();
-                        final bytes = await picture.readAsBytes();
+                      onPressed: () async {
+                        try {
+                          final XFile picture = await controller.takePicture();
+                          final file = File(picture.path);
 
-                        final result =
-                        await GeminiService().classifyWaste(bytes);
+                          // Compress the image before uploading
+                          final File? compressedFile = await compressImage(file);
+                          if (compressedFile == null) {
+                            throw Exception("Image compression failed.");
+                          }
 
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ScanResultScreen(scanResult: result),
-                          ),
-                        );
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error taking picture: $e')),
-                        );
+                          final Uint8List compressedBytes = await compressedFile.readAsBytes();
+
+                          final ref = FirebaseStorage.instance
+                              .ref()
+                              .child('scanned_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+                          await ref.putData(compressedBytes, SettableMetadata(contentType: 'image/jpeg'));
+
+                          final imageUrl = await ref.getDownloadURL();
+
+                          final result = await GeminiService().classifyWaste(compressedBytes);
+
+                          final resultWithImage = ScanResult(
+                            productName: result.productName,
+                            materials: result.materials,
+                            prodInfo: result.prodInfo,
+                            classification: result.classification,
+                            toDo: result.toDo,
+                            notToDo: result.notToDo,
+                            proTip: result.proTip,
+                            timestamp: result.timestamp,
+                            imageUrl: imageUrl,
+                          );
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ScanResultScreen(scanResult: resultWithImage),
+                            ),
+                          );
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Error: $e')),
+                          );
+                        }
                       }
-                    },
                   ),
                   SizedBox(height: 60),
                 ],

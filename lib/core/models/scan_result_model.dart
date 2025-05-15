@@ -1,26 +1,35 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ScanResult {
+  String? id;
   final String productName;
   final List<String> materials;
+  final String prodInfo;
   final String classification;
   final List<String> toDo;
   final List<String> notToDo;
   final String proTip;
+  final String notes;
+  final int qty;
   final DateTime? timestamp;
-
+  final String? imageUrl;
 
   ScanResult({
+    this.id,
     required this.productName,
     required this.materials,
+    required this.prodInfo,
     required this.classification,
     required this.toDo,
     required this.notToDo,
     required this.proTip,
-    this.timestamp
+    this.notes = '',
+    this.qty = 1,
+    this.timestamp,
+    this.imageUrl,
   });
 
-  // from Gemini response
+  // parses response from Gemini model
   factory ScanResult.fromResponse(String responseText) {
     String extractField(String label, String text) {
       final regex = RegExp('$label\\s*:\\s*(.*)', caseSensitive: false);
@@ -43,6 +52,7 @@ class ScanResult {
     return ScanResult(
       productName: extractField('Product Name', responseText),
       materials: extractList('Material', responseText),
+      prodInfo: extractField('Product Info', responseText),
       classification: extractField('Classification', responseText),
       toDo: extractList('To Do', responseText),
       notToDo: extractList('Not To Do', responseText),
@@ -50,28 +60,74 @@ class ScanResult {
     );
   }
 
-
-  // for Firestore
-  factory ScanResult.fromMap(Map<String, dynamic> data) {
+  ScanResult copyWith({
+    String? id,
+    String? productName,
+    List<String>? materials,
+    String? prodInfo,
+    String? classification,
+    List<String>? toDo,
+    List<String>? notToDo,
+    String? proTip,
+    String? notes,
+    int? qty,
+    DateTime? timestamp,
+    String? imageUrl,
+  }) {
     return ScanResult(
-      productName: data['productName'],
-      materials: List<String>.from(data['materials']),
-      classification: data['classification'],
-      toDo: List<String>.from(data['toDo']),
-      notToDo: List<String>.from(data['notToDo']),
-      proTip: data['proTip'],
+      id: id ?? this.id,
+      productName: productName ?? this.productName,
+      materials: materials ?? this.materials,
+      prodInfo: prodInfo ?? this.prodInfo,
+      classification: classification ?? this.classification,
+      toDo: toDo ?? this.toDo,
+      notToDo: notToDo ?? this.notToDo,
+      proTip: proTip ?? this.proTip,
+      notes: notes ?? this.notes,
+      qty: qty ?? this.qty,
+      timestamp: timestamp ?? this.timestamp,
+      imageUrl: imageUrl ?? this.imageUrl,
     );
   }
 
-  Map<String, dynamic> toMap() {
+  factory ScanResult.fromMap(Map<String, dynamic> map, {String? id}) {
+    return ScanResult(
+      id: id,
+      productName: map['productName'] ?? '',
+      materials: List<String>.from(map['materials'] ?? []),
+      prodInfo: map['prodInfo'] ?? '',
+      classification: map['classification'] ?? '',
+      toDo: List<String>.from(map['toDo'] ?? []),
+      notToDo: List<String>.from(map['notToDo'] ?? []),
+      proTip: map['proTip'] ?? '',
+      notes: map['notes'] ?? '',
+      qty: map['qty'] ?? 1,
+      timestamp: map['timestamp'] != null
+          ? (map['timestamp'] as Timestamp).toDate()
+          : null,
+      imageUrl: map['imageUrl'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toMap({bool isNew = false}) {
+    String capitalize(String s) =>
+        s.isNotEmpty ? s[0].toUpperCase() + s.substring(1) : s;
+
     return {
       'productName': productName,
       'materials': materials,
-      'classification': classification,
+      'prodInfo': prodInfo,
+      'classification': capitalize(classification),
       'toDo': toDo,
       'notToDo': notToDo,
       'proTip': proTip,
-      'timestamp': FieldValue.serverTimestamp(),
+      'notes': notes,
+      'qty': qty,
+      'timestamp': isNew
+          ? FieldValue.serverTimestamp()
+          : timestamp,
+      'imageUrl': imageUrl,
     };
   }
+
 }

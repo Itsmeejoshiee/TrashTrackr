@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
@@ -31,34 +32,62 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
 
     if (image != null) {
       setState(() {
-        _currentImageUrl = image.path; // Update the local state
+        _currentImageUrl = image.path;
       });
 
-      // Notify the parent widget about the new image
+      // Notify the parent widget about the new image path
       widget.onImagePicked(image.path);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    Widget imageWidget;
+
+    if (_currentImageUrl == null) {
+      imageWidget = Image.asset(
+        'assets/images/placeholder.png',
+        width: double.infinity,
+        height: 200,
+        fit: BoxFit.cover,
+      );
+    } else if (_currentImageUrl!.startsWith('http')) {
+      imageWidget = Image.network(
+        _currentImageUrl!,
+        width: double.infinity,
+        height: 200,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Image.asset(
+            'assets/images/placeholder.png',
+            width: double.infinity,
+            height: 200,
+            fit: BoxFit.cover,
+          );
+        },
+      );
+    } else {
+      imageWidget = Image.file(
+        File(_currentImageUrl!),
+        width: double.infinity,
+        height: 200,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Image.asset(
+            'assets/images/placeholder.png',
+            width: double.infinity,
+            height: 200,
+            fit: BoxFit.cover,
+          );
+        },
+      );
+    }
+
     return Stack(
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(10),
-          child: Image.asset(
-            _currentImageUrl ?? 'assets/images/placeholder.png', // Show updated image or placeholder
-            width: double.infinity,
-            height: 200,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Image.asset(
-                'assets/images/placeholder.png', // Fallback placeholder image
-                width: double.infinity,
-                height: 200,
-                fit: BoxFit.cover,
-              );
-            },
-          ),
+          child: imageWidget,
         ),
         Positioned(
           bottom: 10,

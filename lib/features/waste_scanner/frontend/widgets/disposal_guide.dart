@@ -7,13 +7,15 @@ class DisposalGuide extends StatelessWidget {
     required this.material,
     required this.toDo,
     required this.notToDo,
-    required this.proTip, required String guide,
+    required this.proTip,
+    required this.guide,
   });
 
   final String material;
   final List<String> toDo;
   final List<String> notToDo;
   final String proTip;
+  final String guide;
 
   List<Widget> _listBuilder(List<String> list) {
     List<Widget> listItems = [];
@@ -51,6 +53,11 @@ class DisposalGuide extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+
+          Text(
+            "Here's how to dispose of $guide responsibly:",
+            style: kPoppinsBodyMedium.copyWith(color: Colors.black54),
           ),
 
           IntrinsicHeight(

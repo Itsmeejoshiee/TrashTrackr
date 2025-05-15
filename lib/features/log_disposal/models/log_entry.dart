@@ -1,3 +1,5 @@
+import '../../../core/models/scan_result_model.dart';
+
 /// A model class representing a single log entry (e.g., trash pickup or disposal record).
 final class LogEntry {
   String imageUrl;
@@ -27,6 +29,7 @@ final class LogEntry {
     this.notes,
     this.quantity,
   });
+
   LogEntry copyWith({
     String? title,
     List<String>? productProperties,
@@ -53,153 +56,42 @@ final class LogEntry {
       quantity: quantity ?? this.quantity,
     );
   }
+
+  /// Converts a ScanResult to a LogEntry
+  factory LogEntry.fromScanResult(ScanResult scan, {required String disposalLocation}) {
+    return LogEntry(
+      imageUrl: scan.imageUrl ?? 'assets/images/placeholder-item.png',
+      title: scan.productName,
+      wasteType: scan.classification,
+      timestamp: scan.timestamp ?? DateTime.now(),
+      productInfo: 'Product scanned via AI classification.',
+      productProperties: scan.materials.map((m) => 'Material: $m').toList(),
+      disposalGuideToDo: scan.toDo,
+      disposalGuideNotToDo: scan.notToDo,
+      disposalGuideProTip: scan.proTip,
+      disposalLocation: disposalLocation,
+      notes: scan.notes.isNotEmpty ? scan.notes : null,
+      quantity: scan.qty > 0 ? scan.qty.toString() : null,
+    );
+  }
+
+  /// Converts this LogEntry back into a ScanResult
+  ScanResult toScanResult() {
+    return ScanResult(
+      productName: title,
+      prodInfo: productInfo,
+      materials: productProperties
+          .where((p) => p.startsWith('Material:'))
+          .map((p) => p.replaceFirst('Material: ', ''))
+          .toList(),
+      classification: wasteType,
+      toDo: disposalGuideToDo,
+      notToDo: disposalGuideNotToDo,
+      proTip: disposalGuideProTip,
+      notes: notes ?? '',
+      qty: int.tryParse(quantity ?? '') ?? 1,
+      timestamp: timestamp,
+      imageUrl: imageUrl,
+    );
+  }
 }
-enum WasteType {
-  recyclable,
-  biodegradable,
-  ewaste,
-  nonBiodegradable,
-}
-
-
-
-final List<LogEntry> logEntry = [
-  LogEntry(
-    imageUrl: 'assets/images/placeholder-item.png',
-    title: 'Coca-Cola Glass Bottle 100ml',
-    wasteType: 'Recyclable',
-    timestamp: DateTime.now(),
-    productInfo: 'A small glass bottle used for Coca-Cola beverages.',
-    productProperties: [
-      'Material: Glass',
-      'Capacity: 100ml',
-      'Lightweight and recyclable',
-    ],
-    disposalGuideToDo: [
-      'Rinse the bottle',
-      'Remove caps or corks',
-      'Sort by color if required',
-    ],
-    disposalGuideNotToDo: [
-      'Do not mix with non-recyclables',
-      'Avoid contamination with food waste',
-    ],
-    disposalGuideProTip: 'Glass is endlessly recyclable without losing quality!',
-    disposalLocation: 'Recycling Center A, Main Street',
-        notes: 'Handle with care to avoid breakage.', // Example notes
-    quantity: '5', // Example quantity
-  ),
-  LogEntry(
-    imageUrl: 'assets/images/placeholder-item.png',
-    title: 'Pepsi Plastic Bottle 1L',
-    wasteType: 'Recyclable',
-    timestamp: DateTime.now().subtract(const Duration(days: 1)),
-    productInfo: 'A 1-liter plastic bottle used for Pepsi beverages.',
-    productProperties: [
-      'Material: Plastic', // Only material-related details
-    ],
-    disposalGuideToDo: [
-      'Rinse the bottle',
-      'Remove the label and cap',
-      'Crush the bottle to save space',
-    ],
-    disposalGuideNotToDo: [
-      'Do not burn the plastic',
-      'Avoid mixing with glass or metal waste',
-    ],
-    disposalGuideProTip: 'Recycling plastic reduces pollution and saves energy!',
-    disposalLocation: 'Recycling Center B, Green Avenue',
-  ),
-  LogEntry(
-    imageUrl: 'assets/images/placeholder-item.png',
-    title: 'Sprite Aluminum Can 250ml',
-    wasteType: 'Recyclable',
-    timestamp: DateTime.now(),
-    productInfo: 'A small aluminum can used for Sprite beverages.',
-    productProperties: [
-      'Material: Aluminum',
-      'Capacity: 250ml',
-      'Lightweight and recyclable',
-    ],
-    disposalGuideToDo: [
-      'Rinse the can',
-      'Crush the can to save space',
-      'Place in metal recycling bins',
-    ],
-    disposalGuideNotToDo: [
-      'Do not mix with food waste',
-      'Avoid throwing in general trash',
-    ],
-    disposalGuideProTip: 'Aluminum is 100% recyclable and can be reused endlessly!',
-    disposalLocation: 'Recycling Center C, Eco Park',
-  ),
-  LogEntry(
-    imageUrl: 'assets/images/placeholder-item.png',
-    title: 'Old Newspaper Bundle',
-    wasteType: 'Biodegradable',
-    timestamp: DateTime(2025, 4, 1),
-    productInfo: 'A bundle of old newspapers ready for recycling.',
-    productProperties: [
-      'Material: Paper',
-      'Reusable and recyclable',
-      'Biodegradable',
-    ],
-    disposalGuideToDo: [
-      'Tie the newspapers into bundles',
-      'Keep them dry',
-      'Drop them off at paper recycling centers',
-    ],
-    disposalGuideNotToDo: [
-      'Do not mix with wet waste',
-      'Avoid tearing into small pieces',
-    ],
-    disposalGuideProTip: 'Recycling paper saves trees and reduces landfill waste!',
-    disposalLocation: 'Paper Recycling Center, Maple Street',
-  ),
-  LogEntry(
-    imageUrl: 'assets/images/placeholder-item.png',
-    title: 'Old Smartphone',
-    wasteType: 'E-Waste',
-    timestamp: DateTime(2025, 5, 1),
-    productInfo: 'An old smartphone ready for e-waste recycling.',
-    productProperties: [
-      'Material: Plastic and Metal',
-      'Contains electronic components',
-      'Non-biodegradable',
-    ],
-    disposalGuideToDo: [
-      'Remove personal data',
-      'Take to an authorized e-waste recycler',
-      'Ensure proper handling of batteries',
-    ],
-    disposalGuideNotToDo: [
-      'Do not throw in general trash',
-      'Avoid dismantling without proper tools',
-    ],
-    disposalGuideProTip: 'Recycling e-waste prevents hazardous materials from harming the environment!',
-    disposalLocation: 'E-Waste Recycling Center, Tech Park',
-  ),
-  LogEntry(
-    imageUrl: 'assets/images/placeholder-item.png',
-    title: 'Reusable Water Bottle',
-    wasteType: 'Non-Biodegradable',
-    timestamp: DateTime(2025, 5, 1),
-    productInfo: 'A reusable water bottle made of durable plastic.',
-    productProperties: [
-      'Material: Plastic',
-      'Capacity: 500ml',
-      'Reusable and recyclable',
-    ],
-    disposalGuideToDo: [
-      'Clean the bottle thoroughly',
-      'Check if it can be reused',
-      'Recycle in plastic bins if damaged',
-    ],
-    disposalGuideNotToDo: [
-      'Do not throw in general trash',
-      'Avoid mixing with glass or metal waste',
-    ],
-    disposalGuideProTip: 'Reusing water bottles reduces waste and saves resources!',
-    disposalLocation: 'Recycling Center D, Ocean Drive',
-  ),
-];

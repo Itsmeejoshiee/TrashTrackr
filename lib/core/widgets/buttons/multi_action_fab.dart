@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
+import 'package:trashtrackr/features/log_disposal/screens/log_disposal_screen.dart';
 import 'package:trashtrackr/features/waste_scanner/frontend/waste_scanner_screen.dart';
 import 'dart:math' as math;
 
@@ -98,7 +99,12 @@ class _MultiActionFabState extends State<MultiActionFab>
         color: Colors.green,
         onTap: () {
           print('Dashboard button pressed');
-          _openLogDisposalScreen(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LogDisposalScreen(),
+            ),
+          );
         },
         position: 2,
       ),
