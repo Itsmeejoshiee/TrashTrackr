@@ -163,7 +163,7 @@ class _LogDisposalScreenState extends State<LogDisposalScreen> {
                 stream: fetchWasteEntries(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator(color: kAvocado));
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -216,7 +216,7 @@ class _LogDisposalScreenState extends State<LogDisposalScreen> {
                               ],
                             ),
                             const SizedBox(height: 8),
-                            ...entry.value.map((log) => LogCard(result: log)).toList(),
+                            ...entry.value.map((log) => LogCard(result: log, fromScreen: 'disposal',)).toList(),
                             const SizedBox(height: 16),
                           ],
                         );

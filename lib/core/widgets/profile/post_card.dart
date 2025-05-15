@@ -59,6 +59,7 @@ class _PostCardState extends State<PostCard> {
   @override
   Widget build(BuildContext context) {
     return NeoBox(
+      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -95,8 +96,6 @@ class _PostCardState extends State<PostCard> {
               ),
               Spacer(),
               _buildEmotionLabel(),
-              SizedBox(width: 15),
-              IconButton(onPressed: () {}, icon: Icon(Icons.more_horiz)),
             ],
           ),
           SizedBox(height: 10),

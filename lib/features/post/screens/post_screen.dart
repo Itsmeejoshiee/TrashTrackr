@@ -249,6 +249,7 @@ class _PostScreenState extends State<PostScreen> {
                                   }
                                 },
                                 style: ButtonStyle(
+                                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.zero),
                                   backgroundColor:
                                       MaterialStateProperty.all<Color>(
                                         kForestGreen,
