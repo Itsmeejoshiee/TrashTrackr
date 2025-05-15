@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
@@ -31,13 +32,40 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
+      // Show a temporary preview
       setState(() {
         _currentImageUrl = image.path;
       });
 
-      // Notify the parent widget about the new image path
-      widget.onImagePicked(image.path);
+      try {
+        // Upload the image to Firebase
+        String downloadUrl = await uploadImage(image.path);
+
+        // Update the image to use the Firebase URL
+        setState(() {
+          _currentImageUrl = downloadUrl;
+        });
+
+        // Notify the parent
+        widget.onImagePicked(downloadUrl);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Image upload failed: $e')),
+        );
+      }
     }
+  }
+
+  Future<String> uploadImage(String imagePath) async {
+    File file = File(imagePath);
+
+    final storageRef = FirebaseStorage.instance
+        .ref()
+        .child('images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+
+    final uploadTask = await storageRef.putFile(file);
+
+    return await uploadTask.ref.getDownloadURL();
   }
 
   @override
