@@ -205,7 +205,6 @@ class AuthService {
       } catch (e) {
         print('Error deleting user data: $e');
       }
-
       await user?.delete();
       print('User successfully reauthenticated and deleted.');
     } catch (e) {

@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "687421805254-c4llfieih0icog8b97uhvic3vmenf448.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.trashtrackr",
+            "certificate_hash": "1658fbc8b0d1798523d55e23bbdc9a6a60a8f958"
+          }
+        },
+        {
           "client_id": "687421805254-qrm1l3k6e03rmpa12uhrd5opgavjs7ju.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

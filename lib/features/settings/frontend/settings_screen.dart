@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:trashtrackr/core/services/user_service.dart';
@@ -38,8 +39,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _logout() async {
     // Sign Out
-    await _authService.signOut();
-
+    if (await checkUser()) {
+      final googleSignIn = GoogleSignIn();
+      await googleSignIn.signOut();
+    } else {
+      await _authService.signOut();
+    }
     // Navigate back to AuthManager and clear navigation stack
     Navigator.pushAndRemoveUntil(
       context,
