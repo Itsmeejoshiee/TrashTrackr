@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 
-class DashboardAppBar extends StatelessWidget {
+class DashboardAppBar extends StatefulWidget {
   const DashboardAppBar({
     super.key,
     required this.username,
     required this.onNotifs,
+    required this.greetingMessage,
   });
 
   final String username;
   final VoidCallback onNotifs;
+  final String? greetingMessage;
 
+  @override
+  State<DashboardAppBar> createState() => _DashboardAppBarState();
+}
+
+class _DashboardAppBarState extends State<DashboardAppBar> {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -27,19 +34,19 @@ class DashboardAppBar extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
                 children: [
-                  TextSpan(text: 'Good Morning,'),
+                  TextSpan(text: '${widget.greetingMessage},'),
                   TextSpan(
-                    text: ' $username!',
+                    text: ' ${widget.username}!',
                     style: TextStyle(color: kAppleGreen),
                   ),
                 ],
               ),
             ),
-            Text('App motto or smt'),
+            Text('Trash it. Track it. Together!'),
           ],
         ),
         IconButton(
-          onPressed: onNotifs,
+          onPressed: widget.onNotifs,
           icon: Icon(
             Icons.notifications_outlined,
             color: Colors.black,

@@ -30,10 +30,11 @@ class _HomeScreenState extends State<HomeScreen> {
   final UserService _userService = UserService();
   final ActivityService _activityService = ActivityService();
   final DateUtilsHelper _dateUtilsHelper = DateUtilsHelper();
-  bool _statsLoading = true;
+  bool _dataLoading = true;
   int? _currentStreak;
   int? _activityCount;
   int? _badgesCount;
+  String? _greetingMessage;
 
   void _selectRoute(NavRoute route) {
     setState(() {
@@ -44,20 +45,22 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _loadCurrentStats();
+    _loadCurrentData();
   }
 
-  Future<void> _loadCurrentStats() async {
+  Future<void> _loadCurrentData() async {
     final activities = await _activityService.getAllActivities(false);
     final activityCount = await _activityService.getAllActivities(true);
     final streak = _dateUtilsHelper.getCurrentStreakFromActivities(activities);
     final badges = await _activityService.getEarnedBadges();
+    final greetingMessage = await _dateUtilsHelper.getGreetingMessage();
     if (mounted) {
       setState(() {
         _currentStreak = streak;
         _activityCount = activityCount;
         _badgesCount = badges;
-        _statsLoading = false;
+        _dataLoading = false;
+        _greetingMessage = greetingMessage;
       });
     }
   }
@@ -68,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
       stream: _userService.getUserStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting ||
-            _statsLoading) {
+            _dataLoading) {
           return Center(child: CircularProgressIndicator(color: kAvocado));
         }
         if (!snapshot.hasData || snapshot.data == null) {
@@ -89,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       // Dashboard App Bar
                       DashboardAppBar(
+                        greetingMessage: _greetingMessage,
                         username: '${user?.firstName}',
                         onNotifs:
                             () => Navigator.push(
@@ -98,9 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                       ),
-
-                      DashboardSearchBar(controller: TextEditingController()),
-
+                      SizedBox(height: 20),
                       QuickActionPanel(
                         onWasteStats: () {
                           Navigator.push(
@@ -193,7 +195,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           SectionLabel(label: 'Disposal Locations'),
                           DisposalLocationButton(),
-
                         ],
                       ),
 
