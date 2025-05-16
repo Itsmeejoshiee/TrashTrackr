@@ -53,6 +53,40 @@ class CommentService {
     }
   }
 
+  // Stream the number of comments for a post or event
+  Stream<int> getCommentCount(String postId, {required bool isForEvent}) {
+    final rootCollection = isForEvent ? 'events' : 'posts';
+
+    return FirebaseFirestore.instance
+        .collection(rootCollection)
+        .doc(postId)
+        .collection('comments')
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length);
+  }
+
+  Stream<bool> _hasCurrentUserCommented({required bool isForEvent, required String id}) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return Stream.value(false);
+    }
+    final userId = user.uid;
+
+    final rootCollection = isForEvent ? 'events' : 'posts';
+
+    return FirebaseFirestore.instance
+        .collection(rootCollection)
+        .doc(id)
+        .collection('comments')
+        .where('uid', isEqualTo: userId)
+        .limit(1)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.isNotEmpty);
+  }
+
+
+
+
   // Fetch comments for a specific post
   Stream<List<CommentModel>> fetchCommentsForPost(String postId, {required bool isForEvent}) {
     try {

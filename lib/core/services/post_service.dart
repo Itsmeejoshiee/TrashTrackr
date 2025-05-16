@@ -217,12 +217,27 @@ class PostService {
   Future<void> likePost(String postId) async {
     final uid = _authService.currentUser?.uid;
     if (uid == null) return;
+
+    final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .get();
+
+    if (!userDoc.exists) return;
+
+    final firstName = userDoc.data()?['first_name'] ?? '';
+    final lastName = userDoc.data()?['last_name'] ?? '';
+
     await FirebaseFirestore.instance
         .collection('posts')
         .doc(postId)
         .collection('likes')
         .doc(uid)
-        .set({'timestamp': FieldValue.serverTimestamp()});
+        .set({
+      'timestamp': FieldValue.serverTimestamp(),
+      'first_name': firstName,
+      'last_name': lastName,
+    });
   }
 
   Future<void> unlikePost(String postId) async {
@@ -274,12 +289,27 @@ class PostService {
   Future<void> likeEvent(String eventId) async {
     final uid = _authService.currentUser?.uid;
     if (uid == null) return;
+
+    final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .get();
+
+    if (!userDoc.exists) return;
+
+    final firstName = userDoc.data()?['first_name'] ?? '';
+    final lastName = userDoc.data()?['last_name'] ?? '';
+
     await FirebaseFirestore.instance
         .collection('events')
         .doc(eventId)
         .collection('likes')
         .doc(uid)
-        .set({'timestamp': FieldValue.serverTimestamp()});
+        .set({
+      'timestamp': FieldValue.serverTimestamp(),
+      'first_name': firstName,
+      'last_name': lastName,
+    });
   }
 
   Future<void> unlikeEvent(String eventId) async {
