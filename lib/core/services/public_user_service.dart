@@ -4,8 +4,13 @@ import 'package:trashtrackr/core/models/badge_model.dart';
 import 'package:trashtrackr/core/models/user_model.dart';
 import 'package:trashtrackr/core/models/post_model.dart';
 import 'package:trashtrackr/core/models/event_model.dart';
+import 'package:trashtrackr/core/services/auth_service.dart';
+import 'package:trashtrackr/features/auth/backend/auth_manager.dart';
 
 class PublicUserService {
+
+  final AuthService _authService = AuthService();
+
   Future<UserModel?> getUserByUid(String uid) async {
     final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
     if (!doc.exists) return null;
@@ -72,6 +77,18 @@ class PublicUserService {
     await FirebaseFirestore.instance.collection('users').doc(uid).update({
       'follower_count': FieldValue.increment(1),
     });
+  }
+
+  Stream<bool> isFollowing(String publicUid) {
+    final currentUid = _authService.currentUser?.uid;
+    if (currentUid == null) return Stream.value(false);
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUid)
+        .collection('following')
+        .doc(publicUid)
+        .snapshots()
+        .map((doc) => doc.exists);
   }
 
   Future<Map<String, int>> countDisposalClassifications(String uid) async {
