@@ -7,10 +7,12 @@ class CommentButton extends StatelessWidget {
     super.key,
     this.isActive = false,
     required this.onPressed,
+    required this.label,
   });
 
   final bool isActive;
   final VoidCallback onPressed;
+  final String label;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class CommentButton extends StatelessWidget {
             height: 19,
           ),
           (!isActive) ? Text(
-            'Comment  ',
+            label,
             style:
             (!isActive)
                 ? kPoppinsBodySmall

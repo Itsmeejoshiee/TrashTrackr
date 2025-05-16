@@ -18,19 +18,22 @@ class PostService {
     required Emotion emotion,
     Uint8List? image,
   }) async {
+    // get the post ID
+    final docRef = FirebaseFirestore.instance.collection('posts').doc();
+    final docId = docRef.id;
+
     final uid = _authService.currentUser?.uid;
     if (uid == null) return;
 
     try {
-      // Fetch user document from Firestore
-
       final firstName = user.firstName;
       final lastName = user.lastName;
       final fullName = '$firstName $lastName'.trim();
       final profilePicture = user.profilePicture;
-      final imageUrl = (image == null) ? '' : await uploadPostImage(image);
+      final imageUrl = (image == null) ? '' : (await uploadPostImage(image) ?? '');
 
       final post = PostModel(
+        id: docId,
         uid: uid,
         fullName: fullName,
         profilePicture: profilePicture,
@@ -40,7 +43,7 @@ class PostService {
         imageUrl: imageUrl,
       );
 
-      await FirebaseFirestore.instance.collection('posts').add(post.toMap());
+      await docRef.set(post.toMap());
     } catch (e) {
       print('Error creating post: $e');
     }
@@ -65,9 +68,10 @@ class PostService {
       final lastName = user.lastName;
       final fullName = '$firstName $lastName'.trim();
       final profilePicture = user.profilePicture;
-      final imageUrl = (image == null) ? '' : await uploadPostImage(image);
+      final imageUrl = (image == null) ? '' : (await uploadPostImage(image) ?? '');
 
       final event = EventModel(
+        id: '',
         uid: uid,
         fullName: fullName,
         profilePicture: profilePicture,
@@ -88,8 +92,8 @@ class PostService {
     }
   }
 
-  Future uploadPostImage(Uint8List? image) async {
-    if (image == null) return;
+  Future<String?> uploadPostImage(Uint8List? image) async {
+    if (image == null) return null;
 
     final storageRef = FirebaseStorage.instance.ref();
     final imageRef = storageRef.child(
@@ -114,14 +118,14 @@ class PostService {
       return Stream.value([]);
     }
 
-    return FirebaseFirestore.instance.collection('posts').snapshots().map((
-      snapshot,
-    ) {
-      print(snapshot.docs);
-      return snapshot.docs.map((doc) {
-        return PostModel.fromMap(doc.data());
-      }).toList();
-    });
+    return FirebaseFirestore.instance.collection('posts').snapshots().map(
+          (snapshot) {
+        print(snapshot.docs);
+        return snapshot.docs.map((doc) {
+          return PostModel.fromMap(doc.data(), id: doc.id); // <-- Pass doc.id here
+        }).toList();
+      },
+    );
   }
 
   Stream<List<EventModel>> getEventStream() {
@@ -132,14 +136,14 @@ class PostService {
       return Stream.value([]);
     }
 
-    return FirebaseFirestore.instance.collection('events').snapshots().map((
-      snapshot,
-    ) {
-      print(snapshot.docs);
-      return snapshot.docs.map((doc) {
-        return EventModel.fromMap(doc.data());
-      }).toList();
-    });
+    return FirebaseFirestore.instance.collection('events').snapshots().map(
+          (snapshot) {
+        print(snapshot.docs);
+        return snapshot.docs.map((doc) {
+          return EventModel.fromMap(doc.data());
+        }).toList();
+      },
+    );
   }
 
   Stream<List<EventModel>> getUpcomingEventStream() {
@@ -155,11 +159,11 @@ class PostService {
         .where('date_start', isGreaterThan: Timestamp.now())
         .snapshots()
         .map((snapshot) {
-          print(snapshot.docs);
-          return snapshot.docs.map((doc) {
-            return EventModel.fromMap(doc.data());
-          }).toList();
-        });
+      print(snapshot.docs);
+      return snapshot.docs.map((doc) {
+        return EventModel.fromMap(doc.data());
+      }).toList();
+    });
   }
 
   Stream<List<EventModel>> getPastEventStream() {
@@ -190,10 +194,10 @@ class PostService {
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map((snapshot) {
-          return snapshot.docs
-              .map((doc) => PostModel.fromMap(doc.data()))
-              .where((post) => post.body.toLowerCase().contains(keywordLower))
-              .toList();
-        });
+      return snapshot.docs
+          .map((doc) => PostModel.fromMap(doc.data(), id: doc.id)) // <-- Pass doc.id here
+          .where((post) => post.body.toLowerCase().contains(keywordLower))
+          .toList();
+    });
   }
 }

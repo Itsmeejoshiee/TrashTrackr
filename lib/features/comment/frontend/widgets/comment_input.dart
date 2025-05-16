@@ -23,8 +23,10 @@ class CommentInput extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: controller,
+                  minLines: 1,
+                  maxLines: 5,
                   decoration: InputDecoration(
-                    hintText: 'Aa',
+                    hintText: 'Reduce, reuse, and reply...',
                     filled: true,
                     fillColor: Colors.grey[200],
                     contentPadding: EdgeInsets.symmetric(

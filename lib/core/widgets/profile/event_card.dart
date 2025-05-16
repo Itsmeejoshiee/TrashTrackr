@@ -9,6 +9,8 @@ import 'package:trashtrackr/core/widgets/buttons/comment_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/like_button.dart';
 import 'package:trashtrackr/features/post/models/event_model.dart';
 
+import '../../../features/comment/frontend/comment_screen.dart';
+
 class EventCard extends StatefulWidget {
   const EventCard({
     super.key,
@@ -54,6 +56,32 @@ class _EventCardState extends State<EventCard> {
     final day = startDate.day;
     final year = startDate.year;
     return '$dayName, $month $day, $year';
+  }
+
+  void _openCommentScreen(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      builder: (context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.9,
+          child: CommentScreen(
+            postId: widget.event.id ?? '',
+            isForEvent: false,
+          ),
+        );
+      },
+    );
+  }
+
+  Stream<int> _commentCountStream() {
+    return FirebaseFirestore.instance
+        .collectionGroup('comments')
+        .where('postId', isEqualTo: widget.event.id)
+        .where('isForEvent', isEqualTo: false)
+        .snapshots()
+        .map((snapshot) => snapshot.size);
   }
   
   @override
@@ -139,12 +167,18 @@ class _EventCardState extends State<EventCard> {
                 },
               ),
 
-              CommentButton(
-                isActive: _isCommented,
-                onPressed: () {
-                  setState(() {
-                    _isCommented = !_isCommented;
-                  });
+              StreamBuilder<int>(
+                stream: _commentCountStream(),
+                builder: (context, snapshot) {
+                  final count = snapshot.data ?? 0;
+                  return CommentButton(
+                    isActive: _isCommented,
+                    label: count > 0 ? count.toString() : 'Comment ',
+                    onPressed: () {
+                      setState(() => _isCommented = !_isCommented);
+                      _openCommentScreen(context);
+                    },
+                  );
                 },
               ),
 

@@ -3,9 +3,16 @@ import 'package:intl/intl.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 
 class CommentTile extends StatelessWidget {
-  const CommentTile({super.key, required this.name, required this.timestamp, required this.comment});
+  const CommentTile({
+    super.key,
+    required this.name,
+    required this.timestamp,
+    required this.comment,
+    required this.profilePicture
+  });
 
   final String name;
+  final String profilePicture;
   final DateTime timestamp;
   final String comment;
 
@@ -30,8 +37,9 @@ class CommentTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.symmetric(vertical: 5),
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
       decoration: BoxDecoration(
         color: kAvocado.withOpacity(0.05),
         borderRadius: BorderRadius.circular(10),
@@ -41,20 +49,12 @@ class CommentTile extends StatelessWidget {
         children: [
           // Profile picture
           CircleAvatar(
-            backgroundImage: AssetImage('assets/images/placeholder_profile.jpg'),
+            backgroundImage: profilePicture.isNotEmpty
+                ? NetworkImage(profilePicture)
+                : AssetImage('assets/images/placeholder_profile.jpg') as ImageProvider,
             radius: 20,
-            child: Align(
-              alignment: Alignment.bottomRight,
-              child: Container(
-                width: 10,
-                height: 10,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  color: Colors.white,
-                ),
-              ),
-            ),
           ),
+
           SizedBox(width: 10),
 
           Expanded(

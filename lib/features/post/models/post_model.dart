@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/emotion.dart';
 
 class PostModel {
+  String? id;
   final String uid;
   final String fullName;
   final String profilePicture;
@@ -12,6 +13,7 @@ class PostModel {
   final String imageUrl;
 
   PostModel({
+    required this.id,
     required this.uid,
     required this.fullName,
     required this.profilePicture,
@@ -21,8 +23,9 @@ class PostModel {
     required this.imageUrl,
   });
 
-  // Example: fromMap and toMap for Firebase integration
-  factory PostModel.fromMap(Map<String, dynamic> map) => PostModel(
+
+  factory PostModel.fromMap(Map<String, dynamic> map, {required String id}) => PostModel(
+    id: map['id'] ?? '',
     uid: map['uid'] ?? '',
     fullName: map['full_name'] ?? '',
     profilePicture: map['profile_picture'] ?? '',
@@ -34,6 +37,7 @@ class PostModel {
 
   Map<String, dynamic> toMap() => {
     'uid': uid,
+    'id': id,
     'full_name': fullName,
     'profile_picture': profilePicture,
     'timestamp': timestamp,
