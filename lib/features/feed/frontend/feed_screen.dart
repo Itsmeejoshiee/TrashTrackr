@@ -23,6 +23,7 @@ class FeedScreen extends StatefulWidget {
 
 class _FeedScreenState extends State<FeedScreen> {
   String userSearch = '';
+  bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
   final PostService _postService = PostService();
 
@@ -75,26 +76,42 @@ class _FeedScreenState extends State<FeedScreen> {
                     },
                     onSearch: () {
                       if (userSearch.isNotEmpty) {
+                    onSubmit: (value) {
+                      final keyword = value.trim();
+                      if (keyword.isNotEmpty) {
+                        setState(() => _isSearching = true);
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder:
                                 (context) =>
                                     FeedResults(searchKeyword: userSearch),
+                                    FeedResults(searchKeyword: keyword),
                           ),
                         );
+                        ).then((_) {
+                          setState(() => _isSearching = false);
+                        });
                       }
                     },
                     onSubmit: (value) {
                       if (userSearch.isNotEmpty) {
+                    onSearch: () {
+                      final keyword = _searchController.text.trim();
+                      if (keyword.isNotEmpty) {
+                        setState(() => _isSearching = true);
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder:
                                 (context) =>
                                     FeedResults(searchKeyword: userSearch),
+                                    FeedResults(searchKeyword: keyword),
                           ),
                         );
+                        ).then((_) {
+                          setState(() => _isSearching = false);
+                        });
                       }
                     },
                   ),
@@ -127,18 +144,34 @@ class _FeedScreenState extends State<FeedScreen> {
                   ),
 
                   SizedBox(height: 13),
+                  _isSearching
+                      ? const SizedBox.shrink()
+                      : StreamBuilder(
+                        stream: _postService.getPostStream(),
+                        builder: (context, snapshot) {
+                          print('POST STREAM: ${snapshot.data}');
 
+<<<<<<< Updated upstream
                   StreamBuilder<List<PostModel>>(
                     stream: _postService.getPostStream(),
                     builder: (context, snapshot) {
                       print('POST STREAM: ${snapshot.data}');
+=======
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                              child: CircularProgressIndicator(color: kAvocado),
+                            );
+                          }
+>>>>>>> Stashed changes
 
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                          child: CircularProgressIndicator(color: kAvocado),
-                        );
-                      }
+                          if (!snapshot.hasData || snapshot.data == null) {
+                            return Center(
+                              child: Text('Post data is not available.'),
+                            );
+                          }
 
+<<<<<<< Updated upstream
                       if (!snapshot.hasData || snapshot.data == null) {
                         return Center(
                           child: Text('Post data is not available.'),
@@ -172,6 +205,11 @@ class _FeedScreenState extends State<FeedScreen> {
                       );
                     },
                   ),
+=======
+                          return Column(children: _postBuilder(snapshot.data!));
+                        },
+                      ),
+>>>>>>> Stashed changes
 
                   // Offset
                   SizedBox(height: 15),
