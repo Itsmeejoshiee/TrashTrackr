@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
+import 'package:trashtrackr/features/dashboard/frontend/dashboard_screen.dart';
 
 class PlaceholderAlert {
-  void showPlaceholderAlert(BuildContext context) {
+  void showPlaceholderConstructionAlert(BuildContext context) {
     Alert(
       context: context,
       style: AlertStyle(
@@ -12,27 +13,26 @@ class PlaceholderAlert {
         titleStyle: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
         descStyle: kTitleMedium,
       ),
-      title: "Are you sure you want\nto delete your account?",
+      title: "We're working on this feature!",
+      image: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 25, 0, 20),
+        child: Image.asset(
+          "assets/images/components/no_construction.png",
+          width: 110,
+        ),
+      ),
       desc:
-          "We're sad to see you leave! Deleting your TrashTrackr account will permanently erase your data, including your streaks, badges, posts, and waste log.",
-      image: Image.asset("assets/images/icons/red_delete_icon.png", width: 110),
+          "We're working on this feature — just cleaning things up before it's ready!",
       buttons: [
         DialogButton(
           margin: EdgeInsets.symmetric(horizontal: 20),
-          color: Color(0xFFE6E6E6),
-          radius: BorderRadius.circular(30),
-          onPressed: () => Navigator.pop(context),
-          child: Text('Cancel', style: kTitleSmall),
-        ),
-        DialogButton(
-          margin: EdgeInsets.symmetric(horizontal: 20),
-          color: kRed,
+          color: kAvocado,
           radius: BorderRadius.circular(30),
           onPressed: () {
-            // delete logic here
+            Navigator.pop(context);
           },
           child: Text(
-            'Delete',
+            'Okay!',
             style: kTitleSmall.copyWith(color: Colors.white),
           ),
         ),
