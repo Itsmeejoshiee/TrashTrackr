@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:trashtrackr/core/models/event_model.dart';
 import 'package:trashtrackr/core/models/post_model.dart';
 import 'package:trashtrackr/core/models/search_model.dart';
-import 'package:trashtrackr/features/post/models/event_model.dart';
 
 class SearchService {
   Future<List<PostModel>> getPostResults({
@@ -17,19 +17,23 @@ class SearchService {
             .orderBy('timestamp', descending: descendingOrder)
             .get();
 
-    return snapshot.docs.map((doc) => PostModel.fromMap(doc.data())).where((
-      post,
-    ) {
-      switch (filterVariable) {
-        case 'Users':
-          return post.fullName.toLowerCase().contains(keywordLower);
-        case 'General Content':
-        case 'Posts':
-          return post.body.toLowerCase().contains(keywordLower);
-        default:
-          return false;
-      }
-    }).toList();
+    return snapshot.docs
+        .map((doc) {
+          final post = PostModel.fromMap(doc.data()).copyWith(id: doc.id);
+          return post;
+        })
+        .where((post) {
+          switch (filterVariable) {
+            case 'Users':
+              return post.fullName.toLowerCase().contains(keywordLower);
+            case 'General Content':
+            case 'Posts':
+              return post.body.toLowerCase().contains(keywordLower);
+            default:
+              return false;
+          }
+        })
+        .toList();
   }
 
   Future<List<EventModel>> getEventResults({
@@ -45,19 +49,23 @@ class SearchService {
             .orderBy('timestamp', descending: descendingOrder)
             .get();
 
-    return snapshot.docs.map((doc) => EventModel.fromMap(doc.data())).where((
-      event,
-    ) {
-      switch (filterVariable) {
-        case 'Users':
-          return event.fullName.toLowerCase().contains(keywordLower);
-        case 'General Content':
-        case 'Events':
-          return event.title.toLowerCase().contains(keywordLower);
-        default:
-          return false;
-      }
-    }).toList();
+    return snapshot.docs
+        .map((doc) {
+          final event = EventModel.fromMap(doc.data()).copyWith(id: doc.id);
+          return event;
+        })
+        .where((event) {
+          switch (filterVariable) {
+            case 'Users':
+              return event.fullName.toLowerCase().contains(keywordLower);
+            case 'General Content':
+            case 'Events':
+              return event.title.toLowerCase().contains(keywordLower);
+            default:
+              return false;
+          }
+        })
+        .toList();
   }
 
   Future<List<SearchResult>> getCombinedResults({
