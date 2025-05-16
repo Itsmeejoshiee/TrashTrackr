@@ -20,7 +20,7 @@ class PublicUserService {
         .map((snapshot) => snapshot.exists ? UserModel.fromMap(snapshot.data()!) : null);
   }
 
-  Stream<List<PostModel>> getUserPosts(String uid) {
+  Stream<List<PostModel>> getUserPostStream(String uid) {
     return FirebaseFirestore.instance
         .collection('posts')
         .where('uid', isEqualTo: uid)
@@ -31,7 +31,7 @@ class PublicUserService {
         .toList());
   }
 
-  Stream<List<EventModel>> getUserEvents(String uid) {
+  Stream<List<EventModel>> getUserEventStream(String uid) {
     return FirebaseFirestore.instance
         .collection('events')
         .where('uid', isEqualTo: uid)
