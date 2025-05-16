@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:trashtrackr/core/services/activity_service.dart';
+import 'package:trashtrackr/core/services/badge_service.dart';
 import 'package:trashtrackr/core/services/post_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/utils/date_utils.dart';
@@ -27,6 +29,8 @@ class PostCard extends StatefulWidget {
 class _PostCardState extends State<PostCard> {
   final CommentService _commentService = CommentService();
   final PostService _postService = PostService();
+  final ActivityService _activityService = ActivityService();
+  final BadgeService _badgeService = BadgeService();
 
   // Removed local _isCommented flag since we get live data from Firestore
 
@@ -192,6 +196,11 @@ class _PostCardState extends State<PostCard> {
                             await _postService.unlikePost(widget.post.id!);
                           } else {
                             await _postService.likePost(widget.post.id!);
+                            await _activityService.logActivity('like');
+                            _badgeService.checkTrashTrackrOg();
+                            _badgeService.checkGreenStreaker();
+                            _badgeService.checkDailyDiligent();
+                            _badgeService.checkWeekendWarrior();
                           }
                         },
                       );
