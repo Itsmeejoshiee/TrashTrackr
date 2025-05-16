@@ -10,15 +10,13 @@ import 'package:trashtrackr/core/widgets/buttons/bookmark_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/comment_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/like_button.dart';
 import 'package:trashtrackr/core/models/event_model.dart';
+import 'package:trashtrackr/features/profile/frontend/public_profile_screen.dart';
 
 import '../../../features/comment/frontend/comment_screen.dart';
 import '../../services/comment_service.dart';
 
 class EventCard extends StatefulWidget {
-  const EventCard({
-    super.key,
-    required this.event,
-  });
+  const EventCard({super.key, required this.event});
 
   final EventModel event;
 
@@ -86,10 +84,7 @@ class _EventCardState extends State<EventCard> {
       builder: (context) {
         return SizedBox(
           height: MediaQuery.of(context).size.height * 0.9,
-          child: CommentScreen(
-            postId: widget.event.id ?? '',
-            isForEvent: true,
-          ),
+          child: CommentScreen(postId: widget.event.id ?? '', isForEvent: true),
         );
       },
     );
@@ -103,10 +98,24 @@ class _EventCardState extends State<EventCard> {
         children: [
           Row(
             children: [
-              CircleAvatar(
-                foregroundImage: (widget.event.profilePicture.isNotEmpty)
-                    ? NetworkImage(widget.event.profilePicture)
-                    : const AssetImage('assets/images/placeholder_profile.jpg'),
+              GestureDetector(
+                onTap:
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) =>
+                                PublicProfileScreen(uid: widget.event.uid),
+                      ),
+                    ),
+                child: CircleAvatar(
+                  foregroundImage:
+                      (widget.event.profilePicture.isNotEmpty)
+                          ? NetworkImage(widget.event.profilePicture)
+                          : const AssetImage(
+                            'assets/images/placeholder_profile.jpg',
+                          ),
+                ),
               ),
               const SizedBox(width: 10),
               Wrap(
@@ -166,7 +175,9 @@ class _EventCardState extends State<EventCard> {
           Row(
             children: [
               StreamBuilder<bool>(
-                stream: _postService.eventLikedByCurrentUserStream(widget.event.id!),
+                stream: _postService.eventLikedByCurrentUserStream(
+                  widget.event.id!,
+                ),
                 builder: (context, snapshot) {
                   final isLiked = snapshot.data ?? false;
                   return StreamBuilder<int>(
@@ -190,7 +201,10 @@ class _EventCardState extends State<EventCard> {
 
               // Comment Button
               StreamBuilder<int>(
-                stream: _commentService.getCommentCount(widget.event.id!, isForEvent: false),
+                stream: _commentService.getCommentCount(
+                  widget.event.id!,
+                  isForEvent: false,
+                ),
                 builder: (context, countSnapshot) {
                   final count = countSnapshot.data ?? 0;
                   return StreamBuilder<bool>(
@@ -232,4 +246,3 @@ class _EventCardState extends State<EventCard> {
     );
   }
 }
-
