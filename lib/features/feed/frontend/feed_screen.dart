@@ -22,7 +22,11 @@ class FeedScreen extends StatefulWidget {
 }
 
 class _FeedScreenState extends State<FeedScreen> {
+<<<<<<< Updated upstream
   String userSearch = '';
+=======
+  bool _isSearching = false;
+>>>>>>> Stashed changes
   final TextEditingController _searchController = TextEditingController();
   final PostService _postService = PostService();
 
@@ -68,6 +72,7 @@ class _FeedScreenState extends State<FeedScreen> {
                   DashboardSearchBar(
                     controller: _searchController,
                     onFilterTap: () {},
+<<<<<<< Updated upstream
                     onChanged: (value) {
                       setState(() {
                         userSearch = value.trim();
@@ -75,11 +80,18 @@ class _FeedScreenState extends State<FeedScreen> {
                     },
                     onSearch: () {
                       if (userSearch.isNotEmpty) {
+=======
+                    onSubmit: (value) {
+                      final keyword = value.trim();
+                      if (keyword.isNotEmpty) {
+                        setState(() => _isSearching = true);
+>>>>>>> Stashed changes
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder:
                                 (context) =>
+<<<<<<< Updated upstream
                                     FeedResults(searchKeyword: userSearch),
                           ),
                         );
@@ -87,14 +99,35 @@ class _FeedScreenState extends State<FeedScreen> {
                     },
                     onSubmit: (value) {
                       if (userSearch.isNotEmpty) {
+=======
+                                    FeedResults(searchKeyword: keyword),
+                          ),
+                        ).then((_) {
+                          setState(() => _isSearching = false);
+                        });
+                      }
+                    },
+                    onSearch: () {
+                      final keyword = _searchController.text.trim();
+                      if (keyword.isNotEmpty) {
+                        setState(() => _isSearching = true);
+>>>>>>> Stashed changes
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder:
                                 (context) =>
+<<<<<<< Updated upstream
                                     FeedResults(searchKeyword: userSearch),
                           ),
                         );
+=======
+                                    FeedResults(searchKeyword: keyword),
+                          ),
+                        ).then((_) {
+                          setState(() => _isSearching = false);
+                        });
+>>>>>>> Stashed changes
                       }
                     },
                   ),
