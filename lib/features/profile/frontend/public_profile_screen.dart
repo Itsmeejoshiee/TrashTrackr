@@ -59,6 +59,7 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                         style: kHeadlineMedium.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
+
                       ),
                       SizedBox(height: 15),
                       Text(
@@ -112,6 +113,7 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                         style: kHeadlineMedium.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
+
                       ),
                       SizedBox(height: 15),
                       Text(
