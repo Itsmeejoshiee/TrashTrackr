@@ -61,8 +61,8 @@ class _HomeScreenState extends State<HomeScreen> {
         _currentStreak = streak;
         _activityCount = activityCount;
         _badgesCount = badges;
-        _dataLoading = false;
         _greetingMessage = greetingMessage;
+        _dataLoading = false;
       });
     }
   }
