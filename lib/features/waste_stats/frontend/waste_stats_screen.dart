@@ -35,12 +35,7 @@ class _WasteStatsScreenState extends State<WasteStatsScreen> {
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DashboardScreen(),
-            ),
-          ),
+          onPressed: () => Navigator.pop(context),
           icon: Icon(Icons.arrow_back_ios),
         ),
         title: Text(
