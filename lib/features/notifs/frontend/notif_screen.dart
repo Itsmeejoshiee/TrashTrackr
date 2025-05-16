@@ -67,7 +67,7 @@ class _NotifScreenState extends State<NotifScreen> {
                     NotifCard(),
                   ],
                 )
-                : BookmarksView(context: context),
+                : BookmarksView(),
           ],
         ),
       ),
