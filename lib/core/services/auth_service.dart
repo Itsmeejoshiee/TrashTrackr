@@ -111,7 +111,6 @@ class AuthService {
     }
   }
 
-  //To do: test this function
   //Delete account
   Future<void> deleteAccount({
     required String email,
