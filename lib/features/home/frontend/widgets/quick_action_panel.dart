@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:trashtrackr/core/utils/constants.dart';
 
 class QuickActionPanel extends StatelessWidget {
   const QuickActionPanel({

@@ -1,9 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
+
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
 import 'package:trashtrackr/features/waste_scanner/backend/camera_module.dart';
@@ -13,7 +15,7 @@ import 'package:trashtrackr/core/models/scan_result_model.dart';
 import '../backend/image_compress.dart';
 
 class WasteScannerScreen extends StatefulWidget {
-  const WasteScannerScreen({Key? key}) : super(key: key);
+  const WasteScannerScreen({super.key});
 
   @override
   _WasteScannerScreenState createState() => _WasteScannerScreenState();
@@ -104,68 +106,80 @@ class _WasteScannerScreenState extends State<WasteScannerScreen> {
                   _isProcessing
                       ? CircularProgressIndicator(color: kAvocado)
                       : IconButton(
-                    icon: Image.asset(
-                      'assets/images/icons/capture.png',
-                      width: 55,
-                      height: 55,
-                    ),
-                    onPressed: () async {
-                      setState(() {
-                        _isProcessing = true;
-                      });
-                      try {
-                        final XFile picture = await controller.takePicture();
-                        final file = File(picture.path);
-
-                        final File? compressedFile = await compressImage(file);
-                        if (compressedFile == null) {
-                          throw Exception("Image compression failed.");
-                        }
-
-                        final Uint8List compressedBytes = await compressedFile.readAsBytes();
-
-                        final ref = FirebaseStorage.instance
-                            .ref()
-                            .child('scanned_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
-                        await ref.putData(compressedBytes, SettableMetadata(contentType: 'image/jpeg'));
-
-                        final imageUrl = await ref.getDownloadURL();
-
-                        final result = await GeminiService().classifyWaste(compressedBytes);
-
-                        final resultWithImage = ScanResult(
-                          productName: result.productName,
-                          materials: result.materials,
-                          prodInfo: result.prodInfo,
-                          classification: result.classification,
-                          toDo: result.toDo,
-                          notToDo: result.notToDo,
-                          proTip: result.proTip,
-                          timestamp: result.timestamp,
-                          imageUrl: imageUrl,
-                        );
-
-                        if (mounted) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ScanResultScreen(scanResult: resultWithImage),
-                            ),
-                          );
-                        }
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error: $e')),
-                        );
-                      } finally {
-                        if (mounted) {
+                        icon: Image.asset(
+                          'assets/images/icons/capture.png',
+                          width: 55,
+                          height: 55,
+                        ),
+                        onPressed: () async {
                           setState(() {
-                            _isProcessing = false;
+                            _isProcessing = true;
                           });
-                        }
-                      }
-                    },
-                  ),
+                          try {
+                            final XFile picture =
+                                await controller.takePicture();
+                            final file = File(picture.path);
+
+                            final File? compressedFile = await compressImage(
+                              file,
+                            );
+                            if (compressedFile == null) {
+                              throw Exception("Image compression failed.");
+                            }
+
+                            final Uint8List compressedBytes =
+                                await compressedFile.readAsBytes();
+
+                            final ref = FirebaseStorage.instance.ref().child(
+                              'scanned_images/${DateTime.now().millisecondsSinceEpoch}.jpg',
+                            );
+                            await ref.putData(
+                              compressedBytes,
+                              SettableMetadata(contentType: 'image/jpeg'),
+                            );
+
+                            final imageUrl = await ref.getDownloadURL();
+
+                            final result = await GeminiService().classifyWaste(
+                              compressedBytes,
+                            );
+
+                            final resultWithImage = ScanResult(
+                              productName: result.productName,
+                              materials: result.materials,
+                              prodInfo: result.prodInfo,
+                              classification: result.classification,
+                              toDo: result.toDo,
+                              notToDo: result.notToDo,
+                              proTip: result.proTip,
+                              timestamp: result.timestamp,
+                              imageUrl: imageUrl,
+                            );
+
+                            if (mounted) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => ScanResultScreen(
+                                        scanResult: resultWithImage,
+                                      ),
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error: $e')),
+                            );
+                          } finally {
+                            if (mounted) {
+                              setState(() {
+                                _isProcessing = false;
+                              });
+                            }
+                          }
+                        },
+                      ),
                   SizedBox(height: 60),
                 ],
               ),
@@ -176,4 +190,3 @@ class _WasteScannerScreenState extends State<WasteScannerScreen> {
     );
   }
 }
-

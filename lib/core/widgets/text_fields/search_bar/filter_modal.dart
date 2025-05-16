@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class FilterModal extends StatefulWidget {
   final String? initialWasteType;
@@ -35,11 +34,7 @@ class _FilterModalState extends State<FilterModal> {
     'E-Waste',
   ];
 
-  final List<String> quickFilters = [
-    'Today',
-    'Yesterday',
-    'Last 7 Days',
-  ];
+  final List<String> quickFilters = ['Today', 'Yesterday', 'Last 7 Days'];
 
   @override
   void initState() {
@@ -97,13 +92,18 @@ class _FilterModalState extends State<FilterModal> {
             children: [
               Text(
                 'Filters',
-                style: kHeadlineSmall.copyWith(color: kForestGreen, fontWeight: FontWeight.w600), // Urbanist font
+                style: kHeadlineSmall.copyWith(
+                  color: kForestGreen,
+                  fontWeight: FontWeight.w600,
+                ), // Urbanist font
               ),
               TextButton(
                 onPressed: widget.onReset,
                 child: Text(
                   'Reset',
-                  style: kTitleSmall.copyWith(color: kForestGreen), // Urbanist font
+                  style: kTitleSmall.copyWith(
+                    color: kForestGreen,
+                  ), // Urbanist font
                 ),
               ),
             ],
@@ -115,25 +115,36 @@ class _FilterModalState extends State<FilterModal> {
             value: selectedWasteType,
             decoration: InputDecoration(
               labelText: 'Waste Type',
-              labelStyle: kTitleMedium.copyWith(color: kForestGreen), // Urbanist font
+              labelStyle: kTitleMedium.copyWith(
+                color: kForestGreen,
+              ), // Urbanist font
               enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Color.fromARGB(255, 89, 119, 91)), // Green border
+                borderSide: const BorderSide(
+                  color: Color.fromARGB(255, 89, 119, 91),
+                ), // Green border
                 borderRadius: BorderRadius.circular(12),
               ),
               focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: kForestGreen), // Dark green border
+                borderSide: const BorderSide(
+                  color: kForestGreen,
+                ), // Dark green border
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            items: wasteTypes
-                .map((type) => DropdownMenuItem(
-                      value: type,
-                      child: Text(
-                        type,
-                        style: kTitleSmall.copyWith(color: kForestGreen), // Urbanist font
+            items:
+                wasteTypes
+                    .map(
+                      (type) => DropdownMenuItem(
+                        value: type,
+                        child: Text(
+                          type,
+                          style: kTitleSmall.copyWith(
+                            color: kForestGreen,
+                          ), // Urbanist font
+                        ),
                       ),
-                    ))
-                .toList(),
+                    )
+                    .toList(),
             onChanged: (value) => setState(() => selectedWasteType = value),
           ),
 
@@ -143,7 +154,9 @@ class _FilterModalState extends State<FilterModal> {
           ListTile(
             title: Text(
               'Date Range',
-              style: kTitleMedium.copyWith(color: kForestGreen), // Urbanist font
+              style: kTitleMedium.copyWith(
+                color: kForestGreen,
+              ), // Urbanist font
             ),
             subtitle: Text(
               selectedDateRange == null
@@ -151,7 +164,10 @@ class _FilterModalState extends State<FilterModal> {
                   : '${DateFormat.yMMMd().format(selectedDateRange!.start)} - ${DateFormat.yMMMd().format(selectedDateRange!.end)}',
               style: kTitleSmall.copyWith(color: kForestGreen), // Urbanist font
             ),
-            trailing: const Icon(Icons.calendar_today, color: kForestGreen), // Green icon
+            trailing: const Icon(
+              Icons.calendar_today,
+              color: kForestGreen,
+            ), // Green icon
             onTap: _pickDateRange,
           ),
 
@@ -162,30 +178,34 @@ class _FilterModalState extends State<FilterModal> {
             alignment: Alignment.centerLeft,
             child: Wrap(
               spacing: 8,
-              children: quickFilters.map((filter) {
-                final isSelected = selectedQuickFilters.contains(filter);
-                return FilterChip(
-                  label: Text(
-                    filter,
-                    style: kTitleSmall.copyWith(
-                      color: isSelected ? Colors.white : kForestGreen, // Urbanist font
-                    ),
-                  ),
-                  selected: isSelected,
-                  selectedColor: kAvocado, // Light green when selected
-                  backgroundColor: Colors.white, // White background
-                  checkmarkColor: Colors.white, // White checkmark
-                  onSelected: (selected) {
-                    setState(() {
-                      if (selected) {
-                        selectedQuickFilters.add(filter);
-                      } else {
-                        selectedQuickFilters.remove(filter);
-                      }
-                    });
-                  },
-                );
-              }).toList(),
+              children:
+                  quickFilters.map((filter) {
+                    final isSelected = selectedQuickFilters.contains(filter);
+                    return FilterChip(
+                      label: Text(
+                        filter,
+                        style: kTitleSmall.copyWith(
+                          color:
+                              isSelected
+                                  ? Colors.white
+                                  : kForestGreen, // Urbanist font
+                        ),
+                      ),
+                      selected: isSelected,
+                      selectedColor: kAvocado, // Light green when selected
+                      backgroundColor: Colors.white, // White background
+                      checkmarkColor: Colors.white, // White checkmark
+                      onSelected: (selected) {
+                        setState(() {
+                          if (selected) {
+                            selectedQuickFilters.add(filter);
+                          } else {
+                            selectedQuickFilters.remove(filter);
+                          }
+                        });
+                      },
+                    );
+                  }).toList(),
             ),
           ),
 
@@ -193,19 +213,25 @@ class _FilterModalState extends State<FilterModal> {
 
           // Apply button
           ElevatedButton(
-            onPressed: () => widget.onApply(
-              selectedWasteType,
-              selectedDateRange,
-              selectedQuickFilters,
-            ),
+            onPressed:
+                () => widget.onApply(
+                  selectedWasteType,
+                  selectedDateRange,
+                  selectedQuickFilters,
+                ),
             style: ElevatedButton.styleFrom(
               backgroundColor: kAvocado, // Dark green button
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             child: Text(
               'Apply',
-              style: kTitleMedium.copyWith(color: Colors.white, fontWeight: FontWeight.w600), // Urbanist font
+              style: kTitleMedium.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ), // Urbanist font
             ),
           ),
         ],

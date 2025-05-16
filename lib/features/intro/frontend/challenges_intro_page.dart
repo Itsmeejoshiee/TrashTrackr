@@ -9,7 +9,6 @@ class ChallengesIntroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
     final plantWidth = screenWidth * 0.60;
     final boxWidth = screenWidth * 0.4;
     return Container(
@@ -84,7 +83,11 @@ class ChallengesIntroPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Icon(Icons.help_outline, size: boxWidth - 50, color: Colors.white),
+                child: Icon(
+                  Icons.help_outline,
+                  size: boxWidth - 50,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),

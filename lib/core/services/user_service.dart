@@ -1,24 +1,15 @@
-import 'dart:io';
 import 'dart:typed_data';
-import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:trashtrackr/core/models/activity_model.dart';
 import 'package:trashtrackr/core/models/user_model.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:trashtrackr/core/services/badge_service.dart';
-import 'package:trashtrackr/core/user_provider.dart';
-import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/models/event_model.dart';
 import 'package:trashtrackr/core/models/post_model.dart';
-import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class UserService {
   final AuthService _authService = AuthService();
@@ -72,7 +63,7 @@ class UserService {
     } catch (e) {
       setErrorMessage('An error occurred. Please try again.');
       print('Error: $e');
-      return null;
+      return;
     }
   }
 
@@ -142,23 +133,48 @@ class UserService {
 
   Future<void> signInWithGoogle() async {
     try {
-      final userCredential = await _authService.signInWithGoogle();
-      final uid = _authService.currentUser?.uid;
-      final docExists = await doesUserDocumentExist(uid!);
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        print('User cancelled Google sign-in');
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase with Google credentials
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(
+        credential,
+      );
+      final user = userCredential.user;
+
+      if (user == null) {
+        print('Error: Firebase user is null after sign-in.');
+        return;
+      }
+
+      final uid = user.uid;
+      final docExists = await doesUserDocumentExist(uid);
       if (!docExists) {
-        final displayName = _authService.currentUser?.displayName ?? '';
+        final displayName = user.displayName ?? '';
         final nameParts = displayName.trim().split(RegExp(r'\s+'));
 
         final firstName = nameParts.isNotEmpty ? nameParts[0] : '';
         final lastName =
             nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
-        final profilePicture = getGUserProfilePicture();
+        final profilePicture = user.photoURL ?? '';
+
         final newUser = UserModel(
           uid: uid,
-          email: _authService.currentUser?.email ?? '',
+          email: user.email ?? '',
           firstName: firstName,
           lastName: lastName,
-          profilePicture: (await profilePicture) ?? '',
+          profilePicture: profilePicture,
           followerCount: 0,
           followingCount: 0,
         );
@@ -171,7 +187,7 @@ class UserService {
             .set(newUser.toMap());
       }
     } catch (e) {
-      print('Error: $e');
+      print('Error during Google sign-in: $e');
     }
   }
 

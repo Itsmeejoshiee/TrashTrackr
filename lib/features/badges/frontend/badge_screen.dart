@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/models/badge_model.dart';
 import 'package:trashtrackr/core/services/badge_service.dart';
-import 'package:trashtrackr/core/widgets/buttons/multi_action_fab.dart';
-import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
 import 'package:trashtrackr/core/widgets/box/badge_box.dart';
 
 class BadgeScreen extends StatefulWidget {
@@ -14,19 +12,19 @@ class BadgeScreen extends StatefulWidget {
 }
 
 class _BadgeScreenState extends State<BadgeScreen> {
-
   final BadgeService _badgeService = BadgeService();
 
   List<Widget> _badgeBoxBuilder(List<BadgeModel>? badges) {
     List<Widget> badgeBoxes = [];
     for (BadgeModel badge in badges!) {
       // TODO: Check if badge is earned by referencing user badges in database
-      final BadgeModel currentBadge = BadgeModel(id: badge.id, percent: badge.percent);
+      final BadgeModel currentBadge = BadgeModel(
+        id: badge.id,
+        percent: badge.percent,
+      );
       final badgeBox = Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: BadgeBox(
-          badge: currentBadge,
-        ),
+        child: BadgeBox(badge: currentBadge),
       );
       if (currentBadge.percent >= 1) {
         badgeBoxes.insert(0, badgeBox);
@@ -47,9 +45,8 @@ class _BadgeScreenState extends State<BadgeScreen> {
     return StreamBuilder(
       stream: _badgeService.getBadgeStream(),
       builder: (context, snapshot) {
-
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator(color: kAvocado,));
+          return Center(child: CircularProgressIndicator(color: kAvocado));
         }
 
         if (!snapshot.hasData || snapshot.data == null) {
@@ -77,7 +74,7 @@ class _BadgeScreenState extends State<BadgeScreen> {
             ],
           ),
         );
-      }
+      },
     );
   }
 }

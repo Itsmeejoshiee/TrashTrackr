@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:trashtrackr/core/utils/constants.dart';
 
 class EditProfilePictureButton extends StatelessWidget {
   const EditProfilePictureButton({

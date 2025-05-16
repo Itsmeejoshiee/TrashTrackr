@@ -15,10 +15,7 @@ import '../../../features/comment/frontend/comment_screen.dart';
 import '../../services/comment_service.dart';
 
 class EventCard extends StatefulWidget {
-  const EventCard({
-    super.key,
-    required this.event,
-  });
+  const EventCard({super.key, required this.event});
 
   final EventModel event;
 
@@ -54,10 +51,10 @@ class _EventCardState extends State<EventCard> {
   }
 
   String _formatTimestamp(Timestamp timestamp) {
-    final DateUtilsHelper _dateUtilsHelpers = DateUtilsHelper();
+    final DateUtilsHelper dateUtilsHelpers = DateUtilsHelper();
     DateTime dateTime = timestamp.toDate();
 
-    String month = _dateUtilsHelpers.getMonthName(dateTime.month);
+    String month = dateUtilsHelpers.getMonthName(dateTime.month);
     int day = dateTime.day;
     int year = dateTime.year;
     int hour = dateTime.hour % 12 == 0 ? 12 : dateTime.hour % 12;
@@ -68,11 +65,11 @@ class _EventCardState extends State<EventCard> {
   }
 
   String _formatDate(DateTimeRange dateRange) {
-    final DateUtilsHelper _dateUtilsHelpers = DateUtilsHelper();
+    final DateUtilsHelper dateUtilsHelpers = DateUtilsHelper();
 
     final startDate = dateRange.start;
     final dayName = DateFormat('EEEE').format(startDate);
-    final month = _dateUtilsHelpers.getMonthName(startDate.month);
+    final month = dateUtilsHelpers.getMonthName(startDate.month);
     final day = startDate.day;
     final year = startDate.year;
     return '$dayName, $month $day, $year';
@@ -86,10 +83,7 @@ class _EventCardState extends State<EventCard> {
       builder: (context) {
         return SizedBox(
           height: MediaQuery.of(context).size.height * 0.9,
-          child: CommentScreen(
-            postId: widget.event.id ?? '',
-            isForEvent: true,
-          ),
+          child: CommentScreen(postId: widget.event.id ?? '', isForEvent: true),
         );
       },
     );
@@ -104,9 +98,12 @@ class _EventCardState extends State<EventCard> {
           Row(
             children: [
               CircleAvatar(
-                foregroundImage: (widget.event.profilePicture.isNotEmpty)
-                    ? NetworkImage(widget.event.profilePicture)
-                    : const AssetImage('assets/images/placeholder_profile.jpg'),
+                foregroundImage:
+                    (widget.event.profilePicture.isNotEmpty)
+                        ? NetworkImage(widget.event.profilePicture)
+                        : const AssetImage(
+                          'assets/images/placeholder_profile.jpg',
+                        ),
               ),
               const SizedBox(width: 10),
               Wrap(
@@ -166,7 +163,9 @@ class _EventCardState extends State<EventCard> {
           Row(
             children: [
               StreamBuilder<bool>(
-                stream: _postService.eventLikedByCurrentUserStream(widget.event.id!),
+                stream: _postService.eventLikedByCurrentUserStream(
+                  widget.event.id!,
+                ),
                 builder: (context, snapshot) {
                   final isLiked = snapshot.data ?? false;
                   return StreamBuilder<int>(
@@ -190,7 +189,10 @@ class _EventCardState extends State<EventCard> {
 
               // Comment Button
               StreamBuilder<int>(
-                stream: _commentService.getCommentCount(widget.event.id!, isForEvent: false),
+                stream: _commentService.getCommentCount(
+                  widget.event.id!,
+                  isForEvent: false,
+                ),
                 builder: (context, countSnapshot) {
                   final count = countSnapshot.data ?? 0;
                   return StreamBuilder<bool>(
@@ -232,4 +234,3 @@ class _EventCardState extends State<EventCard> {
     );
   }
 }
-

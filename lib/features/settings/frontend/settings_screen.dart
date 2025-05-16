@@ -1,3 +1,6 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -11,7 +14,6 @@ import 'package:trashtrackr/features/auth/backend/auth_manager.dart';
 import 'package:trashtrackr/features/faqs/frontend/faq_screen.dart';
 import 'package:trashtrackr/features/placeholder/delete_transition_screen.dart';
 import 'package:trashtrackr/features/settings/frontend/edit_profile_screen.dart';
-import 'package:trashtrackr/features/settings/frontend/privacy_screen.dart';
 import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
 import 'package:trashtrackr/features/settings/frontend/widgets/buttons/edit_profile_picture_button.dart';
 import 'package:trashtrackr/features/settings/frontend/widgets/list_tiles/setting_tile.dart';
@@ -38,19 +40,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _logout() async {
-    // Sign Out
-    if (await checkUser()) {
-      final googleSignIn = GoogleSignIn();
-      await googleSignIn.signOut();
-    } else {
-      await _authService.signOut();
+    final googleSignIn = GoogleSignIn();
+
+    try {
+      // If Google user, sign out of Google too
+      if (await checkUser()) {
+        await googleSignIn.disconnect().catchError((e) {});
+        await googleSignIn.signOut().catchError((e) {});
+      }
+
+      // Always sign out from Firebase Auth
+      await FirebaseAuth.instance.signOut();
+
+      // Navigate back to AuthManager
+      if (context.mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => AuthManager()),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      print("Logout failed: $e");
     }
-    // Navigate back to AuthManager and clear navigation stack
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => AuthManager()),
-      (r) => false,
-    );
   }
 
   Future<void> _deleteAccount(String email, String password) async {
@@ -79,12 +91,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await Future.delayed(Duration(milliseconds: 300));
 
     await _authService.deleteGUser();
-
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => AuthManager()),
-      (r) => false,
-    );
+    if (mounted) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => AuthManager()),
+        (r) => false,
+      );
+    }
   }
 
   void _logoutAlert() {
@@ -128,7 +141,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _deleteGAccountAlert() {
-    TextEditingController passwordController = TextEditingController();
     Alert(
       context: context,
       style: AlertStyle(

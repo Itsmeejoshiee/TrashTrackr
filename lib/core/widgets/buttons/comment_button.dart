@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
-import 'package:trashtrackr/features/comment/frontend/comment_screen.dart';
 
 class CommentButton extends StatelessWidget {
   const CommentButton({

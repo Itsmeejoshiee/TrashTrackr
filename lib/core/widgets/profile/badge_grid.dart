@@ -85,13 +85,17 @@ class _BadgeGridState extends State<BadgeGrid> {
                   crossAxisCount: 3,
                   mainAxisSpacing: 10,
                 ),
-                itemCount: (badges.length < _visibleBadges) ? badges.length : _visibleBadges,
+                itemCount:
+                    (badges.length < _visibleBadges)
+                        ? badges.length
+                        : _visibleBadges,
                 itemBuilder: (context, index) {
                   final badge = badges[index];
                   print(badges.length);
                   if (badge.isEarned) {
                     return BadgeTile(badge: badge);
                   }
+                  return null;
                 },
               ),
             ),

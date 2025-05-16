@@ -7,6 +7,7 @@ class PostInputField extends StatelessWidget {
   final Function(String?)? onChange;
 
   const PostInputField({
+    super.key,
     required this.controller,
     required this.focusNode,
     this.onChange,

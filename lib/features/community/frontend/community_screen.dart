@@ -9,7 +9,6 @@ class CommunityScreen extends StatefulWidget {
 
   @override
   State<CommunityScreen> createState() => _CommunityScreenState();
-
 }
 
 class _CommunityScreenState extends State<CommunityScreen> {
@@ -17,14 +16,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
-    final double screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
+    final double screenWidth = MediaQuery.of(context).size.width;
     final double imageSize = (screenWidth / 3) + 60;
     return Scaffold(
       appBar: AppBar(
@@ -42,10 +34,11 @@ class _CommunityScreenState extends State<CommunityScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 32),
         child: Column(
           children: [
-
             // Notif Title
             Image.asset(
-                'assets/images/titles/community_title.png', width: imageSize),
+              'assets/images/titles/community_title.png',
+              width: imageSize,
+            ),
 
             // Offset
             SizedBox(height: 8),
@@ -63,9 +56,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
               },
             ),
 
-            (_upcomingView)
-                ? UpcomingEventView()
-                : PastEventView(),
+            (_upcomingView) ? UpcomingEventView() : PastEventView(),
 
             // Offset
             SizedBox(height: 30),

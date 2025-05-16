@@ -5,7 +5,6 @@ import '../../../../core/models/scan_result_model.dart';
 import '../../../../core/services/waste_entry_service.dart';
 import '../../../../core/utils/constants.dart';
 
-
 class SummaryView extends StatelessWidget {
   final WasteEntryService service = WasteEntryService();
 
@@ -30,15 +29,20 @@ class SummaryView extends StatelessWidget {
       stream: service.fetchWasteEntries(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(color: kAvocado));
+          return const Center(
+            child: CircularProgressIndicator(color: kAvocado),
+          );
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: \${snapshot.error}'));
         }
 
         final entries = snapshot.data ?? [];
-        final validEntries = entries.where((e) => e.timestamp != null && e.qty != null).toList();
+        final validEntries = entries.where((e) => e.timestamp != null).toList();
 
-        final wasteCount = validEntries.fold<int>(0, (sum, entry) => sum + (entry.qty ?? 0));
+        final wasteCount = validEntries.fold<int>(
+          0,
+          (sum, entry) => sum + (entry.qty),
+        );
 
         final Map<String, int> classificationCounts = {
           'Recyclable': 0,
@@ -47,27 +51,35 @@ class SummaryView extends StatelessWidget {
         };
 
         for (final entry in validEntries) {
-          final classification = entry.classification ?? '';
+          final classification = entry.classification;
           if (classificationCounts.containsKey(classification)) {
-            classificationCounts[classification] = classificationCounts[classification]! + 1;
+            classificationCounts[classification] =
+                classificationCounts[classification]! + 1;
           }
         }
 
         List<FlSpot> spots;
 
         if (updateView) {
-
           // wekely view (Mon=1 to Sun=7)
-          final Map<int, int> qtyPerDay = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0};
+          final Map<int, int> qtyPerDay = {
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+            5: 0,
+            6: 0,
+            7: 0,
+          };
           for (final entry in validEntries) {
             final weekday = entry.timestamp!.weekday;
-            qtyPerDay[weekday] = qtyPerDay[weekday]! + (entry.qty ?? 0);
+            qtyPerDay[weekday] = qtyPerDay[weekday]! + (entry.qty);
           }
-          spots = qtyPerDay.entries
-              .map((e) => FlSpot(e.key.toDouble(), e.value.toDouble()))
-              .toList();
+          spots =
+              qtyPerDay.entries
+                  .map((e) => FlSpot(e.key.toDouble(), e.value.toDouble()))
+                  .toList();
         } else {
-
           // monthly view (last 5 months + including current)
           final now = DateTime.now();
           final List<DateTime> months = List.generate(5, (i) {
@@ -82,16 +94,18 @@ class SummaryView extends StatelessWidget {
             for (int i = 0; i < months.length; i++) {
               final monthStart = months[i];
               final monthEnd = DateTime(monthStart.year, monthStart.month + 1);
-              if (ts.isAfter(monthStart.subtract(const Duration(days: 1))) && ts.isBefore(monthEnd)) {
-                qtyPerMonth[i + 1] = qtyPerMonth[i + 1]! + (entry.qty ?? 0);
+              if (ts.isAfter(monthStart.subtract(const Duration(days: 1))) &&
+                  ts.isBefore(monthEnd)) {
+                qtyPerMonth[i + 1] = qtyPerMonth[i + 1]! + (entry.qty);
                 break;
               }
             }
           }
 
-          spots = qtyPerMonth.entries
-              .map((e) => FlSpot(e.key.toDouble(), e.value.toDouble()))
-              .toList();
+          spots =
+              qtyPerMonth.entries
+                  .map((e) => FlSpot(e.key.toDouble(), e.value.toDouble()))
+                  .toList();
         }
 
         return SummaryViewContent(
@@ -108,5 +122,3 @@ class SummaryView extends StatelessWidget {
     );
   }
 }
-
-
