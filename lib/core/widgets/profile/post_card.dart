@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:trashtrackr/core/services/post_service.dart';
@@ -12,6 +13,8 @@ import 'package:trashtrackr/core/widgets/buttons/like_button.dart';
 import 'package:trashtrackr/core/models/post_model.dart';
 import 'package:trashtrackr/features/comment/frontend/comment_screen.dart';
 
+import '../../services/comment_service.dart';
+
 class PostCard extends StatefulWidget {
   const PostCard({super.key, required this.post});
 
@@ -22,13 +25,11 @@ class PostCard extends StatefulWidget {
 }
 
 class _PostCardState extends State<PostCard> {
-
+  final CommentService _commentService = CommentService();
   final AuthService _authService = AuthService();
   final PostService _postService = PostService();
 
-  bool _isLiked = false;
-  bool _isCommented = false;
-  bool _isBookmarked = false;
+  // Removed local _isCommented flag since we get live data from Firestore
 
   Widget _buildEmotionLabel() {
     final emotionName = widget.post.emotion.name;
@@ -65,10 +66,7 @@ class _PostCardState extends State<PostCard> {
       backgroundColor: Colors.white,
       builder: (context) {
         return SizedBox(
-          height: MediaQuery
-              .of(context)
-              .size
-              .height * 0.9,
+          height: MediaQuery.of(context).size.height * 0.9,
           child: CommentScreen(
             postId: widget.post.id ?? '',
             isForEvent: false,
@@ -80,11 +78,26 @@ class _PostCardState extends State<PostCard> {
 
   Stream<int> _commentCountStream() {
     return FirebaseFirestore.instance
-        .collectionGroup('comments')
-        .where('postId', isEqualTo: widget.post.id)
-        .where('isForEvent', isEqualTo: false)
+        .collection('posts')
+        .doc(widget.post.id)
+        .collection('comments')
         .snapshots()
         .map((snapshot) => snapshot.size);
+  }
+
+
+  Stream<bool> _hasCurrentUserCommented() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return Stream.value(false);
+
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .doc(widget.post.id)
+        .collection('comments')
+        .where('uid', isEqualTo: user.uid)
+        .limit(1)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.isNotEmpty);
   }
 
   @override
@@ -125,16 +138,14 @@ class _PostCardState extends State<PostCard> {
               ),
               const Spacer(),
               _buildEmotionLabel(),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
             ],
           ),
           const SizedBox(height: 10),
-
           Text(
             widget.post.body,
             style: kPoppinsBodyMedium.copyWith(fontSize: 12),
           ),
-
           if (widget.post.imageUrl.isNotEmpty)
             Container(
               width: double.infinity,
@@ -151,17 +162,12 @@ class _PostCardState extends State<PostCard> {
                 ),
               ),
             ),
-
           const SizedBox(height: 15),
-
           Row(
             children: [
-
               // Like Button
               StreamBuilder<bool>(
-                stream: _postService.postLikedByCurrentUserStream(
-                  widget.post.id!,
-                ),
+                stream: _postService.postLikedByCurrentUserStream(widget.post.id!),
                 builder: (context, snapshot) {
                   final isLiked = snapshot.data ?? false;
                   return StreamBuilder<int>(
@@ -183,16 +189,22 @@ class _PostCardState extends State<PostCard> {
                 },
               ),
 
+              // Comment Button
               StreamBuilder<int>(
-                stream: _commentCountStream(),
-                builder: (context, snapshot) {
-                  final count = snapshot.data ?? 0;
-                  return CommentButton(
-                    isActive: _isCommented,
-                    label: count > 0 ? count.toString() : 'Comment ',
-                    onPressed: () {
-                      setState(() => _isCommented = !_isCommented);
-                      _openCommentScreen(context);
+                stream: _commentService.getCommentCount(widget.post.id!, isForEvent: false),
+                builder: (context, countSnapshot) {
+                  final count = countSnapshot.data ?? 0;
+                  return StreamBuilder<bool>(
+                    stream: _hasCurrentUserCommented(),
+                    builder: (context, userCommentSnapshot) {
+                      final hasCommented = userCommentSnapshot.data ?? false;
+                      return CommentButton(
+                        isActive: hasCommented,
+                        count: count,
+                        onPressed: () {
+                          _openCommentScreen(context);
+                        },
+                      );
                     },
                   );
                 },
@@ -222,3 +234,4 @@ class _PostCardState extends State<PostCard> {
     );
   }
 }
+

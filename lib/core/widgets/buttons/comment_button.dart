@@ -7,34 +7,31 @@ class CommentButton extends StatelessWidget {
     super.key,
     this.isActive = false,
     required this.onPressed,
-    required this.label,
+    required this.count,
   });
 
   final bool isActive;
   final VoidCallback onPressed;
-  final String label;
+  final int count;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onPressed,
       child: Row(
-        spacing: 5,
         children: [
           Image.asset(
             'assets/images/icons/comment_${isActive ? 'active' : 'inactive'}.png',
             height: 19,
           ),
-          (!isActive) ? Text(
-            label,
-            style:
-            (!isActive)
-                ? kPoppinsBodySmall
-                : kPoppinsBodySmall.copyWith(
-              color: kAvocado,
-              fontWeight: FontWeight.bold,
+          SizedBox(width: 5),
+          Text(
+            (count > 0) ? '$count ' : 'Comment ',
+            style: kPoppinsBodySmall.copyWith(
+              color: isActive ? kAvocado : Colors.black,
+              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
             ),
-          ) : SizedBox(),
+          ),
         ],
       ),
     );
