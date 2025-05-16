@@ -4,12 +4,14 @@ import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/utils/emotion.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
 import 'package:trashtrackr/core/widgets/buttons/multi_action_fab.dart';
+import 'package:trashtrackr/core/widgets/profile/event_card.dart';
 import 'package:trashtrackr/core/widgets/text_fields/dashboard_search_bar.dart';
 import 'package:trashtrackr/features/feed/frontend/feed_results.dart';
 import 'package:trashtrackr/features/home/frontend/widgets/section_label.dart';
 import 'package:trashtrackr/features/feed/frontend/widgets/recycling_guide_card.dart';
 import 'package:trashtrackr/features/feed/frontend/widgets/recycling_guide_carousel.dart';
 import 'package:trashtrackr/core/widgets/profile/post_card.dart';
+import 'package:trashtrackr/features/post/models/event_model.dart';
 import 'package:trashtrackr/features/post/models/post_model.dart';
 
 class FeedScreen extends StatefulWidget {
@@ -23,6 +25,7 @@ class _FeedScreenState extends State<FeedScreen> {
   String userSearch = '';
   final TextEditingController _searchController = TextEditingController();
   final PostService _postService = PostService();
+
   List<Widget> _postBuilder(List<PostModel> posts) {
     List<Widget> postCards = [];
     for (PostModel post in posts) {
@@ -30,6 +33,15 @@ class _FeedScreenState extends State<FeedScreen> {
       postCards.add(postCard);
     }
     return postCards;
+  }
+
+  List<Widget> _eventBuilder(List<EventModel> events) {
+    List<Widget> eventCards = [];
+    for (EventModel event in events) {
+      final postCard = EventCard(event: event);
+      eventCards.add(postCard);
+    }
+    return eventCards;
   }
 
   @override
@@ -116,7 +128,7 @@ class _FeedScreenState extends State<FeedScreen> {
 
                   SizedBox(height: 13),
 
-                  StreamBuilder(
+                  StreamBuilder<List<PostModel>>(
                     stream: _postService.getPostStream(),
                     builder: (context, snapshot) {
                       print('POST STREAM: ${snapshot.data}');
@@ -133,7 +145,31 @@ class _FeedScreenState extends State<FeedScreen> {
                         );
                       }
 
-                      return Column(children: _postBuilder(snapshot.data!));
+                      final postCards = _postBuilder(snapshot.data!);
+                      return StreamBuilder<List<EventModel>>(
+                        stream: _postService.getEventStream(),
+                        builder: (context, snapshot) {
+
+                          print('EVENT STREAM: ${snapshot.data}');
+
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return Center(
+                              child: CircularProgressIndicator(color: kAvocado),
+                            );
+                          }
+
+                          if (!snapshot.hasData || snapshot.data == null) {
+                            return Center(
+                              child: Text('Event data is not available.'),
+                            );
+                          }
+
+                          final eventCards = _eventBuilder(snapshot.data!);
+                          final feed = [...postCards, ...eventCards];
+                          feed.shuffle();
+                          return Column(children: feed);
+                        }
+                      );
                     },
                   ),
 
