@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:trashtrackr/core/services/activity_service.dart';
+import 'package:trashtrackr/core/services/badge_service.dart';
 import 'package:trashtrackr/core/services/post_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/utils/date_utils.dart';
@@ -27,6 +29,8 @@ class EventCard extends StatefulWidget {
 class _EventCardState extends State<EventCard> {
   final CommentService _commentService = CommentService();
   final PostService _postService = PostService();
+  final ActivityService _activityService = ActivityService();
+  final BadgeService _badgeService = BadgeService();
 
   Stream<int> _commentCountStream() {
     return FirebaseFirestore.instance
@@ -191,6 +195,11 @@ class _EventCardState extends State<EventCard> {
                             await _postService.unlikeEvent(widget.event.id!);
                           } else {
                             await _postService.likeEvent(widget.event.id!);
+                            await _activityService.logActivity('like');
+                            _badgeService.checkTrashTrackrOg();
+                            _badgeService.checkGreenStreaker();
+                            _badgeService.checkDailyDiligent();
+                            _badgeService.checkWeekendWarrior();
                           }
                         },
                       );

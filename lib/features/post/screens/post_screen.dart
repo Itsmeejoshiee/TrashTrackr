@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/models/user_model.dart';
 import 'package:trashtrackr/core/services/activity_service.dart';
+import 'package:trashtrackr/core/services/badge_service.dart';
 import 'package:trashtrackr/core/services/post_service.dart';
 import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
@@ -34,6 +35,7 @@ class _PostScreenState extends State<PostScreen> {
   UserModel? _user;
 
   final ActivityService _activityService = ActivityService();
+  final BadgeService _badgeService = BadgeService();
 
   final PostService _postService = PostService();
   bool _isPost = true;
@@ -187,7 +189,11 @@ class _PostScreenState extends State<PostScreen> {
                                         image: _postImage,
                                       );
                                       // Log post activity
-                                      _activityService.logActivity('post');
+                                      await _activityService.logActivity('post');
+                                      _badgeService.checkTrashTrackrOg();
+                                      _badgeService.checkGreenStreaker();
+                                      _badgeService.checkDailyDiligent();
+                                      _badgeService.checkWeekendWarrior();
                                       // Pop loading indicator
                                       if (!context.mounted) return;
                                       Navigator.pop(context);
@@ -230,8 +236,12 @@ class _PostScreenState extends State<PostScreen> {
                                         endTime: _eventEndTime!.format(context),
                                         desc: _eventDesc!,
                                       );
-                                      // Log post activity
-                                      _activityService.logActivity('event');
+                                      // Log event activity
+                                      await _activityService.logActivity('event');
+                                      _badgeService.checkTrashTrackrOg();
+                                      _badgeService.checkGreenStreaker();
+                                      _badgeService.checkDailyDiligent();
+                                      _badgeService.checkWeekendWarrior();
                                       // Pop loading indicator
                                       if (!context.mounted) return;
                                       Navigator.pop(context);

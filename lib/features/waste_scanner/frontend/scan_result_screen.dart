@@ -35,12 +35,6 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
     super.initState();
     _noteController.text = widget.scanResult.notes;
     _quantityController.text = widget.scanResult.qty.toString();
-    _activityService.logActivity('scan');
-    _badgeService.checkTrashTrackrOg();
-    _badgeService.checkScannerRookie();
-    _badgeService.checkGreenStreaker();
-    _badgeService.checkDailyDiligent();
-    _badgeService.checkWeekendWarrior();
   }
 
   @override
@@ -92,7 +86,14 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
           margin: EdgeInsets.symmetric(horizontal: 20),
           color: kAvocado,
           radius: BorderRadius.circular(30),
-          onPressed: () {
+          onPressed: () async {
+            _activityService.logActivity('disposal');
+            await _activityService.logActivity('event');
+            _badgeService.checkTrashTrackrOg();
+            _badgeService.checkScannerRookie();
+            _badgeService.checkGreenStreaker();
+            _badgeService.checkDailyDiligent();
+            _badgeService.checkWeekendWarrior();
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => WasteScannerScreen()),
