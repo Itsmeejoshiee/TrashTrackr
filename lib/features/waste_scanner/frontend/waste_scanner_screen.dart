@@ -5,6 +5,8 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:trashtrackr/core/services/activity_service.dart';
+import 'package:trashtrackr/core/services/badge_service.dart';
 
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
@@ -22,6 +24,10 @@ class WasteScannerScreen extends StatefulWidget {
 }
 
 class _WasteScannerScreenState extends State<WasteScannerScreen> {
+
+  final ActivityService _activityService = ActivityService();
+  final BadgeService _badgeService = BadgeService();
+
   late final Future<CameraController> _controllerFuture;
   final _service = CameraModule();
   NavRoute _selectedRoute = NavRoute.badge;
@@ -167,6 +173,12 @@ class _WasteScannerScreenState extends State<WasteScannerScreen> {
                                 ),
                               );
                             }
+                            await _activityService.logActivity('scan');
+                            _badgeService.checkTrashTrackrOg();
+                            _badgeService.checkScannerRookie();
+                            _badgeService.checkGreenStreaker();
+                            _badgeService.checkDailyDiligent();
+                            _badgeService.checkWeekendWarrior();
                           } catch (e) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text('Error: $e')),

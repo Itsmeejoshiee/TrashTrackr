@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:trashtrackr/core/services/activity_service.dart';
+import 'package:trashtrackr/core/services/badge_service.dart';
 import 'package:trashtrackr/features/comment/frontend/widgets/comment_appbar.dart';
 import 'package:trashtrackr/features/comment/frontend/widgets/comment_input.dart';
 import 'package:trashtrackr/features/comment/frontend/widgets/comment_tile.dart';
@@ -25,6 +27,8 @@ class CommentScreen extends StatefulWidget {
 class _CommentScreenState extends State<CommentScreen> {
   final TextEditingController _commentController = TextEditingController();
   final CommentService _commentService = CommentService();
+  final ActivityService _activityService = ActivityService();
+  final BadgeService _badgeService = BadgeService();
 
   UserModel? _currentUser;
 
@@ -74,6 +78,11 @@ class _CommentScreenState extends State<CommentScreen> {
 
       await _commentService.addComment(newComment);
       _commentController.clear();
+      await _activityService.logActivity('comment');
+      _badgeService.checkTrashTrackrOg();
+      _badgeService.checkGreenStreaker();
+      _badgeService.checkDailyDiligent();
+      _badgeService.checkWeekendWarrior();
     } catch (e) {
       print('Error adding comment: $e');
       rethrow; // Optional but helpful for deeper debugging

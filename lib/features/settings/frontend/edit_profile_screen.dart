@@ -65,6 +65,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 32),
               child: Column(
                 children: [
+
                   // Edit Profile Picture
                   EditProfilePictureButton(
                     image:
