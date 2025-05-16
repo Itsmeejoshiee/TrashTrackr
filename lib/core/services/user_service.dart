@@ -318,4 +318,46 @@ class UserService {
       return null;
     }
   }
+
+  Future<void> incrementFollowingCount() async {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) {
+      print('UID is null, cannot fetch profile picture');
+      return null;
+    }
+
+    await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      'following_count': FieldValue.increment(1),
+    });
+  }
+
+  // Waste Log Counter
+  Future<Map<String, int>?> countDisposalClassifications() async {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) {
+      print('UID is null, cannot fetch profile picture');
+      return null;
+    }
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('log_disposal')
+        .get();
+
+    final Map<String, int> counts = {
+      'Recyclable': 0,
+      'Biodegradable': 0,
+      'Non-biodegradable': 0,
+    };
+
+    for (final doc in snapshot.docs) {
+      final classification = doc['classification'] as String?;
+      if (classification != null && counts.containsKey(classification)) {
+        counts[classification] = counts[classification]! + 1;
+      }
+    }
+    return counts;
+  }
+
 }
