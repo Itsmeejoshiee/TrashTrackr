@@ -7,6 +7,7 @@ import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
 import 'package:trashtrackr/core/widgets/buttons/disposal_location_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/multi_action_fab.dart';
 import 'package:trashtrackr/core/widgets/text_fields/dashboard_search_bar.dart';
+import 'package:trashtrackr/features/community/frontend/community_screen.dart';
 import 'package:trashtrackr/features/log_disposal/screens/log_disposal_screen.dart';
 import 'package:trashtrackr/features/maps/frontend/map_screen.dart';
 import 'package:trashtrackr/features/notifs/frontend/notif_screen.dart';
@@ -114,11 +115,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         },
                         onCommunity: () {
-                          //TODO: Implement community action
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => PlaceholderScreen(),
+                              builder: (context) => CommunityScreen(),
                             ),
                           );
                         },
