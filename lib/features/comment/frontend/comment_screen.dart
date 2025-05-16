@@ -8,16 +8,19 @@ import 'package:trashtrackr/features/comment/frontend/widgets/comment_input.dart
 import 'package:trashtrackr/features/comment/frontend/widgets/comment_tile.dart';
 import '../../../core/models/user_model.dart';
 import '../../../core/services/comment_service.dart';
-import '../../comment/model/comment_model.dart';
+import '../../profile/frontend/public_profile_screen.dart';
+import '../model/comment_model.dart';
 
 class CommentScreen extends StatefulWidget {
   final String postId;
   final bool isForEvent;
+  final Future<void> Function()? onCommentAdded; // <-- Added callback
 
   const CommentScreen({
     super.key,
     required this.postId,
     required this.isForEvent,
+    this.onCommentAdded, // <-- Added callback
   });
 
   @override
@@ -78,14 +81,21 @@ class _CommentScreenState extends State<CommentScreen> {
 
       await _commentService.addComment(newComment);
       _commentController.clear();
+
       await _activityService.logActivity('comment');
       _badgeService.checkTrashTrackrOg();
       _badgeService.checkGreenStreaker();
       _badgeService.checkDailyDiligent();
       _badgeService.checkWeekendWarrior();
+
+      // Call the passed callback after adding comment
+      if (widget.onCommentAdded != null) {
+        await widget.onCommentAdded!();
+      }
+
     } catch (e) {
       print('Error adding comment: $e');
-      rethrow; // Optional but helpful for deeper debugging
+      rethrow;
     }
   }
 
@@ -131,17 +141,25 @@ class _CommentScreenState extends State<CommentScreen> {
                   itemBuilder: (context, index) {
                     final comment = comments[index];
                     return CommentTile(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PublicProfileScreen(uid: comment.uid),
+                          ),
+                        );
+                      },
                       name: comment.fullName,
                       timestamp: comment.timestamp.toDate(),
                       comment: comment.content,
                       profilePicture: comment.profilePicture,
                     );
+
                   },
                 );
               },
             ),
           ),
-
 
           CommentInput(
             controller: _commentController,
