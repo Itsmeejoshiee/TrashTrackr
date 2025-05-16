@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:trashtrackr/core/services/waste_entry_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/box/neo_box.dart';
 
 class StatBoard extends StatelessWidget {
-  const StatBoard({
+  StatBoard({
     super.key,
-    required this.wasteDisposals,
     required this.streak,
     required this.badges,
+    required this.wasteCount,
   });
 
-  final int wasteDisposals;
   final int streak;
   final int badges;
+  final int wasteCount;
+
+  final WasteEntryService _wasteEntryService = WasteEntryService();
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +42,7 @@ class StatBoard extends StatelessWidget {
 
                 Center(
                   child: Text(
-                    '$wasteDisposals',
+                    '$wasteCount',
                     style: kPoppinsDisplayMedium.copyWith(
                       fontSize: 58,
                       fontWeight: FontWeight.bold,
