@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/services/activity_service.dart';
 import 'package:trashtrackr/core/services/badge_service.dart';
+import 'package:trashtrackr/core/services/auth_service.dart';
+import 'package:trashtrackr/core/services/notif_service.dart';
 import 'package:trashtrackr/core/services/post_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/utils/date_utils.dart';
@@ -31,8 +33,6 @@ class _PostCardState extends State<PostCard> {
   final PostService _postService = PostService();
   final ActivityService _activityService = ActivityService();
   final BadgeService _badgeService = BadgeService();
-
-  // Removed local _isCommented flag since we get live data from Firestore
 
   Widget _buildEmotionLabel() {
     final emotionName = widget.post.emotion.name;
@@ -75,6 +75,7 @@ class _PostCardState extends State<PostCard> {
       },
     );
   }
+
 
   Stream<int> _commentCountStream() {
     return FirebaseFirestore.instance
@@ -178,7 +179,7 @@ class _PostCardState extends State<PostCard> {
           const SizedBox(height: 15),
           Row(
             children: [
-              // Like Button
+              // Like Button with notification
               StreamBuilder<bool>(
                 stream: _postService.postLikedByCurrentUserStream(
                   widget.post.id!,
@@ -192,8 +193,12 @@ class _PostCardState extends State<PostCard> {
                         isActive: isLiked,
                         count: snapshot.data ?? 0,
                         onPressed: () async {
+                          final currentUser = FirebaseAuth.instance.currentUser;
+                          if (currentUser == null) return;
+
                           if (isLiked) {
                             await _postService.unlikePost(widget.post.id!);
+                            // Optionally, you can add code to remove like notification if needed
                           } else {
                             await _postService.likePost(widget.post.id!);
                             await _activityService.logActivity('like');
@@ -209,7 +214,7 @@ class _PostCardState extends State<PostCard> {
                 },
               ),
 
-              // Comment Button
+              // Comment Button with notification handled inside _openCommentScreen
               StreamBuilder<int>(
                 stream: _commentService.getCommentCount(
                   widget.post.id!,
@@ -233,7 +238,7 @@ class _PostCardState extends State<PostCard> {
                 },
               ),
 
-              // Bookmark Button
+              // Bookmark Button unchanged
               StreamBuilder<bool>(
                 stream: _postService.postBookmarkedStream(widget.post.id!),
                 builder: (context, snapshot) {

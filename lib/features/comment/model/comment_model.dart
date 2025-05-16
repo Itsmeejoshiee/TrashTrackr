@@ -9,6 +9,7 @@ class CommentModel {
   final String content;
   final Timestamp timestamp;
   final bool isForEvent;
+  final bool isForLike;
 
   CommentModel({
     required this.id,
@@ -19,6 +20,7 @@ class CommentModel {
     required this.content,
     required this.timestamp,
     required this.isForEvent,
+    this.isForLike = false
   });
 
   Map<String, dynamic> toMap() {
@@ -30,6 +32,7 @@ class CommentModel {
       'content': content,
       'timestamp': timestamp,
       'isForEvent': isForEvent,
+      'isForLike': isForLike
     };
   }
 
@@ -46,6 +49,7 @@ class CommentModel {
           ? map['timestamp']
           : Timestamp.now(),
       isForEvent: map['isForEvent'] ?? false,
+      isForLike: map['isForLike']
     );
   }
 }

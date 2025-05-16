@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:trashtrackr/core/services/activity_service.dart';
 import 'package:trashtrackr/core/services/badge_service.dart';
+import 'package:trashtrackr/core/services/notif_service.dart';
 import 'package:trashtrackr/core/services/post_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/utils/date_utils.dart';
@@ -31,15 +32,6 @@ class _EventCardState extends State<EventCard> {
   final PostService _postService = PostService();
   final ActivityService _activityService = ActivityService();
   final BadgeService _badgeService = BadgeService();
-
-  Stream<int> _commentCountStream() {
-    return FirebaseFirestore.instance
-        .collectionGroup('comments')
-        .where('postId', isEqualTo: widget.event.id)
-        .where('isForEvent', isEqualTo: true)
-        .snapshots()
-        .map((snapshot) => snapshot.size);
-  }
 
   Stream<bool> _hasCurrentUserCommented() {
     final user = FirebaseAuth.instance.currentUser;
@@ -168,7 +160,7 @@ class _EventCardState extends State<EventCard> {
             style: kTitleLarge.copyWith(fontWeight: FontWeight.bold),
           ),
           Text(
-            '${_formatDate(widget.event.dateRange)}   •   ${widget.event.startTime.toString()} - ${widget.event.startTime.toString()}',
+            '${_formatDate(widget.event.dateRange)}   •   ${widget.event.startTime} - ${widget.event.endTime}',
             style: kPoppinsBodySmall.copyWith(color: kGray.withOpacity(0.5)),
           ),
           Text(
@@ -178,6 +170,8 @@ class _EventCardState extends State<EventCard> {
           const SizedBox(height: 10),
           Row(
             children: [
+
+              // Like Button
               StreamBuilder<bool>(
                 stream: _postService.eventLikedByCurrentUserStream(
                   widget.event.id!,
@@ -191,6 +185,9 @@ class _EventCardState extends State<EventCard> {
                         isActive: isLiked,
                         count: snapshot.data ?? 0,
                         onPressed: () async {
+                          final currentUser = FirebaseAuth.instance.currentUser;
+                          if (currentUser == null) return;
+
                           if (isLiked) {
                             await _postService.unlikeEvent(widget.event.id!);
                           } else {
@@ -210,10 +207,7 @@ class _EventCardState extends State<EventCard> {
 
               // Comment Button
               StreamBuilder<int>(
-                stream: _commentService.getCommentCount(
-                  widget.event.id!,
-                  isForEvent: false,
-                ),
+                stream: _commentService.getCommentCount(widget.event.id!, isForEvent: true),
                 builder: (context, countSnapshot) {
                   final count = countSnapshot.data ?? 0;
                   return StreamBuilder<bool>(
@@ -231,7 +225,6 @@ class _EventCardState extends State<EventCard> {
                   );
                 },
               ),
-
               StreamBuilder<bool>(
                 stream: _postService.eventBookmarkedStream(widget.event.id!),
                 builder: (context, snapshot) {
