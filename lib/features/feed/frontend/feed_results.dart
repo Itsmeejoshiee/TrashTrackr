@@ -9,7 +9,6 @@ import 'package:trashtrackr/core/widgets/text_fields/dashboard_search_bar.dart';
 import 'package:trashtrackr/core/models/post_model.dart';
 import 'package:trashtrackr/features/feed/frontend/widgets/filter_menu.dart';
 
-
 class FeedResults extends StatefulWidget {
   final String searchKeyword;
   final String initialFilter;
@@ -82,7 +81,11 @@ class _FeedResultsState extends State<FeedResults>
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () async {
+            if (mounted) {
+              Navigator.pop(context);
+            }
+          },
           icon: const Icon(Icons.arrow_back_ios),
         ),
         title: Text(
