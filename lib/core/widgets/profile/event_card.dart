@@ -10,6 +10,7 @@ import 'package:trashtrackr/core/widgets/buttons/bookmark_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/comment_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/like_button.dart';
 import 'package:trashtrackr/core/models/event_model.dart';
+import 'package:trashtrackr/features/profile/frontend/public_profile_screen.dart';
 
 import '../../../features/comment/frontend/comment_screen.dart';
 import '../../services/comment_service.dart';
@@ -97,13 +98,24 @@ class _EventCardState extends State<EventCard> {
         children: [
           Row(
             children: [
-              CircleAvatar(
-                foregroundImage:
-                    (widget.event.profilePicture.isNotEmpty)
-                        ? NetworkImage(widget.event.profilePicture)
-                        : const AssetImage(
-                          'assets/images/placeholder_profile.jpg',
-                        ),
+              GestureDetector(
+                onTap:
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) =>
+                                PublicProfileScreen(uid: widget.event.uid),
+                      ),
+                    ),
+                child: CircleAvatar(
+                  foregroundImage:
+                      (widget.event.profilePicture.isNotEmpty)
+                          ? NetworkImage(widget.event.profilePicture)
+                          : const AssetImage(
+                            'assets/images/placeholder_profile.jpg',
+                          ),
+                ),
               ),
               const SizedBox(width: 10),
               Wrap(

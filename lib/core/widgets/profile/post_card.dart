@@ -11,6 +11,7 @@ import 'package:trashtrackr/core/widgets/buttons/comment_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/like_button.dart';
 import 'package:trashtrackr/core/models/post_model.dart';
 import 'package:trashtrackr/features/comment/frontend/comment_screen.dart';
+import 'package:trashtrackr/features/profile/frontend/public_profile_screen.dart';
 
 import '../../services/comment_service.dart';
 
@@ -103,14 +104,25 @@ class _PostCardState extends State<PostCard> {
         children: [
           Row(
             children: [
-              CircleAvatar(
-                backgroundImage:
-                    (widget.post.profilePicture.isNotEmpty)
-                        ? NetworkImage(widget.post.profilePicture)
-                        : const AssetImage(
-                              'assets/images/placeholder_profile.jpg',
-                            )
-                            as ImageProvider,
+              GestureDetector(
+                onTap:
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) =>
+                                PublicProfileScreen(uid: widget.post.uid),
+                      ),
+                    ),
+                child: CircleAvatar(
+                  backgroundImage:
+                      (widget.post.profilePicture.isNotEmpty)
+                          ? NetworkImage(widget.post.profilePicture)
+                          : const AssetImage(
+                                'assets/images/placeholder_profile.jpg',
+                              )
+                              as ImageProvider,
+                ),
               ),
               const SizedBox(width: 10),
               Wrap(

@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:trashtrackr/core/services/public_user_service.dart';
 import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/box/neo_box.dart';
-import 'package:trashtrackr/features/waste_stats/frontend/waste_stats_screen.dart';
 
-class WastelogBoard extends StatefulWidget {
-  const WastelogBoard({super.key});
+class PublicWastelogBoard extends StatefulWidget {
+  const PublicWastelogBoard({super.key, required this.uid});
+
+  final String uid;
 
   @override
-  State<WastelogBoard> createState() => _WastelogBoardState();
+  State<PublicWastelogBoard> createState() => _PublicWastelogBoardState();
 }
 
-class _WastelogBoardState extends State<WastelogBoard> {
-  final UserService _userService = UserService();
+class _PublicWastelogBoardState extends State<PublicWastelogBoard> {
+
+  final PublicUserService _publicUserService  = PublicUserService();
 
   int recylable = 0;
   int biodegradable = 0;
   int nonbiodegradable = 0;
 
   Future<void> _initClassificationCount() async {
-    final classifications = await _userService.countDisposalClassifications();
+    final classifications = await _publicUserService.countDisposalClassifications(widget.uid);
     setState(() {
       recylable = classifications!['Recyclable']!;
       biodegradable = classifications['Biodegradable']!;
@@ -43,7 +46,7 @@ class _WastelogBoardState extends State<WastelogBoard> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           NeoBox(
-            height: 216,
+            height: 160,
             width: screenWidth * 0.25,
             child: Column(
               children: [
@@ -66,24 +69,12 @@ class _WastelogBoardState extends State<WastelogBoard> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Spacer(),
-                IconButton(
-                  onPressed:
-                      () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => WasteStatsScreen(updateView: false),
-                        ),
-                      ),
-                  icon: Icon(Icons.keyboard_arrow_down),
-                ),
               ],
             ),
           ),
           SizedBox(width: 10),
           NeoBox(
-            height: 216,
+            height: 160,
             width: screenWidth * 0.25,
             child: Column(
               children: [
@@ -106,24 +97,12 @@ class _WastelogBoardState extends State<WastelogBoard> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Spacer(),
-                IconButton(
-                  onPressed:
-                      () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => WasteStatsScreen(updateView: false),
-                    ),
-                  ),
-                  icon: Icon(Icons.keyboard_arrow_down),
-                ),
               ],
             ),
           ),
           SizedBox(width: 10),
           NeoBox(
-            height: 216,
+            height: 160,
             width: screenWidth * 0.25,
             child: Column(
               children: [
@@ -145,18 +124,6 @@ class _WastelogBoardState extends State<WastelogBoard> {
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
-                ),
-                Spacer(),
-                IconButton(
-                  onPressed:
-                      () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => WasteStatsScreen(updateView: false),
-                    ),
-                  ),
-                  icon: Icon(Icons.keyboard_arrow_down),
                 ),
               ],
             ),

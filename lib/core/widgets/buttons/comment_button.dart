@@ -25,7 +25,7 @@ class CommentButton extends StatelessWidget {
           ),
           SizedBox(width: 5),
           Text(
-            (count > 0) ? '$count ' : 'Comment ',
+            (count > 0) ? '$count  ' : 'Comment  ',
             style: kPoppinsBodySmall.copyWith(
               color: isActive ? kAvocado : Colors.black,
               fontWeight: isActive ? FontWeight.bold : FontWeight.normal,

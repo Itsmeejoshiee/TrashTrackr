@@ -51,11 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
         );
       case ProfileSection.wasteLog:
-        return WastelogBoard(
-          recylable: 32,
-          biodegradable: 80,
-          nonbiodegradable: 12,
-        );
+        return WastelogBoard();
       case ProfileSection.events:
         return StreamBuilder(
           stream: _postService.getEventStream(),
