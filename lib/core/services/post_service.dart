@@ -149,6 +149,7 @@ class PostService {
       }).toList();
     });
   }
+
   Stream<List<EventModel>> getUpcomingEventStream() {
     final uid = _authService.currentUser?.uid;
 

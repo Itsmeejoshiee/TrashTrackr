@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:trashtrackr/core/models/post_model.dart';
 import 'package:trashtrackr/core/models/search_model.dart';
 import 'package:trashtrackr/features/post/models/event_model.dart';
-import 'package:trashtrackr/features/post/models/post_model.dart';
 
 class SearchService {
   Future<List<PostModel>> getPostResults({

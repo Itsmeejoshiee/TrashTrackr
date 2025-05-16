@@ -21,7 +21,7 @@ class PostModel {
     required this.body,
     required this.imageUrl,
   });
-  
+
   // Example: fromMap and toMap for Firebase integration
   factory PostModel.fromMap(Map<String, dynamic> map, {String? id}) =>
       PostModel(
