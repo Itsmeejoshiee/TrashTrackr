@@ -87,4 +87,24 @@ class ActivityService {
       return earnedBadges.length;
     }
   }
+
+  Future<int> getScanCount() async {
+    final uid = _authService.currentUser?.uid;
+
+    if (uid == null) {
+      print('UID is null, cannot fetch badges');
+      return 0;
+    }
+
+    final snapshot =
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .collection('activity_log')
+            .where('is_earned', isEqualTo: true)
+            .where('activity', isEqualTo: 'scan')
+            .get();
+
+    return snapshot.docs.length;
+  }
 }

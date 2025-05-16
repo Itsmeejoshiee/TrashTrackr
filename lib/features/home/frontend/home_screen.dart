@@ -12,6 +12,7 @@ import 'package:trashtrackr/features/log_disposal/screens/log_disposal_screen.da
 import 'package:trashtrackr/features/maps/frontend/map_screen.dart';
 import 'package:trashtrackr/features/notifs/frontend/notif_screen.dart';
 import 'package:trashtrackr/features/placeholder/placeholder_screen.dart';
+import 'package:trashtrackr/features/placeholder/widgets/placeholder_alert.dart';
 import 'package:trashtrackr/features/waste_scanner/frontend/waste_scanner_screen.dart';
 import 'package:trashtrackr/features/waste_stats/frontend/waste_stats_screen.dart';
 import 'widgets/badge_carousel.dart';
@@ -52,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _loadCurrentData() async {
     final activities = await _activityService.getAllActivities(false);
-    final activityCount = await _activityService.getAllActivities(true);
+    final activityCount = await _activityService.getScanCount();
     final streak = _dateUtilsHelper.getCurrentStreakFromActivities(activities);
     final badges = await _activityService.getEarnedBadges();
     final greetingMessage = await _dateUtilsHelper.getGreetingMessage();
@@ -92,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       // Dashboard App Bar
                       DashboardAppBar(
                         greetingMessage: _greetingMessage,
-                        username: '${user?.firstName}',
+                        username: user.firstName,
                         onNotifs:
                             () => Navigator.push(
                               context,
@@ -130,12 +131,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         },
                         onGames: () {
-                          //TODO: Implement games action
-                          Navigator.push(
+                          //TODO: Implement Games
+                          PlaceholderAlert().showPlaceholderConstructionAlert(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) => PlaceholderScreen(),
-                            ),
                           );
                         },
                         onLogDisposal: () {
@@ -164,17 +162,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           // Tips n Tricks & Show more
                           SectionLabel(label: 'Tips & Tricks'),
 
-                          Container(
-                            width: double.infinity,
-                            margin: EdgeInsets.symmetric(vertical: 10),
-                            height: 180,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              image: DecorationImage(
-                                image: AssetImage(
-                                  'assets/images/covers/tips_n_tricks.png',
+                          GestureDetector(
+                            onTap: () {
+                              PlaceholderAlert()
+                                  .showPlaceholderConstructionAlert(context);
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              margin: EdgeInsets.symmetric(vertical: 10),
+                              height: 180,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                    'assets/images/covers/tips_n_tricks.png',
+                                  ),
+                                  fit: BoxFit.cover,
                                 ),
-                                fit: BoxFit.cover,
                               ),
                             ),
                           ),
