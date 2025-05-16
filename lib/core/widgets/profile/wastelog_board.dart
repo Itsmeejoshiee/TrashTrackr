@@ -1,13 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/box/neo_box.dart';
+import 'package:trashtrackr/features/waste_stats/frontend/waste_stats_screen.dart';
 
-class WastelogBoard extends StatelessWidget {
-  const WastelogBoard({super.key, this.recylable = 0, this.biodegradable = 0, this.nonbiodegradable = 0});
+class WastelogBoard extends StatefulWidget {
+  const WastelogBoard({super.key});
 
-  final int recylable;
-  final int biodegradable;
-  final int nonbiodegradable;
+  @override
+  State<WastelogBoard> createState() => _WastelogBoardState();
+}
+
+class _WastelogBoardState extends State<WastelogBoard> {
+  final UserService _userService = UserService();
+
+  int recylable = 0;
+  int biodegradable = 0;
+  int nonbiodegradable = 0;
+
+  Future<void> _initClassificationCount() async {
+    final classifications = await _userService.countDisposalClassifications();
+    setState(() {
+      recylable = classifications!['Recyclable']!;
+      biodegradable = classifications['Biodegradable']!;
+      nonbiodegradable = classifications['Non-biodegradable']!;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initClassificationCount();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +68,14 @@ class WastelogBoard extends StatelessWidget {
                 ),
                 Spacer(),
                 IconButton(
-                  onPressed: () {},
+                  onPressed:
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => WasteStatsScreen(updateView: false),
+                        ),
+                      ),
                   icon: Icon(Icons.keyboard_arrow_down),
                 ),
               ],
@@ -77,7 +108,14 @@ class WastelogBoard extends StatelessWidget {
                 ),
                 Spacer(),
                 IconButton(
-                  onPressed: () {},
+                  onPressed:
+                      () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => WasteStatsScreen(updateView: false),
+                    ),
+                  ),
                   icon: Icon(Icons.keyboard_arrow_down),
                 ),
               ],
@@ -110,7 +148,14 @@ class WastelogBoard extends StatelessWidget {
                 ),
                 Spacer(),
                 IconButton(
-                  onPressed: () {},
+                  onPressed:
+                      () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => WasteStatsScreen(updateView: false),
+                    ),
+                  ),
                   icon: Icon(Icons.keyboard_arrow_down),
                 ),
               ],
