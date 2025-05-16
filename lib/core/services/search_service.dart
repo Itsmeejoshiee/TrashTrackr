@@ -10,7 +10,9 @@ class SearchService {
     required String filterVariable,
   }) async {
     final keywordLower = searchKeyword.toLowerCase();
-
+    print(
+      '🔍 Searching for posts. Filter: $filterVariable, Keyword: $keywordLower',
+    );
     final snapshot =
         await FirebaseFirestore.instance
             .collection('posts')
@@ -20,11 +22,18 @@ class SearchService {
     return snapshot.docs
         .map((doc) {
           final post = PostModel.fromMap(doc.data()).copyWith(id: doc.id);
+          print('➡️ Found post by: ${post.fullName}');
           return post;
         })
         .where((post) {
           switch (filterVariable) {
             case 'Users':
+              final matches = post.fullName.toLowerCase().contains(
+                keywordLower,
+              );
+              print(
+                '👤 Checking ${post.fullName} for "$keywordLower" — Match: $matches',
+              );
               return post.fullName.toLowerCase().contains(keywordLower);
             case 'General Content':
             case 'Posts':
