@@ -30,9 +30,10 @@ class _LogDisposalScreenState extends State<LogDisposalScreen> {
   void initState() {
     super.initState();
     _searchController.addListener(
-      () => setState(() {
-        searchQuery = _searchController.text;
-      }),
+          () =>
+          setState(() {
+            searchQuery = _searchController.text;
+          }),
     );
   }
 
@@ -52,11 +53,9 @@ class _LogDisposalScreenState extends State<LogDisposalScreen> {
           initialWasteType: selectedWasteType,
           initialDateRange: selectedDateRange,
           initialMultiSelect: multiSelectOptions,
-          onApply: (
-            String? wasteType,
-            DateTimeRange? dateRange,
-            List<String> quickFilters,
-          ) {
+          onApply: (String? wasteType,
+              DateTimeRange? dateRange,
+              List<String> quickFilters,) {
             Navigator.of(modalContext).pop();
             setState(() {
               selectedWasteType = wasteType;
@@ -133,14 +132,18 @@ class _LogDisposalScreenState extends State<LogDisposalScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double imageSize = (screenWidth / 3) + 60;
+    final double bottomOffset = screenHeight / 8;
     final query = searchQuery.toLowerCase();
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         leading: IconButton(
           onPressed:
-              () => Navigator.push(
+              () =>
+              Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => DashboardScreen()),
               ),
@@ -178,32 +181,61 @@ class _LogDisposalScreenState extends State<LogDisposalScreen> {
                     );
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  } else if (!snapshot.hasData) {
                     return Center(
                       child: Text(
                         "No results found.",
                         style: kTitleMedium.copyWith(color: kDarkGrey),
                       ),
                     );
+                  } else if (snapshot.data!.isEmpty) {
+
+                    return Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/components/no_logs.png',
+                            width: imageSize,
+                          ),
+                          Text(
+                            "No disposals yet!",
+                            style: kDisplaySmall.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 15),
+                          Text(
+                            'Looks like you haven’t tracked\nany waste today.',
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 15),
+                          Text(
+                            ' Scan or sort items to start logging\nyour impact! ♻️',
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: bottomOffset),
+                        ],
+                      ),
+                    );
+
                   } else {
                     final wasteEntries = snapshot.data!;
 
                     final filteredEntries =
-                        wasteEntries.where((entry) {
-                          final matchesSearch =
-                              entry.productName.toLowerCase().contains(query) ||
+                    wasteEntries.where((entry) {
+                      final matchesSearch =
+                          entry.productName.toLowerCase().contains(query) ||
                               entry.classification.toLowerCase().contains(
                                 query,
                               ) ||
                               (entry.timestamp?.toString().contains(query) ??
                                   false);
 
-                          final matchesWasteType =
-                              selectedWasteType == null ||
+                      final matchesWasteType =
+                          selectedWasteType == null ||
                               entry.classification == selectedWasteType;
 
-                          final matchesDateRange =
-                              selectedDateRange == null ||
+                      final matchesDateRange =
+                          selectedDateRange == null ||
                               (entry.timestamp != null &&
                                   entry.timestamp!.isAfter(
                                     selectedDateRange!.start.subtract(
@@ -216,55 +248,56 @@ class _LogDisposalScreenState extends State<LogDisposalScreen> {
                                     ),
                                   ));
 
-                          final matchesQuickOptions =
-                              multiSelectOptions.isEmpty ||
+                      final matchesQuickOptions =
+                          multiSelectOptions.isEmpty ||
                               _matchQuickOptions(entry.timestamp);
 
-                          return matchesSearch &&
-                              matchesWasteType &&
-                              matchesDateRange &&
-                              matchesQuickOptions;
-                        }).toList();
+                      return matchesSearch &&
+                          matchesWasteType &&
+                          matchesDateRange &&
+                          matchesQuickOptions;
+                    }).toList();
 
                     final groupedByDate = _groupEntriesByDate(filteredEntries);
 
                     return ListView(
                       children:
-                          groupedByDate.entries.map((entry) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                      groupedByDate.entries.map((entry) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
                               children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      entry.key,
-                                      style: kTitleMedium.copyWith(
-                                        color: kForestGreen,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    const Expanded(
-                                      child: Divider(
-                                        thickness: 2,
-                                        color: kDarkGrey,
-                                      ),
-                                    ),
-                                  ],
+                                Text(
+                                  entry.key,
+                                  style: kTitleMedium.copyWith(
+                                    color: kForestGreen,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
-                                const SizedBox(height: 8),
-                                ...entry.value
-                                    .map(
-                                      (log) => LogCard(
-                                        result: log,
-                                        fromScreen: 'disposal',
-                                      ),
-                                    )
-                                    .toList(),
-                                const SizedBox(height: 16),
+                                const SizedBox(width: 8),
+                                const Expanded(
+                                  child: Divider(
+                                    thickness: 2,
+                                    color: kDarkGrey,
+                                  ),
+                                ),
                               ],
-                            );
-                          }).toList(),
+                            ),
+                            const SizedBox(height: 8),
+                            ...entry.value
+                                .map(
+                                  (log) =>
+                                  LogCard(
+                                    result: log,
+                                    fromScreen: 'disposal',
+                                  ),
+                            )
+                                .toList(),
+                            const SizedBox(height: 16),
+                          ],
+                        );
+                      }).toList(),
                     );
                   }
                 },

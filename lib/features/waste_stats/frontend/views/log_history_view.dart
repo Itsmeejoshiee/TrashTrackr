@@ -55,6 +55,10 @@ class _LogHistoryViewState extends State<LogHistoryView> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double imageSize = (screenWidth / 3) + 60;
+    final double bottomOffset = screenHeight / 8;
     return StreamBuilder<List<ScanResult>>(
       stream: fetchWasteEntries(),
       builder: (context, snapshot) {
@@ -64,6 +68,46 @@ class _LogHistoryViewState extends State<LogHistoryView> {
 
         if (snapshot.hasError) {
           return Center(child: Text("Error: ${snapshot.error}"));
+        }
+
+        if (!snapshot.hasData) {
+          return Center(
+            child: Text(
+              "No results found.",
+              style: kTitleMedium.copyWith(color: kDarkGrey),
+            ),
+          );
+        }
+
+        if (snapshot.data!.isEmpty) {
+
+          return Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/components/no_logs.png',
+                  width: imageSize,
+                ),
+                Text(
+                  "No disposals yet!",
+                  style: kDisplaySmall.copyWith(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 15),
+                Text(
+                  'Looks like you haven’t tracked\nany waste today.',
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 15),
+                Text(
+                  ' Scan or sort items to start logging\nyour impact! ♻️',
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: bottomOffset),
+              ],
+            ),
+          );
+
         }
 
         final logs = snapshot.data ?? [];
