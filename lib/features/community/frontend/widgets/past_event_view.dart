@@ -25,6 +25,10 @@ class _PastEventViewState extends State<PastEventView> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double imageSize = (screenWidth / 3) + 60;
+    final double bottomOffset = screenHeight / 8;
     return Expanded(
       child: StreamBuilder<List<EventModel>>(
           stream: _postService.getPastEventStream(),
@@ -39,6 +43,36 @@ class _PastEventViewState extends State<PastEventView> {
             }
 
             final upcomingEvents = _eventBuilder(snapshot.data!);
+
+            final pastEvents = _eventBuilder(snapshot.data!);
+
+            if (upcomingEvents.isEmpty) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/images/components/no_feeds.png',
+                    width: imageSize,
+                  ),
+                  Text(
+                    "No past events yet!",
+                    style: kDisplaySmall.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 15),
+                  Text(
+                    ' You haven’t joined or hosted any events—yet.',
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 15),
+                  Text(
+                    ' Attend your first clean-up and it’ll\nshow up here! 🌿🗓️',
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: bottomOffset),
+                ],
+              );
+            }
+
             return SingleChildScrollView(
               child: Column(
                 children: upcomingEvents,
