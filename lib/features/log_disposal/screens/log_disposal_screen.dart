@@ -167,6 +167,7 @@ class _LogDisposalScreenState extends State<LogDisposalScreen> {
               },
               onFilterTap: () => _showFilterModal(context),
             ),
+            const SizedBox(height: 20),
             Expanded(
               child: StreamBuilder<List<ScanResult>>(
                 stream: fetchWasteEntries(),

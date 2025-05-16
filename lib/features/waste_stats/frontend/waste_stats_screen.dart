@@ -69,6 +69,8 @@ class _WasteStatsScreenState extends State<WasteStatsScreen> {
               },
             ),
 
+            const SizedBox(height: 5),
+
             // Waste Stats Content
             (_updateView)
                 ? Expanded(
