@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/services/public_user_service.dart';
-import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/box/neo_box.dart';
 
@@ -14,17 +13,17 @@ class PublicWastelogBoard extends StatefulWidget {
 }
 
 class _PublicWastelogBoardState extends State<PublicWastelogBoard> {
-
-  final PublicUserService _publicUserService  = PublicUserService();
+  final PublicUserService _publicUserService = PublicUserService();
 
   int recylable = 0;
   int biodegradable = 0;
   int nonbiodegradable = 0;
 
   Future<void> _initClassificationCount() async {
-    final classifications = await _publicUserService.countDisposalClassifications(widget.uid);
+    final classifications = await _publicUserService
+        .countDisposalClassifications(widget.uid);
     setState(() {
-      recylable = classifications!['Recyclable']!;
+      recylable = classifications['Recyclable']!;
       biodegradable = classifications['Biodegradable']!;
       nonbiodegradable = classifications['Non-biodegradable']!;
     });

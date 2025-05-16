@@ -11,12 +11,9 @@ import 'package:trashtrackr/core/widgets/profile/profile_header.dart';
 import 'package:trashtrackr/core/widgets/profile/profile_switch_tile.dart';
 import 'package:trashtrackr/core/widgets/profile/post_card.dart';
 import 'package:trashtrackr/core/widgets/profile/event_card.dart';
-import 'package:trashtrackr/core/widgets/profile/badge_grid.dart';
 import 'package:trashtrackr/core/widgets/profile/public_badge_grid.dart';
 import 'package:trashtrackr/core/widgets/profile/public_streak_calendar.dart';
 import 'package:trashtrackr/core/widgets/profile/public_wastelog_board.dart';
-import 'package:trashtrackr/core/widgets/profile/streak_calendar.dart';
-import 'package:trashtrackr/core/widgets/profile/wastelog_board.dart';
 
 class PublicProfileScreen extends StatefulWidget {
   final String uid;
@@ -59,7 +56,9 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                       ),
                       Text(
                         "Nothing here yet!",
-                        style: kHeadlineMedium.copyWith(fontWeight: FontWeight.bold),
+                        style: kHeadlineMedium.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       SizedBox(height: 15),
                       Text(
@@ -110,7 +109,9 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                       ),
                       Text(
                         "No events yet!",
-                        style: kHeadlineMedium.copyWith(fontWeight: FontWeight.bold),
+                        style: kHeadlineMedium.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       SizedBox(height: 15),
                       Text(
@@ -192,15 +193,18 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
 
                     SizedBox(height: 18),
 
-
-                    (_authService.currentUser!.uid != widget.uid) ? RoundedRectangleButton(
-                      title: 'Follow',
-                      height: 40,
-                      onPressed: () {
-                        _userService.incrementFollowingCount();
-                        _publicUserService.incrementFollowerCount(widget.uid);
-                      },
-                    ) : SizedBox(),
+                    (_authService.currentUser!.uid != widget.uid)
+                        ? RoundedRectangleButton(
+                          title: 'Follow',
+                          height: 40,
+                          onPressed: () {
+                            _userService.incrementFollowingCount();
+                            _publicUserService.incrementFollowerCount(
+                              widget.uid,
+                            );
+                          },
+                        )
+                        : SizedBox(),
 
                     SizedBox(height: 18),
 

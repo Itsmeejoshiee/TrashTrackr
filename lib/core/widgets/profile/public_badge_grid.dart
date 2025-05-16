@@ -1,10 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:trashtrackr/core/services/badge_service.dart';
 import 'package:trashtrackr/core/services/public_user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/models/badge_model.dart';
-import 'package:trashtrackr/core/utils/date_utils.dart';
 import 'package:trashtrackr/core/widgets/box/neo_box.dart';
 import 'package:trashtrackr/core/widgets/profile/badge_tile.dart';
 
@@ -18,9 +15,8 @@ class PublicBadgeGrid extends StatefulWidget {
 }
 
 class _PublicBadgeGridState extends State<PublicBadgeGrid> {
-
   final PublicUserService _publicUserService = PublicUserService();
-  
+
   bool _isExpanded = false;
   int _visibleBadges = 3;
 
@@ -91,13 +87,17 @@ class _PublicBadgeGridState extends State<PublicBadgeGrid> {
                   crossAxisCount: 3,
                   mainAxisSpacing: 10,
                 ),
-                itemCount: (badges.length < _visibleBadges) ? badges.length : _visibleBadges,
+                itemCount:
+                    (badges.length < _visibleBadges)
+                        ? badges.length
+                        : _visibleBadges,
                 itemBuilder: (context, index) {
                   final badge = badges[index];
                   print(badges.length);
                   if (badge.isEarned) {
                     return BadgeTile(badge: badge);
                   }
+                  return null;
                 },
               ),
             ),
