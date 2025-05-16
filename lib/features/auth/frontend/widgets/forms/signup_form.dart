@@ -4,6 +4,7 @@ import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/text_fields/profile_text_field.dart';
 import 'package:trashtrackr/core/widgets/buttons/rounded_rectangle_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/auth_provider_button.dart';
+import 'package:trashtrackr/features/placeholder/widgets/placeholder_alert.dart';
 
 class SignupForm extends StatefulWidget {
   const SignupForm({super.key, required this.onToggle});
@@ -178,13 +179,17 @@ class _SignupFormState extends State<SignupForm> {
 
               AuthProviderButton(
                 padding: EdgeInsets.all(12),
-                onPressed: () {},
+                onPressed: () {
+                  PlaceholderAlert().showPlaceholderConstructionAlert(context);
+                },
                 child: Image.asset('assets/images/icons/facebook_green.png'),
               ),
 
               AuthProviderButton(
                 padding: EdgeInsets.all(10),
-                onPressed: () {},
+                onPressed: () {
+                  PlaceholderAlert().showPlaceholderConstructionAlert(context);
+                },
                 child: Image.asset('assets/images/icons/apple_green.png'),
               ),
             ],
