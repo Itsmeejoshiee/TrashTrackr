@@ -113,7 +113,7 @@ class _MapScreenState extends State<MapScreen> {
         body: Stack(
           children: [
             _currentLocation == null
-                ? Center(child: CircularProgressIndicator())
+                ? Center(child: CircularProgressIndicator(color: kAvocado))
                 : GoogleMap(
                   onMapCreated: (controller) => _mapController = controller,
                   style: _mapStyle,
