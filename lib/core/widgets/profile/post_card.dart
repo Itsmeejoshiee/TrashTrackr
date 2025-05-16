@@ -8,6 +8,7 @@ import 'package:trashtrackr/core/widgets/buttons/bookmark_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/comment_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/like_button.dart';
 import 'package:trashtrackr/features/post/models/post_model.dart';
+import 'package:trashtrackr/features/comment/frontend/comment_screen.dart';
 
 class PostCard extends StatefulWidget {
   const PostCard({super.key, required this.post});
@@ -54,6 +55,22 @@ class _PostCardState extends State<PostCard> {
     String time = '$hour:$minutes $meridian';
 
     return '$date @ $time';
+  }
+
+  // for comment bottom sheet
+  void _openCommentScreen(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      builder: (context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.9,
+          child: CommentScreen(
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -142,6 +159,7 @@ class _PostCardState extends State<PostCard> {
                 onPressed: () {
                   setState(() {
                     _isCommented = !_isCommented;
+                    _openCommentScreen(context);
                   });
                 },
               ),
