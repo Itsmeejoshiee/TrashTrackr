@@ -9,31 +9,32 @@ import 'package:image_cropper/image_cropper.dart';
 
 class ProfilePicture {
   Future<Uint8List?> selectImage(ImageSource source) async {
-    // Pick an image from source (gallery or camera)
     final ImagePicker picker = ImagePicker();
     final XFile? pickedImage = await picker.pickImage(source: source);
 
     if (pickedImage != null) {
-      // Crop image and transform it into Uint8List
-      final File croppedImage = await cropImage(pickedImage);
+      final File? croppedImage = await cropImage(pickedImage);
 
-      var imageBytes = await FlutterImageCompress.compressWithFile(
-        croppedImage.path,
-        quality: 50,
-        rotate: 0,
-        autoCorrectionAngle: true,
-      );
-
-      return imageBytes;
+      if (croppedImage != null) {
+        var imageBytes = await FlutterImageCompress.compressWithFile(
+          croppedImage.path,
+          quality: 50,
+          rotate: 0,
+          autoCorrectionAngle: true,
+        );
+        return imageBytes;
+      }
     }
 
     return null;
   }
 
-  Future<File> cropImage(XFile? imageFile) async {
+  Future<File?> cropImage(XFile? imageFile) async {
+    if (imageFile == null) return null;
+
     final ImageCropper cropper = ImageCropper();
     final CroppedFile? croppedImage = await cropper.cropImage(
-      sourcePath: imageFile!.path,
+      sourcePath: imageFile.path,
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: 'Cropper',
@@ -51,7 +52,10 @@ class ProfilePicture {
         ),
       ],
     );
-    return File(croppedImage!.path);
+
+    if (croppedImage == null) return null;
+
+    return File(croppedImage.path);
   }
 
   Future<void> update(BuildContext context) async {
@@ -70,7 +74,9 @@ class ProfilePicture {
                   final image = await ProfilePicture().selectImage(
                     ImageSource.gallery,
                   );
-                  await userService.uploadProfileImage(image);
+                  if (image != null) {
+                    await userService.uploadProfileImage(image);
+                  }
                 },
               ),
               ListTile(
@@ -81,7 +87,9 @@ class ProfilePicture {
                   final image = await ProfilePicture().selectImage(
                     ImageSource.camera,
                   );
-                  await userService.uploadProfileImage(image);
+                  if (image != null) {
+                    await userService.uploadProfileImage(image);
+                  }
                 },
               ),
             ],

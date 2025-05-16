@@ -77,7 +77,6 @@ class _HomeScreenState extends State<HomeScreen> {
         return StreamBuilder(
           stream: _wasteEntryService.fetchWasteEntries(),
           builder: (context, snapshot) {
-
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(color: kAvocado),
@@ -87,11 +86,12 @@ class _HomeScreenState extends State<HomeScreen> {
             }
 
             final entries = snapshot.data ?? [];
-            final validEntries = entries.where((e) => e.timestamp != null).toList();
+            final validEntries =
+                entries.where((e) => e.timestamp != null).toList();
 
             final wasteCount = validEntries.fold<int>(
               0,
-                  (sum, entry) => sum + (entry.qty),
+              (sum, entry) => sum + (entry.qty),
             );
 
             return Scaffold(
@@ -148,9 +148,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                             onGames: () {
                               //TODO: Implement Games
-                              PlaceholderAlert().showPlaceholderConstructionAlert(
-                                context,
-                              );
+                              PlaceholderAlert()
+                                  .showPlaceholderConstructionAlert(context);
                             },
                             onLogDisposal: () {
                               Navigator.push(
@@ -181,7 +180,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               GestureDetector(
                                 onTap: () {
                                   PlaceholderAlert()
-                                      .showPlaceholderConstructionAlert(context);
+                                      .showPlaceholderConstructionAlert(
+                                        context,
+                                      );
                                 },
                                 child: Container(
                                   width: double.infinity,
@@ -234,7 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             );
-          }
+          },
         );
       },
     );
