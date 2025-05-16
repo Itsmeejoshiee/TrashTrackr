@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     children: [
                       // Offset
-                      SizedBox(height: 50),
+                      SizedBox(height: 60),
 
                       // Dashboard App Bar
                       DashboardAppBar(
@@ -165,10 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Column(
                         children: [
                           // Tips n Tricks & Show more
-                          SectionLabel(
-                            label: 'Tips & Tricks',
-                            onShowMore: () {},
-                          ),
+                          SectionLabel(label: 'Tips & Tricks'),
 
                           Container(
                             width: double.infinity,
@@ -192,10 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SectionLabel(
-                            label: 'Current Stats',
-                            onShowMore: () {},
-                          ),
+                          SectionLabel(label: 'Current Stats'),
                           StatBoard(
                             wasteDisposals: _activityCount ?? 0,
                             streak: _currentStreak ?? 0,
