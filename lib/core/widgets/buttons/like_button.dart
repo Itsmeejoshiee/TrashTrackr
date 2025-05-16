@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 
 class LikeButton extends StatelessWidget {
-  const LikeButton({super.key, this.isActive = false, required this.onPressed});
+  const LikeButton({
+    super.key,
+    this.isActive = false,
+    required this.count,
+    required this.onPressed,
+  });
 
   final bool isActive;
+  final int count;
   final VoidCallback onPressed;
 
   @override
@@ -18,16 +24,16 @@ class LikeButton extends StatelessWidget {
             'assets/images/icons/like_${isActive ? 'active' : 'inactive'}.png',
             height: 16,
           ),
-          (!isActive) ? Text(
-            'Like  ',
+          Text(
+            (count > 0) ? '$count  ' : 'Like  ',
             style:
-            (!isActive)
-                ? kPoppinsBodySmall
-                : kPoppinsBodySmall.copyWith(
-              color: kAvocado,
-              fontWeight: FontWeight.bold,
-            ),
-          ) : SizedBox(),
+                (!isActive)
+                    ? kPoppinsBodySmall
+                    : kPoppinsBodySmall.copyWith(
+                      color: kAvocado,
+                      fontWeight: FontWeight.bold,
+                    ),
+          ),
         ],
       ),
     );
