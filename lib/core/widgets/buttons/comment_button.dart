@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
+import 'package:trashtrackr/features/comment/frontend/comment_screen.dart';
 
 class CommentButton extends StatelessWidget {
   const CommentButton({
     super.key,
     this.isActive = false,
     required this.onPressed,
+    required this.label,
   });
 
   final bool isActive;
   final VoidCallback onPressed;
+  final String label;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +26,7 @@ class CommentButton extends StatelessWidget {
             height: 19,
           ),
           (!isActive) ? Text(
-            'Comment  ',
+            label,
             style:
             (!isActive)
                 ? kPoppinsBodySmall

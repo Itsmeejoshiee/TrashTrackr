@@ -1,13 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:trashtrackr/core/services/post_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/utils/date_utils.dart';
 import 'package:trashtrackr/core/widgets/box/neo_box.dart';
 import 'package:trashtrackr/core/widgets/buttons/bookmark_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/comment_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/like_button.dart';
-import 'package:trashtrackr/features/post/models/event_model.dart';
+import 'package:trashtrackr/core/models/event_model.dart';
+
+import '../../../features/comment/frontend/comment_screen.dart';
 
 class EventCard extends StatefulWidget {
   const EventCard({
@@ -22,6 +25,9 @@ class EventCard extends StatefulWidget {
 }
 
 class _EventCardState extends State<EventCard> {
+
+  final PostService _postService = PostService();
+
   bool _isLiked = false;
   bool _isCommented = false;
   bool _isBookmarked = false;
@@ -54,6 +60,32 @@ class _EventCardState extends State<EventCard> {
     final day = startDate.day;
     final year = startDate.year;
     return '$dayName, $month $day, $year';
+  }
+
+  void _openCommentScreen(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      builder: (context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.9,
+          child: CommentScreen(
+            postId: widget.event.id ?? '',
+            isForEvent: false,
+          ),
+        );
+      },
+    );
+  }
+
+  Stream<int> _commentCountStream() {
+    return FirebaseFirestore.instance
+        .collectionGroup('comments')
+        .where('postId', isEqualTo: widget.event.id)
+        .where('isForEvent', isEqualTo: false)
+        .snapshots()
+        .map((snapshot) => snapshot.size);
   }
   
   @override
@@ -130,30 +162,62 @@ class _EventCardState extends State<EventCard> {
 
           Row(
             children: [
-              LikeButton(
-                isActive: _isLiked,
-                onPressed: () {
-                  setState(() {
-                    _isLiked = !_isLiked;
-                  });
+
+              StreamBuilder<bool>(
+                stream: _postService.eventLikedByCurrentUserStream(
+                  widget.event.id!,
+                ),
+                builder: (context, snapshot) {
+                  final isLiked = snapshot.data ?? false;
+                  return StreamBuilder<int>(
+                    stream: _postService.getEventLikeCount(widget.event.id!),
+                    builder: (context, snapshot) {
+                      return LikeButton(
+                        isActive: isLiked,
+                        count: snapshot.data ?? 0,
+                        onPressed: () async {
+                          if (isLiked) {
+                            await _postService.unlikeEvent(widget.event.id!);
+                          } else {
+                            await _postService.likeEvent(widget.event.id!);
+                          }
+                        },
+                      );
+                    },
+                  );
                 },
               ),
 
-              CommentButton(
-                isActive: _isCommented,
-                onPressed: () {
-                  setState(() {
-                    _isCommented = !_isCommented;
-                  });
+              StreamBuilder<int>(
+                stream: _commentCountStream(),
+                builder: (context, snapshot) {
+                  final count = snapshot.data ?? 0;
+                  return CommentButton(
+                    isActive: _isCommented,
+                    label: count > 0 ? count.toString() : 'Comment ',
+                    onPressed: () {
+                      setState(() => _isCommented = !_isCommented);
+                      _openCommentScreen(context);
+                    },
+                  );
                 },
               ),
 
-              BookmarkButton(
-                isActive: _isBookmarked,
-                onPressed: () {
-                  setState(() {
-                    _isBookmarked = !_isBookmarked;
-                  });
+              // Bookmark Button
+              StreamBuilder<bool>(
+                stream: _postService.eventBookmarkedStream(widget.event.id!),
+                builder: (context, snapshot) {
+                  final isBookmarked = snapshot.data ?? false;
+                  return BookmarkButton(
+                    isActive: isBookmarked,
+                    onPressed: () async {
+                      if (isBookmarked) {
+                        await _postService.unbookmarkEvent(widget.event.id!);
+                      } else {
+                        await _postService.bookmarkEvent(widget.event.id!);
+                      }
+                    },
+                  );
                 },
               ),
             ],

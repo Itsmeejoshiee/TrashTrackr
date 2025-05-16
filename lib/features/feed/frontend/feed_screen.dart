@@ -4,6 +4,11 @@ import 'package:trashtrackr/core/widgets/profile/event_card.dart';
 import 'package:trashtrackr/core/widgets/profile/post_card.dart';
 import 'package:trashtrackr/core/widgets/text_fields/dashboard_search_bar.dart';
 import 'package:trashtrackr/features/feed/frontend/feed_results.dart';
+import 'package:trashtrackr/features/home/frontend/widgets/section_label.dart';
+import 'package:trashtrackr/features/feed/frontend/widgets/recycling_guide_card.dart';
+import 'package:trashtrackr/features/feed/frontend/widgets/recycling_guide_carousel.dart';
+import 'package:trashtrackr/core/widgets/profile/post_card.dart';
+import 'package:trashtrackr/core/models/post_model.dart';
 import 'package:trashtrackr/features/feed/frontend/widgets/filter_menu.dart';
 
 class FeedScreen extends StatefulWidget {

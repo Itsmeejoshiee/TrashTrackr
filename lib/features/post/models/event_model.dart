@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trashtrackr/core/utils/event_type.dart';
 
 class EventModel {
+  String? id;
   final String uid;
   final String fullName;
   final String profilePicture;
@@ -17,6 +18,7 @@ class EventModel {
   final String desc;
 
   EventModel({
+    required this.id,
     required this.uid,
     required this.fullName,
     required this.profilePicture,
@@ -33,6 +35,7 @@ class EventModel {
 
   // Example: fromMap and toMap for Firebase integration
   factory EventModel.fromMap(Map<String, dynamic> map) => EventModel(
+    id: map['id'] ?? '',
     uid: map['uid'] ?? '',
     fullName: map['full_name'] ?? '',
     profilePicture: map['profile_picture'] ?? '',
@@ -51,6 +54,7 @@ class EventModel {
   );
 
   Map<String, dynamic> toMap() => {
+    'id': id,
     'uid': uid,
     'full_name': fullName,
     'profile_picture': profilePicture,

@@ -6,7 +6,7 @@ import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/utils/emotion.dart';
 import 'package:trashtrackr/core/utils/string_utils.dart';
-import 'package:trashtrackr/features/post/models/post_model.dart';
+import 'package:trashtrackr/core/models/post_model.dart';
 import 'package:trashtrackr/features/post/widgets/emotion_dropdown.dart';
 import 'package:trashtrackr/features/post/widgets/post_header.dart';
 import 'package:trashtrackr/features/post/widgets/post_image_preview.dart';

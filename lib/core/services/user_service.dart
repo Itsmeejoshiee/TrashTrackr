@@ -15,8 +15,8 @@ import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:trashtrackr/core/services/badge_service.dart';
 import 'package:trashtrackr/core/user_provider.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
-import 'package:trashtrackr/features/post/models/event_model.dart';
-import 'package:trashtrackr/features/post/models/post_model.dart';
+import 'package:trashtrackr/core/models/event_model.dart';
+import 'package:trashtrackr/core/models/post_model.dart';
 import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
