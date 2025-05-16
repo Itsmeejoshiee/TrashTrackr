@@ -27,12 +27,15 @@ class CommentService {
       final fullName = '$firstName $lastName'.trim();
       final profilePicture = userData['profile_picture'] ?? '';
 
-      final postDoc = postsCollection.doc(comment.postId);
-      final commentsRef = postDoc.collection('comments');
+      final rootCollection = comment.isForEvent ? 'events' : 'posts';
+      final docRef = FirebaseFirestore.instance
+          .collection(rootCollection)
+          .doc(comment.postId)
+          .collection('comments')
+          .doc();
 
-      final commentDoc = commentsRef.doc();
       final commentWithId = CommentModel(
-        id: commentDoc.id,
+        id: docRef.id,
         postId: comment.postId,
         uid: user.uid,
         fullName: fullName,
@@ -42,8 +45,8 @@ class CommentService {
         isForEvent: comment.isForEvent,
       );
 
-      await commentDoc.set(commentWithId.toMap());
-      print('Comment added with ID: ${commentDoc.id}');
+      await docRef.set(commentWithId.toMap());
+      print('Comment added with ID: ${docRef.id}');
     } catch (e) {
       print('Error adding comment: $e');
       rethrow;
@@ -51,13 +54,18 @@ class CommentService {
   }
 
   // Fetch comments for a specific post
-  Stream<List<CommentModel>> fetchCommentsForPost(String postId) {
+  Stream<List<CommentModel>> fetchCommentsForPost(String postId, {required bool isForEvent}) {
     try {
-      final commentsRef = postsCollection.doc(postId).collection('comments').orderBy('timestamp', descending: true);
+      final rootCollection = isForEvent ? 'events' : 'posts';
+      final commentsRef = FirebaseFirestore.instance
+          .collection(rootCollection)
+          .doc(postId)
+          .collection('comments')
+          .orderBy('timestamp', descending: true);
 
       return commentsRef.snapshots().map((snapshot) {
         return snapshot.docs.map((doc) {
-          final data = doc.data() as Map<String, dynamic>;
+          final data = doc.data();
           return CommentModel.fromMap(data, id: doc.id);
         }).toList();
       });
@@ -66,6 +74,7 @@ class CommentService {
       return Stream.error(e);
     }
   }
+
 
   // Update an existing comment
   Future<void> updateComment(CommentModel comment) async {

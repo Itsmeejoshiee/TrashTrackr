@@ -65,7 +65,7 @@ class _CommentScreenState extends State<CommentScreen> {
         id: '',
         postId: widget.postId,
         uid: _currentUser!.uid,
-        fullName: '$_currentUser!.firstName $_currentUser.lastName',
+        fullName: '${_currentUser!.firstName} ${_currentUser!.lastName}',
         profilePicture: _currentUser!.profilePicture,
         content: text,
         timestamp: Timestamp.now(),
@@ -76,7 +76,7 @@ class _CommentScreenState extends State<CommentScreen> {
       _commentController.clear();
     } catch (e) {
       print('Error adding comment: $e');
-
+      rethrow; // Optional but helpful for deeper debugging
     }
   }
 
@@ -97,7 +97,10 @@ class _CommentScreenState extends State<CommentScreen> {
 
           Expanded(
             child: StreamBuilder<List<CommentModel>>(
-              stream: _commentService.fetchCommentsForPost(widget.postId),
+              stream: _commentService.fetchCommentsForPost(
+                widget.postId,
+                isForEvent: widget.isForEvent,
+              ),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -123,13 +126,13 @@ class _CommentScreenState extends State<CommentScreen> {
                       timestamp: comment.timestamp.toDate(),
                       comment: comment.content,
                       profilePicture: comment.profilePicture,
-                      // optionally pass profilePicture, comment.id for extra UI
                     );
                   },
                 );
               },
             ),
           ),
+
 
           CommentInput(
             controller: _commentController,

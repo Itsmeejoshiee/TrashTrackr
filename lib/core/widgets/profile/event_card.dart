@@ -72,7 +72,7 @@ class _EventCardState extends State<EventCard> {
           height: MediaQuery.of(context).size.height * 0.9,
           child: CommentScreen(
             postId: widget.event.id ?? '',
-            isForEvent: false,
+            isForEvent: true,
           ),
         );
       },
@@ -83,7 +83,7 @@ class _EventCardState extends State<EventCard> {
     return FirebaseFirestore.instance
         .collectionGroup('comments')
         .where('postId', isEqualTo: widget.event.id)
-        .where('isForEvent', isEqualTo: false)
+        .where('isForEvent', isEqualTo: true)
         .snapshots()
         .map((snapshot) => snapshot.size);
   }

@@ -62,6 +62,10 @@ class PostService {
     required String desc,
   }) async {
     try {
+      // get the post ID
+      final docRef = FirebaseFirestore.instance.collection('events').doc();
+      final docId = docRef.id;
+
       final uid = AuthService().currentUser?.uid;
       if (uid == null) return;
 
@@ -73,7 +77,7 @@ class PostService {
           (image == null) ? '' : (await uploadPostImage(image) ?? '');
 
       final event = EventModel(
-        id: '',
+        id: docId,
         uid: uid,
         fullName: fullName,
         profilePicture: profilePicture,
@@ -88,7 +92,7 @@ class PostService {
         desc: desc,
       );
 
-      await FirebaseFirestore.instance.collection('events').add(event.toMap());
+      await docRef.set(event.toMap());
     } catch (e) {
       print('Error creating event: $e');
     }
