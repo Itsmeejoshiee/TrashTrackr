@@ -21,7 +21,7 @@ class PostModel {
     required this.body,
     required this.imageUrl,
   });
-
+  
   // Example: fromMap and toMap for Firebase integration
   factory PostModel.fromMap(Map<String, dynamic> map, {String? id}) =>
       PostModel(
@@ -37,6 +37,7 @@ class PostModel {
 
   Map<String, dynamic> toMap() => {
     'uid': uid,
+    'id': id,
     'full_name': fullName,
     'profile_picture': profilePicture,
     'timestamp': timestamp,

@@ -18,19 +18,23 @@ class PostService {
     required Emotion emotion,
     Uint8List? image,
   }) async {
+    // get the post ID
+    final docRef = FirebaseFirestore.instance.collection('posts').doc();
+    final docId = docRef.id;
+
     final uid = _authService.currentUser?.uid;
     if (uid == null) return;
 
     try {
-      // Fetch user document from Firestore
-
       final firstName = user.firstName;
       final lastName = user.lastName;
       final fullName = '$firstName $lastName'.trim();
       final profilePicture = user.profilePicture;
-      final imageUrl = (image == null) ? '' : await uploadPostImage(image);
+      final imageUrl =
+          (image == null) ? '' : (await uploadPostImage(image) ?? '');
 
       final post = PostModel(
+        id: docId,
         uid: uid,
         fullName: fullName,
         profilePicture: profilePicture,
@@ -40,7 +44,7 @@ class PostService {
         imageUrl: imageUrl,
       );
 
-      await FirebaseFirestore.instance.collection('posts').add(post.toMap());
+      await docRef.set(post.toMap());
     } catch (e) {
       print('Error creating post: $e');
     }
@@ -65,9 +69,11 @@ class PostService {
       final lastName = user.lastName;
       final fullName = '$firstName $lastName'.trim();
       final profilePicture = user.profilePicture;
-      final imageUrl = (image == null) ? '' : await uploadPostImage(image);
+      final imageUrl =
+          (image == null) ? '' : (await uploadPostImage(image) ?? '');
 
       final event = EventModel(
+        id: '',
         uid: uid,
         fullName: fullName,
         profilePicture: profilePicture,
@@ -88,8 +94,8 @@ class PostService {
     }
   }
 
-  Future uploadPostImage(Uint8List? image) async {
-    if (image == null) return;
+  Future<String?> uploadPostImage(Uint8List? image) async {
+    if (image == null) return null;
 
     final storageRef = FirebaseStorage.instance.ref();
     final imageRef = storageRef.child(
@@ -178,12 +184,12 @@ class PostService {
         .where('date_start', isLessThan: Timestamp.now())
         .snapshots()
         .map((snapshot) {
-      print(snapshot.docs);
-      return snapshot.docs.map((doc) {
-        final event = EventModel.fromMap(doc.data()).copyWith(id: doc.id);
-        return event;
-      }).toList();
-    });
+          print(snapshot.docs);
+          return snapshot.docs.map((doc) {
+            final event = EventModel.fromMap(doc.data()).copyWith(id: doc.id);
+            return event;
+          }).toList();
+        });
   }
 
   Stream<List<PostModel>> getPostResultStream({required String searchKeyword}) {
@@ -195,7 +201,9 @@ class PostService {
         .snapshots()
         .map((snapshot) {
           return snapshot.docs
-              .map((doc) => PostModel.fromMap(doc.data()))
+              .map(
+                (doc) => PostModel.fromMap(doc.data(), id: doc.id),
+              ) // <-- Pass doc.id here
               .where((post) => post.body.toLowerCase().contains(keywordLower))
               .toList();
         });
@@ -205,26 +213,45 @@ class PostService {
   Future<void> likePost(String postId) async {
     final uid = _authService.currentUser?.uid;
     if (uid == null) return;
-    await FirebaseFirestore.instance.collection('posts').doc(postId).collection('likes').doc(uid).set({
-      'timestamp': FieldValue.serverTimestamp(),
-    });
+    await FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .collection('likes')
+        .doc(uid)
+        .set({'timestamp': FieldValue.serverTimestamp()});
   }
 
   Future<void> unlikePost(String postId) async {
     final uid = _authService.currentUser?.uid;
     if (uid == null) return;
-    await FirebaseFirestore.instance.collection('posts').doc(postId).collection('likes').doc(uid).delete();
+    await FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .collection('likes')
+        .doc(uid)
+        .delete();
   }
 
   Future<bool> isPostLikedByUser(String postId) async {
     final uid = _authService.currentUser?.uid;
     if (uid == null) return false;
-    final doc = await FirebaseFirestore.instance.collection('posts').doc(postId).collection('likes').doc(uid).get();
+    final doc =
+        await FirebaseFirestore.instance
+            .collection('posts')
+            .doc(postId)
+            .collection('likes')
+            .doc(uid)
+            .get();
     return doc.exists;
   }
 
   Stream<int> getPostLikeCount(String postId) {
-    return FirebaseFirestore.instance.collection('posts').doc(postId).collection('likes').snapshots().map((snap) => snap.docs.length);
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .collection('likes')
+        .snapshots()
+        .map((snap) => snap.docs.length);
   }
 
   Stream<bool> postLikedByCurrentUserStream(String postId) {
@@ -243,26 +270,45 @@ class PostService {
   Future<void> likeEvent(String eventId) async {
     final uid = _authService.currentUser?.uid;
     if (uid == null) return;
-    await FirebaseFirestore.instance.collection('events').doc(eventId).collection('likes').doc(uid).set({
-      'timestamp': FieldValue.serverTimestamp(),
-    });
+    await FirebaseFirestore.instance
+        .collection('events')
+        .doc(eventId)
+        .collection('likes')
+        .doc(uid)
+        .set({'timestamp': FieldValue.serverTimestamp()});
   }
 
   Future<void> unlikeEvent(String eventId) async {
     final uid = _authService.currentUser?.uid;
     if (uid == null) return;
-    await FirebaseFirestore.instance.collection('events').doc(eventId).collection('likes').doc(uid).delete();
+    await FirebaseFirestore.instance
+        .collection('events')
+        .doc(eventId)
+        .collection('likes')
+        .doc(uid)
+        .delete();
   }
 
   Future<bool> isEventLikedByUser(String eventId) async {
     final uid = _authService.currentUser?.uid;
     if (uid == null) return false;
-    final doc = await FirebaseFirestore.instance.collection('events').doc(eventId).collection('likes').doc(uid).get();
+    final doc =
+        await FirebaseFirestore.instance
+            .collection('events')
+            .doc(eventId)
+            .collection('likes')
+            .doc(uid)
+            .get();
     return doc.exists;
   }
 
   Stream<int> getEventLikeCount(String eventId) {
-    return FirebaseFirestore.instance.collection('events').doc(eventId).collection('likes').snapshots().map((snap) => snap.docs.length);
+    return FirebaseFirestore.instance
+        .collection('events')
+        .doc(eventId)
+        .collection('likes')
+        .snapshots()
+        .map((snap) => snap.docs.length);
   }
 
   Stream<bool> eventLikedByCurrentUserStream(String eventId) {
@@ -288,10 +334,10 @@ class PostService {
         .collection('bookmarks')
         .doc('post_$postId')
         .set({
-      'type': 'post',
-      'postId': postId,
-      'timestamp': FieldValue.serverTimestamp(),
-    });
+          'type': 'post',
+          'postId': postId,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
   }
 
   Future<void> unbookmarkPost(String postId) async {
@@ -316,10 +362,10 @@ class PostService {
         .collection('bookmarks')
         .doc('event_$eventId')
         .set({
-      'type': 'event',
-      'eventId': eventId,
-      'timestamp': FieldValue.serverTimestamp(),
-    });
+          'type': 'event',
+          'eventId': eventId,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
   }
 
   Future<void> unbookmarkEvent(String eventId) async {
@@ -338,24 +384,26 @@ class PostService {
   Future<bool> isPostBookmarked(String postId) async {
     final uid = _authService.currentUser?.uid;
     if (uid == null) return false;
-    final doc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .collection('bookmarks')
-        .doc('post_$postId')
-        .get();
+    final doc =
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .collection('bookmarks')
+            .doc('post_$postId')
+            .get();
     return doc.exists;
   }
 
   Future<bool> isEventBookmarked(String eventId) async {
     final uid = _authService.currentUser?.uid;
     if (uid == null) return false;
-    final doc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .collection('bookmarks')
-        .doc('event_$eventId')
-        .get();
+    final doc =
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .collection('bookmarks')
+            .doc('event_$eventId')
+            .get();
     return doc.exists;
   }
 
@@ -382,7 +430,4 @@ class PostService {
         .snapshots()
         .map((doc) => doc.exists);
   }
-
-
-
 }
