@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/buttons/intro_button.dart';
+import 'package:trashtrackr/features/auth/backend/auth_manager.dart';
 import 'badge_intro_page.dart';
 import 'challenges_intro_page.dart';
 import 'package:card_swiper/card_swiper.dart';
@@ -65,6 +66,13 @@ class _IntroScreenState extends State<IntroScreen> {
     }
   }
 
+  void _start() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => AuthManager()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -93,6 +101,14 @@ class _IntroScreenState extends State<IntroScreen> {
                               bottomLeft: Radius.circular(30),
                               bottomRight: Radius.circular(30),
                             ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color(0x3F000000),
+                                blurRadius: 7,
+                                offset: Offset(0, 6),
+                                spreadRadius: 1,
+                              )
+                            ],
                           ),
                         )
                         : (cardIndex == 2)
@@ -180,7 +196,7 @@ class _IntroScreenState extends State<IntroScreen> {
                 title: (cardIndex == 3) ? 'Get Started' :  'Next ➜',
                 color: (cardIndex == 1) ? kLightGreen : null,
                 backgroundColor: (cardIndex == 1) ? kAvocado : null,
-                onPressed: _next,
+                onPressed: (cardIndex == 3) ? _start : _next,
               ),
             ),
           ),
