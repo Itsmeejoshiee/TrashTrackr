@@ -23,6 +23,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
     return StreamBuilder(
       stream: _userService.getUserStream(),
       builder: (context, snapshot) {
@@ -63,75 +64,80 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           body: SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: Column(
-                children: [
-                  // Edit Profile Picture
-                  EditProfilePictureButton(
-                    image:
-                        (user!.profilePicture.isNotEmpty)
-                            ? NetworkImage(user.profilePicture)
-                            : AssetImage(
-                              'assets/images/placeholder_profile.jpg',
-                            ),
-                    onPressed: () async {
-                      final profilePicture = ProfilePicture();
-                      await profilePicture.update(context);
-                    },
+              child: SingleChildScrollView(
+                child: SizedBox(
+                  height: screenHeight,
+                  child: Column(
+                    children: [
+                      // Edit Profile Picture
+                      EditProfilePictureButton(
+                        image:
+                            (user!.profilePicture.isNotEmpty)
+                                ? NetworkImage(user.profilePicture)
+                                : AssetImage(
+                                  'assets/images/placeholder_profile.jpg',
+                                ),
+                        onPressed: () async {
+                          final profilePicture = ProfilePicture();
+                          await profilePicture.update(context);
+                        },
+                      ),
+
+                      Text(
+                        '${user.firstName} ${user.lastName}',
+                        style: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+
+                      Flexible(child: SizedBox(height: 72)),
+
+                      ProfileTextField(
+                        controller: _firstNameController,
+                        hintText: 'First Name',
+                      ),
+
+                      ProfileTextField(
+                        controller: _lasttNameController,
+                        hintText: 'Last Name',
+                      ),
+
+                      ProfileTextField(
+                        controller: _emailController,
+                        iconData: Icons.email,
+                        hintText: 'Email Address',
+                        enabled: false,
+                      ),
+
+                      // Flexible Offset
+                      Flexible(child: SizedBox(height: 55)),
+
+                      // Save Account Button
+                      RoundedRectangleButton(
+                        title: 'Save',
+                        onPressed: () async {
+                          final UserService userService = UserService();
+
+                          if (_firstNameController.text != user.firstName) {
+                            await userService.updateUserInfo(
+                              'first_name',
+                              _firstNameController.text,
+                            );
+                          }
+
+                          if (_lasttNameController.text != user.lastName) {
+                            await userService.updateUserInfo(
+                              'last_name',
+                              _lasttNameController.text,
+                            );
+                          }
+                        },
+                      ),
+
+                      // Offset
+                      SizedBox(height: 15),
+                    ],
                   ),
-
-                  Text(
-                    '${user.firstName} ${user.lastName}',
-                    style: kHeadlineSmall.copyWith(fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-
-                  Flexible(child: SizedBox(height: 72)),
-
-                  ProfileTextField(
-                    controller: _emailController,
-                    iconData: Icons.email,
-                    hintText: 'Email Address',
-                    enabled: false,
-                  ),
-
-                  ProfileTextField(
-                    controller: _firstNameController,
-                    hintText: 'First Name',
-                  ),
-
-                  ProfileTextField(
-                    controller: _lasttNameController,
-                    hintText: 'Last Name',
-                  ),
-
-                  // Flexible Offset
-                  Flexible(child: SizedBox(height: 55)),
-
-                  // Save Account Button
-                  RoundedRectangleButton(
-                    title: 'Save',
-                    onPressed: () async {
-                      final UserService userService = UserService();
-
-                      if (_firstNameController.text != user.firstName) {
-                        await userService.updateUserInfo(
-                          'first_name',
-                          _firstNameController.text,
-                        );
-                      }
-
-                      if (_lasttNameController.text != user.lastName) {
-                        await userService.updateUserInfo(
-                          'last_name',
-                          _lasttNameController.text,
-                        );
-                      }
-                    },
-                  ),
-
-                  // Offset
-                  SizedBox(height: 15),
-                ],
+                ),
               ),
             ),
           ),
