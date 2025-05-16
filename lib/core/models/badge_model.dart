@@ -54,7 +54,7 @@ const Map<BadgeType, String> badgeDesc = {
   BadgeType.weekendWarrior: 'Use the app on both a Saturday and a Sunday',
   BadgeType.barcodeSleuth: 'Scan 10 product barcodes',
   BadgeType.ecoChampion: 'Hit a 30-day milestone',
-  BadgeType.scannerRookie: 'Scan 10 items',
+  BadgeType.scannerRookie: 'Classify 10 items correctly',
   BadgeType.zeroWasteHero: 'Log a waste-free day',
   BadgeType.firstToss: 'Classify your first item correctly',
   BadgeType.sortingExpert: 'Get 100 correct classifications',

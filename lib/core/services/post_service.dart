@@ -155,7 +155,6 @@ class PostService {
         .where('date_start', isGreaterThan: Timestamp.now())
         .snapshots()
         .map((snapshot) {
-          print('SNAPSHOT DOCS!');
           print(snapshot.docs);
           return snapshot.docs.map((doc) {
             return EventModel.fromMap(doc.data());
@@ -176,11 +175,25 @@ class PostService {
         .where('date_start', isLessThan: Timestamp.now())
         .snapshots()
         .map((snapshot) {
-      print('SNAPSHOT DOCS!');
       print(snapshot.docs);
       return snapshot.docs.map((doc) {
         return EventModel.fromMap(doc.data());
       }).toList();
     });
+  }
+
+  Stream<List<PostModel>> getPostResultStream({required String searchKeyword}) {
+    final keywordLower = searchKeyword.toLowerCase();
+
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => PostModel.fromMap(doc.data()))
+              .where((post) => post.body.toLowerCase().contains(keywordLower))
+              .toList();
+        });
   }
 }
