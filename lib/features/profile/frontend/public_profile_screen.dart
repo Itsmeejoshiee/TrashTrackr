@@ -37,13 +37,44 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
     switch (_selectedSection) {
       case ProfileSection.posts:
         return StreamBuilder<List<PostModel>>(
-          stream: _publicUserService.getUserPosts(widget.uid),
+          stream: _publicUserService.getUserPostStream(widget.uid),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator(color: kAvocado));
             }
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            if (!snapshot.hasData) {
               return Center(child: Text('No posts yet.'));
+            }
+
+            if (snapshot.data!.isEmpty) {
+              return Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 15),
+                      Image.asset(
+                        'assets/images/components/no_feeds.png',
+                        width: 150,
+                      ),
+                      Text(
+                        "Nothing here yet!",
+                        style: kHeadlineMedium.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 15),
+                      Text(
+                        'You haven’t shared or interacted with\nany EcoFeeds yet.',
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 15),
+                      Text(
+                        'Join the conversation—post, comment,\nor cheer others on! 🌱💬',
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              );
             }
             return Column(
               children:
@@ -56,14 +87,47 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
         return PublicWastelogBoard(uid: widget.uid);
       case ProfileSection.events:
         return StreamBuilder<List<EventModel>>(
-          stream: _publicUserService.getUserEvents(widget.uid),
+          stream: _publicUserService.getUserEventStream(widget.uid),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator(color: kAvocado));
             }
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+
+            if (!snapshot.hasData) {
               return Center(child: Text('No events yet.'));
             }
+
+            if (snapshot.data!.isEmpty) {
+              return Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 15),
+                      Image.asset(
+                        'assets/images/components/no_feeds.png',
+                        width: 150,
+                      ),
+                      Text(
+                        "No events yet!",
+                        style: kHeadlineMedium.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 15),
+                      Text(
+                        'There aren’t any clean-ups right now.',
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 15),
+                      Text(
+                        'Be the first to start something great\nfor the planet! 🌍✨',
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
             return Column(
               children:
                   snapshot.data!
