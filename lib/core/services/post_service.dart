@@ -114,15 +114,14 @@ class PostService {
       return Stream.value([]);
     }
 
-    return FirebaseFirestore.instance
-        .collection('posts')
-        .snapshots()
-        .map((snapshot) {
-          print(snapshot.docs);
-          return snapshot.docs.map((doc) {
-            return PostModel.fromMap(doc.data());
-          }).toList();
-        });
+    return FirebaseFirestore.instance.collection('posts').snapshots().map((
+      snapshot,
+    ) {
+      print(snapshot.docs);
+      return snapshot.docs.map((doc) {
+        return PostModel.fromMap(doc.data());
+      }).toList();
+    });
   }
 
   Stream<List<EventModel>> getEventStream() {
@@ -133,10 +132,51 @@ class PostService {
       return Stream.value([]);
     }
 
+    return FirebaseFirestore.instance.collection('events').snapshots().map((
+      snapshot,
+    ) {
+      print(snapshot.docs);
+      return snapshot.docs.map((doc) {
+        return EventModel.fromMap(doc.data());
+      }).toList();
+    });
+  }
+
+  Stream<List<EventModel>> getUpcomingEventStream() {
+    final uid = _authService.currentUser?.uid;
+
+    if (uid == null) {
+      print('UID is null, cannot fetch event stream');
+      return Stream.value([]);
+    }
+
     return FirebaseFirestore.instance
         .collection('events')
+        .where('date_start', isGreaterThan: Timestamp.now())
         .snapshots()
         .map((snapshot) {
+          print('SNAPSHOT DOCS!');
+          print(snapshot.docs);
+          return snapshot.docs.map((doc) {
+            return EventModel.fromMap(doc.data());
+          }).toList();
+        });
+  }
+
+  Stream<List<EventModel>> getPastEventStream() {
+    final uid = _authService.currentUser?.uid;
+
+    if (uid == null) {
+      print('UID is null, cannot fetch event stream');
+      return Stream.value([]);
+    }
+
+    return FirebaseFirestore.instance
+        .collection('events')
+        .where('date_start', isLessThan: Timestamp.now())
+        .snapshots()
+        .map((snapshot) {
+      print('SNAPSHOT DOCS!');
       print(snapshot.docs);
       return snapshot.docs.map((doc) {
         return EventModel.fromMap(doc.data());
