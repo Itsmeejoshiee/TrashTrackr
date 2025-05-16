@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/services/activity_service.dart';
 import 'package:trashtrackr/core/services/user_service.dart';
@@ -5,8 +7,6 @@ import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/utils/date_utils.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
 import 'package:trashtrackr/core/widgets/buttons/disposal_location_button.dart';
-import 'package:trashtrackr/core/widgets/buttons/multi_action_fab.dart';
-import 'package:trashtrackr/core/widgets/text_fields/dashboard_search_bar.dart';
 import 'package:trashtrackr/features/community/frontend/community_screen.dart';
 import 'package:trashtrackr/features/log_disposal/screens/log_disposal_screen.dart';
 import 'package:trashtrackr/features/maps/frontend/map_screen.dart';
@@ -110,7 +110,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => WasteStatsScreen(updateView: true),
+                              builder:
+                                  (context) =>
+                                      WasteStatsScreen(updateView: true),
                             ),
                           );
                         },

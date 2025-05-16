@@ -15,13 +15,16 @@ class PropertiesTile extends StatelessWidget {
   List<Widget> _listBuilder(List<String> list) {
     List<Widget> listItems = [];
     for (String item in list) {
-      String textContent = '$item';
-      listItems.add(Text(textContent, 
-        style: kTitleMedium.copyWith(
-          color: kAvocado,
-          fontWeight: FontWeight.bold,
+      String textContent = item;
+      listItems.add(
+        Text(
+          textContent,
+          style: kTitleMedium.copyWith(
+            color: kAvocado,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      ));
+      );
     }
     return listItems;
   }
@@ -42,7 +45,7 @@ class PropertiesTile extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              ..._listBuilder(materials)
+              ..._listBuilder(materials),
             ],
           ),
 

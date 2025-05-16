@@ -101,7 +101,7 @@ class _FilterMenuState extends State<FilterMenu> {
           Wrap(
             spacing: 8.0,
             children: [
-              FilterChip(
+              /*FilterChip(
                 backgroundColor: Colors.white,
                 checkmarkColor: Colors.white,
                 label: Text(
@@ -119,7 +119,7 @@ class _FilterMenuState extends State<FilterMenu> {
                   });
                   _notifyParent();
                 },
-              ),
+              ),*/
               FilterChip(
                 backgroundColor: Colors.white,
                 checkmarkColor: Colors.white,

@@ -1,10 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/features/feed/web_view/know_your_bin_article.dart';
 import 'package:trashtrackr/features/feed/web_view/recycling_code_article.dart';
 import 'package:trashtrackr/features/feed/web_view/special_waste_article.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class RecyclingGuideCard extends StatelessWidget {
   const RecyclingGuideCard({super.key, this.index = 1});

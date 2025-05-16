@@ -1,18 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:trashtrackr/core/services/post_service.dart';
 import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
-import 'package:trashtrackr/core/utils/emotion.dart';
-import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
-import 'package:trashtrackr/core/widgets/buttons/multi_action_fab.dart';
 import 'package:trashtrackr/core/widgets/profile/profile_header.dart';
 import 'package:trashtrackr/core/widgets/profile/profile_switch_tile.dart';
-import 'package:trashtrackr/core/widgets/profile/post_view.dart';
 import 'package:trashtrackr/core/widgets/profile/post_card.dart';
-import 'package:trashtrackr/core/widgets/profile/events_view.dart';
 import 'package:trashtrackr/core/widgets/profile/event_card.dart';
 import 'package:trashtrackr/core/widgets/profile/streak_calendar.dart';
 import 'package:trashtrackr/core/widgets/profile/badge_grid.dart';
@@ -20,7 +12,6 @@ import 'package:trashtrackr/core/widgets/profile/wastelog_board.dart';
 import 'package:trashtrackr/core/models/event_model.dart';
 import 'package:trashtrackr/core/models/post_model.dart';
 import 'package:trashtrackr/features/settings/frontend/settings_screen.dart';
-import 'package:trashtrackr/features/post/screens/post_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

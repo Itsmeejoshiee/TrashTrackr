@@ -4,10 +4,8 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:trashtrackr/core/models/scan_result_model.dart';
 import 'package:trashtrackr/core/services/waste_entry_service.dart';
 import 'package:trashtrackr/features/log_disposal/screens/log_disposal_screen.dart';
-import 'package:trashtrackr/features/log_disposal/widgets/log_edit.dart'; // No longer used
 import 'package:trashtrackr/features/waste_scanner/frontend/widgets/log_button.dart';
 import 'package:trashtrackr/features/waste_scanner/frontend/widgets/properties_tile.dart';
-import 'package:trashtrackr/features/waste_stats/frontend/views/log_history_view.dart';
 import 'package:trashtrackr/features/waste_stats/frontend/waste_stats_screen.dart';
 
 import '../../../core/utils/constants.dart';
@@ -61,7 +59,6 @@ class _LogDetailsState extends State<LogDetails> {
   String? _updatedImageUrl;
   bool _isEditing = false;
 
-
   void _delDisposal() {
     Alert(
       context: context,
@@ -75,10 +72,7 @@ class _LogDetailsState extends State<LogDetails> {
       desc: "You can’t undo this!",
       image: Padding(
         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 100),
-        child: Image.asset(
-          "assets/images/icons/logDelete.png",
-          width: 90,
-        ),
+        child: Image.asset("assets/images/icons/logDelete.png", width: 90),
       ),
       buttons: [
         DialogButton(
@@ -98,22 +92,26 @@ class _LogDetailsState extends State<LogDetails> {
             } else {
               print('No ID found on entry, cannot delete.');
             }
-            Navigator.pop(context);
+            if (mounted) {
+              Navigator.pop(context);
+            }
 
             if (widget.fromScreen == 'history') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => WasteStatsScreen(updateView: false),
-                ),
-              );
+              if (mounted) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WasteStatsScreen(updateView: false),
+                  ),
+                );
+              }
             } else if (widget.fromScreen == 'disposal') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => LogDisposalScreen(),
-                ),
-              );
+              if (mounted) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LogDisposalScreen()),
+                );
+              }
               widget.onDelete?.call();
             }
           },
@@ -175,23 +173,23 @@ class _LogDetailsState extends State<LogDetails> {
                 children: [
                   result.productName.length > 30
                       ? Flexible(
-                    child: Text(
-                      result.productName,
-                      style: kTitleLarge.copyWith(
-                        color: kAvocado,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
-                  )
+                        child: Text(
+                          result.productName,
+                          style: kTitleLarge.copyWith(
+                            color: kAvocado,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      )
                       : Text(
-                    result.productName,
-                    style: kTitleLarge.copyWith(
-                      color: kAvocado,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                        result.productName,
+                        style: kTitleLarge.copyWith(
+                          color: kAvocado,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                   SizedBox(width: 8),
                   Image.asset(
                     getWasteTypeImage(result.classification),
@@ -294,19 +292,19 @@ class _LogDetailsState extends State<LogDetails> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   LogButton(
-                      title: 'Delete',
-                      backgroundColor: Colors.white,
-                      textColor: Colors.grey.shade800,
-                      onPressed: () {
-                        _delDisposal();
-                      },
+                    title: 'Delete',
+                    backgroundColor: Colors.white,
+                    textColor: Colors.grey.shade800,
+                    onPressed: () {
+                      _delDisposal();
+                    },
                   ),
 
                   LogButton(
                     title: 'Save',
                     onPressed: () async {
                       final user = FirebaseAuth.instance.currentUser;
-                      final _wasteEntryService = WasteEntryService();
+                      final wasteEntryService = WasteEntryService();
 
                       if (user == null) return;
 
@@ -316,24 +314,31 @@ class _LogDetailsState extends State<LogDetails> {
                       final updatedResult = widget.scanResult.copyWith(
                         notes: updatedNotes,
                         qty: int.tryParse(updatedQty) ?? 1,
-                        imageUrl: _updatedImageUrl ?? widget.scanResult.imageUrl,
+                        imageUrl:
+                            _updatedImageUrl ?? widget.scanResult.imageUrl,
                       );
 
                       try {
-                        await _wasteEntryService.updateWasteEntries(user, updatedResult);
+                        await wasteEntryService.updateWasteEntries(
+                          user,
+                          updatedResult,
+                        );
                         widget.onDetailsUpdated(updatedNotes, updatedQty);
+                        if (!context.mounted) return;
                         Navigator.pop(context);
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Failed to update entry for ID: ${updatedResult.id ?? "unknown"} & ${user.uid ?? "unknown"}')),
+                          SnackBar(
+                            content: Text(
+                              'Failed to update entry for ID: ${updatedResult.id ?? "unknown"} & ${user.uid}',
+                            ),
+                          ),
                         );
                       }
-
                     },
                   ),
                 ],
               ),
-
 
               SizedBox(height: 50),
             ],

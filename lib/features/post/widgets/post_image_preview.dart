@@ -6,7 +6,11 @@ class PostImagePreview extends StatelessWidget {
   final Uint8List image;
   final VoidCallback onRemove;
 
-  const PostImagePreview({required this.image, required this.onRemove});
+  const PostImagePreview({
+    super.key,
+    required this.image,
+    required this.onRemove,
+  });
 
   @override
   Widget build(BuildContext context) {

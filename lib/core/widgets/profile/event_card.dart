@@ -52,10 +52,10 @@ class _EventCardState extends State<EventCard> {
   }
 
   String _formatTimestamp(Timestamp timestamp) {
-    final DateUtilsHelper _dateUtilsHelpers = DateUtilsHelper();
+    final DateUtilsHelper dateUtilsHelpers = DateUtilsHelper();
     DateTime dateTime = timestamp.toDate();
 
-    String month = _dateUtilsHelpers.getMonthName(dateTime.month);
+    String month = dateUtilsHelpers.getMonthName(dateTime.month);
     int day = dateTime.day;
     int year = dateTime.year;
     int hour = dateTime.hour % 12 == 0 ? 12 : dateTime.hour % 12;
@@ -66,11 +66,11 @@ class _EventCardState extends State<EventCard> {
   }
 
   String _formatDate(DateTimeRange dateRange) {
-    final DateUtilsHelper _dateUtilsHelpers = DateUtilsHelper();
+    final DateUtilsHelper dateUtilsHelpers = DateUtilsHelper();
 
     final startDate = dateRange.start;
     final dayName = DateFormat('EEEE').format(startDate);
-    final month = _dateUtilsHelpers.getMonthName(startDate.month);
+    final month = dateUtilsHelpers.getMonthName(startDate.month);
     final day = startDate.day;
     final year = startDate.year;
     return '$dayName, $month $day, $year';
