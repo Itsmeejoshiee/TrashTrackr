@@ -142,6 +142,46 @@ class PostService {
     });
   }
 
+  Stream<List<EventModel>> getUpcomingEventStream() {
+    final uid = _authService.currentUser?.uid;
+
+    if (uid == null) {
+      print('UID is null, cannot fetch event stream');
+      return Stream.value([]);
+    }
+
+    return FirebaseFirestore.instance
+        .collection('events')
+        .where('date_start', isGreaterThan: Timestamp.now())
+        .snapshots()
+        .map((snapshot) {
+          print(snapshot.docs);
+          return snapshot.docs.map((doc) {
+            return EventModel.fromMap(doc.data());
+          }).toList();
+        });
+  }
+
+  Stream<List<EventModel>> getPastEventStream() {
+    final uid = _authService.currentUser?.uid;
+
+    if (uid == null) {
+      print('UID is null, cannot fetch event stream');
+      return Stream.value([]);
+    }
+
+    return FirebaseFirestore.instance
+        .collection('events')
+        .where('date_start', isLessThan: Timestamp.now())
+        .snapshots()
+        .map((snapshot) {
+      print(snapshot.docs);
+      return snapshot.docs.map((doc) {
+        return EventModel.fromMap(doc.data());
+      }).toList();
+    });
+  }
+
   Stream<List<PostModel>> getPostResultStream({required String searchKeyword}) {
     final keywordLower = searchKeyword.toLowerCase();
 
