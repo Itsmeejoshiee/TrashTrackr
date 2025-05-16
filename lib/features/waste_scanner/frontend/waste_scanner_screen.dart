@@ -5,6 +5,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:trashtrackr/core/services/activity_service.dart';
 
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/bars/main_navigation_bar.dart';
@@ -22,6 +23,7 @@ class WasteScannerScreen extends StatefulWidget {
 }
 
 class _WasteScannerScreenState extends State<WasteScannerScreen> {
+  final ActivityService _activityService = ActivityService();
   late final Future<CameraController> _controllerFuture;
   final _service = CameraModule();
   NavRoute _selectedRoute = NavRoute.badge;
@@ -114,6 +116,7 @@ class _WasteScannerScreenState extends State<WasteScannerScreen> {
                         onPressed: () async {
                           setState(() {
                             _isProcessing = true;
+                            _activityService.logActivity('scan');
                           });
                           try {
                             final XFile picture =

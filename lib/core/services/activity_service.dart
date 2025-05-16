@@ -7,10 +7,17 @@ class ActivityService {
 
   Future<void> logActivity(String activity) async {
     final uid = _authService.currentUser?.uid;
+
+    if (uid == null) {
+      print("Error: UID is null. Cannot log activity.");
+      return;
+    }
+
     final activityModel = ActivityModel(
       activity: activity,
       timestamp: Timestamp.now(),
     );
+
     await FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
@@ -96,7 +103,7 @@ class ActivityService {
       return 0;
     }
 
-    final snapshot =
+    final scanLogCount =
         await FirebaseFirestore.instance
             .collection('users')
             .doc(uid)
@@ -105,6 +112,6 @@ class ActivityService {
             .where('activity', isEqualTo: 'scan')
             .get();
 
-    return snapshot.docs.length;
+    return scanLogCount.docs.length;
   }
 }
