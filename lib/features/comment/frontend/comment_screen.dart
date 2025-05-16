@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trashtrackr/core/services/activity_service.dart';
 import 'package:trashtrackr/core/services/badge_service.dart';
+import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/comment/frontend/widgets/comment_appbar.dart';
 import 'package:trashtrackr/features/comment/frontend/widgets/comment_input.dart';
 import 'package:trashtrackr/features/comment/frontend/widgets/comment_tile.dart';
@@ -122,7 +123,7 @@ class _CommentScreenState extends State<CommentScreen> {
               ),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator(color: kAvocado,));
                 }
 
                 if (snapshot.hasError) {
