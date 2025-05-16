@@ -35,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     switch (_selectedSection) {
       case ProfileSection.posts:
         return StreamBuilder(
-          stream: _postService.getPostStream(),
+          stream: _postService.getUserPostStream(),
           builder: (context, snapshot) {
             print('POST STREAM: ${snapshot.data}');
 
@@ -45,6 +45,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             if (!snapshot.hasData || snapshot.data == null) {
               return Center(child: Text('Post data is not available.'));
+            }
+
+            if (snapshot.data!.isEmpty) {
+              return Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 15),
+                      Image.asset(
+                        'assets/images/components/no_feeds.png',
+                        width: 150,
+                      ),
+                      Text(
+                        "Nothing here yet!",
+                        style: kHeadlineMedium.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 15),
+                      Text(
+                        'You haven’t shared or interacted with\nany EcoFeeds yet.',
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 15),
+                      Text(
+                        'Join the conversation—post, comment,\nor cheer others on! 🌱💬',
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              );
             }
 
             return Column(children: _postBuilder(snapshot.data!));
@@ -54,7 +85,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return WastelogBoard();
       case ProfileSection.events:
         return StreamBuilder(
-          stream: _postService.getEventStream(),
+          stream: _postService.getUserEventStream(),
           builder: (context, snapshot) {
             print('POST STREAM: ${snapshot.data}');
 
@@ -64,6 +95,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             if (!snapshot.hasData || snapshot.data == null) {
               return Center(child: Text('Post data is not available.'));
+            }
+
+            if (snapshot.data!.isEmpty) {
+              return Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 15),
+                      Image.asset(
+                        'assets/images/components/no_feeds.png',
+                        width: 150,
+                      ),
+                      Text(
+                        "No events yet!",
+                        style: kHeadlineMedium.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 15),
+                      Text(
+                        'There aren’t any clean-ups right now.',
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 15),
+                      Text(
+                        'Be the first to start something great\nfor the planet! 🌍✨',
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              );
             }
 
             return Column(children: _eventBuilder(snapshot.data!));

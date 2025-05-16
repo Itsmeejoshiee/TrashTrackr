@@ -213,6 +213,42 @@ class PostService {
         });
   }
 
+  Stream<List<PostModel>> getUserPostStream() {
+    final uid = _authService.currentUser?.uid;
+
+    if (uid == null) {
+      print('UID is null, cannot fetch event stream');
+      return Stream.value([]);
+    }
+
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .where('uid', isEqualTo: uid)
+    // .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+        .map((doc) => PostModel.fromMap(doc.data(), id: doc.id))
+        .toList());
+  }
+
+  Stream<List<EventModel>> getUserEventStream() {
+    final uid = _authService.currentUser?.uid;
+
+    if (uid == null) {
+      print('UID is null, cannot fetch event stream');
+      return Stream.value([]);
+    }
+
+    return FirebaseFirestore.instance
+        .collection('events')
+        .where('uid', isEqualTo: uid)
+    // .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+        .map((doc) => EventModel.fromMap(doc.data(), id: doc.id))
+        .toList());
+  }
+
   // Post Liking Methods
   Future<void> likePost(String postId) async {
     final uid = _authService.currentUser?.uid;
