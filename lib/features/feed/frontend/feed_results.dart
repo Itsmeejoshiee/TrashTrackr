@@ -34,9 +34,8 @@ class _FeedResultsState extends State<FeedResults>
   late String _selectedFilter;
   late bool _isNewest;
 
-  bool _isLoading = false;
   bool _showFilterMenu = false;
-  List<SearchResult> _results = [];
+  late Future<List<SearchResult>> _searchFuture;
 
   @override
   void initState() {
@@ -45,19 +44,21 @@ class _FeedResultsState extends State<FeedResults>
     _selectedFilter = widget.initialFilter;
     _isNewest = widget.isNewest;
     _searchController.text = _searchKeyword;
-    _performSearch();
+    _searchFuture = _performSearch();
   }
 
-  Future<void> _performSearch() async {
-    setState(() => _isLoading = true);
-
-    _results = await _searchService.getCombinedResults(
+  Future<List<SearchResult>> _performSearch() {
+    return _searchService.getCombinedResults(
       searchKeyword: _searchKeyword,
       descendingOrder: _isNewest,
       filterVariable: _selectedFilter,
     );
+  }
 
-    setState(() => _isLoading = false);
+  void _triggerSearch() {
+    setState(() {
+      _searchFuture = _performSearch();
+    });
   }
 
   @override
@@ -81,10 +82,8 @@ class _FeedResultsState extends State<FeedResults>
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          onPressed: () async {
-            if (mounted) {
-              Navigator.pop(context);
-            }
+          onPressed: () {
+            if (mounted) Navigator.pop(context);
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),
@@ -105,6 +104,7 @@ class _FeedResultsState extends State<FeedResults>
                     'assets/images/titles/ecofeed_title.png',
                     width: imageSize,
                   ),
+
                   // Search Bar
                   DashboardSearchBar(
                     controller: _searchController,
@@ -113,20 +113,20 @@ class _FeedResultsState extends State<FeedResults>
                       setState(() {
                         _searchKeyword = value.trim();
                       });
-                      _performSearch();
+                      _triggerSearch();
                     },
                     onSearch: () {
                       setState(() {
                         _searchKeyword = _searchController.text.trim();
                       });
-                      _performSearch();
+                      _triggerSearch();
                     },
                     onChanged: (value) {
                       setState(() => _searchKeyword = value.trim());
                     },
                   ),
 
-                  /// 🔄 Animated Filter Menu
+                  // 🔄 Animated Filter Menu
                   AnimatedSize(
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
@@ -141,7 +141,7 @@ class _FeedResultsState extends State<FeedResults>
                                     _selectedFilter = filter;
                                     _isNewest = isNewest;
                                   });
-                                  _performSearch();
+                                  _triggerSearch();
                                 },
                               ),
                             )
@@ -149,7 +149,6 @@ class _FeedResultsState extends State<FeedResults>
                   ),
 
                   const SizedBox(height: 30),
-
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -159,23 +158,33 @@ class _FeedResultsState extends State<FeedResults>
                   ),
                   const SizedBox(height: 16),
 
-                  // Results
-                  _isLoading
-                      ? const Center(
-                        child: CircularProgressIndicator(color: kAvocado),
-                      )
-                      : _results.isEmpty
-                      ? const Center(child: Text('No results found.'))
-                      : Column(
-                        children:
-                            _results.map((result) {
-                              if (result.type == SearchResultType.post) {
-                                return PostCard(post: result.data);
-                              } else {
-                                return EventCard(event: result.data);
-                              }
-                            }).toList(),
-                      ),
+                  // FutureBuilder for results
+                  FutureBuilder<List<SearchResult>>(
+                    future: _searchFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(color: kAvocado),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(child: Text('No results found.'));
+                      } else {
+                        final results = snapshot.data!;
+                        return Column(
+                          children:
+                              results.map((result) {
+                                if (result.type == SearchResultType.post) {
+                                  return PostCard(post: result.data);
+                                } else {
+                                  return EventCard(event: result.data);
+                                }
+                              }).toList(),
+                        );
+                      }
+                    },
+                  ),
                 ],
               ),
             ),
