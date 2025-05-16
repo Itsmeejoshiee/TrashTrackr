@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:trashtrackr/core/services/activity_service.dart';
+import 'package:trashtrackr/core/services/badge_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/buttons/disposal_location_button.dart';
 import 'package:trashtrackr/features/dashboard/frontend/dashboard_screen.dart';
@@ -22,6 +24,9 @@ class ScanResultScreen extends StatefulWidget {
 }
 
 class _ScanResultScreenState extends State<ScanResultScreen> {
+  final ActivityService _activityService = ActivityService();
+  final BadgeService _badgeService = BadgeService();
+
   final TextEditingController _noteController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
 
@@ -30,6 +35,12 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
     super.initState();
     _noteController.text = widget.scanResult.notes;
     _quantityController.text = widget.scanResult.qty.toString();
+    _activityService.logActivity('scan');
+    _badgeService.checkTrashTrackrOg();
+    _badgeService.checkScannerRookie();
+    _badgeService.checkGreenStreaker();
+    _badgeService.checkDailyDiligent();
+    _badgeService.checkWeekendWarrior();
   }
 
   @override
@@ -39,11 +50,12 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
     super.dispose();
   }
 
-
   String getIconPath(String classification) {
-    if (classification == 'Biodegradable' || classification == 'biodegradable') {
+    if (classification == 'Biodegradable' ||
+        classification == 'biodegradable') {
       return 'assets/images/icons/bio.png';
-    } else if (classification == 'Recyclable' || classification == 'recyclable') {
+    } else if (classification == 'Recyclable' ||
+        classification == 'recyclable') {
       return 'assets/images/icons/recycling.png';
     } else {
       return 'assets/images/icons/nonbio.png';
@@ -63,17 +75,17 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
       desc: "Congrats! You've successfully logged your waste. 🌿👏",
       image: Padding(
         padding: const EdgeInsets.symmetric(vertical: 15),
-        child: Image.asset(
-          "assets/images/icons/logDisposal.png",
-          width: 90,
-        ),
+        child: Image.asset("assets/images/icons/logDisposal.png", width: 90),
       ),
       buttons: [
         DialogButton(
           margin: EdgeInsets.symmetric(horizontal: 20),
           color: Color(0xFFE6E6E6),
           radius: BorderRadius.circular(30),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
           child: Text('Cancel', style: kTitleSmall),
         ),
         DialogButton(
@@ -83,9 +95,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => WasteScannerScreen(),
-              ),
+              MaterialPageRoute(builder: (context) => WasteScannerScreen()),
             );
           },
           child: Align(
@@ -93,6 +103,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
             child: Text(
               'Log Another?',
               style: kTitleSmall.copyWith(color: Colors.white),
+              textAlign: TextAlign.center,
             ),
           ),
         ),
@@ -108,10 +119,11 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => DashboardScreen()),
-          ),
+          onPressed:
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DashboardScreen()),
+              ),
           icon: Icon(Icons.arrow_back_ios),
         ),
         title: Text(
@@ -139,10 +151,7 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                     ),
                   ),
                   SizedBox(width: 8),
-                  Image.asset(
-                    getIconPath(result.classification),
-                    height: 18,
-                  )
+                  Image.asset(getIconPath(result.classification), height: 18),
                 ],
               ),
 
