@@ -129,9 +129,15 @@ class _FeedScreenState extends State<FeedScreen> {
                 ],
               ),
             ),
+
             const SizedBox(height: 30),
-            SectionLabel(label: 'Recycling Guide'),
-            SizedBox(height: 17),
+
+            Padding(
+              padding: const EdgeInsets.only(left: 32),
+              child: SectionLabel(label: 'Recycling Guide'),
+            ),
+
+            const SizedBox(height: 17),
 
             // Carousel
             RecyclingGuideCarousel(
