@@ -86,7 +86,6 @@ class _PostCardState extends State<PostCard> {
         .map((snapshot) => snapshot.size);
   }
 
-
   Stream<bool> _hasCurrentUserCommented() {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return Stream.value(false);

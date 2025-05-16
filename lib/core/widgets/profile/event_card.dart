@@ -33,15 +33,6 @@ class _EventCardState extends State<EventCard> {
   final ActivityService _activityService = ActivityService();
   final BadgeService _badgeService = BadgeService();
 
-  Stream<int> _commentCountStream() {
-    return FirebaseFirestore.instance
-        .collectionGroup('comments')
-        .where('postId', isEqualTo: widget.event.id)
-        .where('isForEvent', isEqualTo: true)
-        .snapshots()
-        .map((snapshot) => snapshot.size);
-  }
-
   Stream<bool> _hasCurrentUserCommented() {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return Stream.value(false);
@@ -94,9 +85,6 @@ class _EventCardState extends State<EventCard> {
       },
     );
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
