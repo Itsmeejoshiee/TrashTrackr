@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trashtrackr/features/auth/backend/auth_manager.dart';
+import 'package:trashtrackr/features/intro/frontend/intro_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -9,20 +11,31 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  void _welcomeUser(BuildContext context) async {
-    // 5 second delay
-    final delay = Duration(seconds: 5);
-    await Future.delayed(delay);
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => AuthManager()),
-    );
+
+  Future<void> _navigate() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isFirstRun = prefs.getBool('is_first_run') ?? true;
+
+    await Future.delayed(const Duration(seconds: 5)); // Optional: splash delay
+
+    if (isFirstRun) {
+      await prefs.setBool('is_first_run', false);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const IntroScreen()),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => AuthManager()),
+      );
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    _welcomeUser(context);
+    _navigate();
   }
 
   @override
