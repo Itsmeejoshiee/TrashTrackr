@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
-import 'package:trashtrackr/features/post/models/event_model.dart';
+import 'package:trashtrackr/core/models/event_model.dart';
 
 class EventImagePicker extends StatefulWidget {
   const EventImagePicker({
