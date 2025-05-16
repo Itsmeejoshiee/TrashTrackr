@@ -8,13 +8,15 @@ class CommentTile extends StatelessWidget {
     required this.name,
     required this.timestamp,
     required this.comment,
-    required this.profilePicture
+    required this.profilePicture,
+    required this.onTap
   });
 
   final String name;
   final String profilePicture;
   final DateTime timestamp;
   final String comment;
+  final VoidCallback onTap;
 
   // Formats the timestamp into a "time ago" string.
   String _formatTimestamp(DateTime time) {
@@ -49,7 +51,7 @@ class CommentTile extends StatelessWidget {
         children: [
           // Profile picture
           GestureDetector(
-            onTap: () {},
+            onTap: onTap,
             child: CircleAvatar(
               backgroundImage: profilePicture.isNotEmpty
                   ? NetworkImage(profilePicture)

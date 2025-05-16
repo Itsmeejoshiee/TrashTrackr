@@ -8,6 +8,7 @@ import 'package:trashtrackr/features/comment/frontend/widgets/comment_input.dart
 import 'package:trashtrackr/features/comment/frontend/widgets/comment_tile.dart';
 import '../../../core/models/user_model.dart';
 import '../../../core/services/comment_service.dart';
+import '../../profile/frontend/public_profile_screen.dart';
 import '../model/comment_model.dart';
 
 class CommentScreen extends StatefulWidget {
@@ -140,11 +141,20 @@ class _CommentScreenState extends State<CommentScreen> {
                   itemBuilder: (context, index) {
                     final comment = comments[index];
                     return CommentTile(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PublicProfileScreen(uid: comment.uid),
+                          ),
+                        );
+                      },
                       name: comment.fullName,
                       timestamp: comment.timestamp.toDate(),
                       comment: comment.content,
                       profilePicture: comment.profilePicture,
                     );
+
                   },
                 );
               },
