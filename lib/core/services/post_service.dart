@@ -142,14 +142,14 @@ class PostService {
     });
   }
 
-  Stream<List<PostModel>> getPostResultStream({required String searchKeyword}) {
+  Future<List<PostModel>> getPostResults({required String searchKeyword}) {
     final keywordLower = searchKeyword.toLowerCase();
 
     return FirebaseFirestore.instance
         .collection('posts')
         .orderBy('timestamp', descending: true)
-        .snapshots()
-        .map((snapshot) {
+        .get()
+        .then((snapshot) {
           return snapshot.docs
               .map((doc) => PostModel.fromMap(doc.data()))
               .where((post) => post.body.toLowerCase().contains(keywordLower))
