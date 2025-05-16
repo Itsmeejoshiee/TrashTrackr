@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:trashtrackr/core/services/post_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/utils/date_utils.dart';
 import 'package:trashtrackr/core/utils/string_utils.dart';
@@ -7,7 +8,7 @@ import 'package:trashtrackr/core/widgets/box/neo_box.dart';
 import 'package:trashtrackr/core/widgets/buttons/bookmark_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/comment_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/like_button.dart';
-import 'package:trashtrackr/features/post/models/post_model.dart';
+import 'package:trashtrackr/core/models/post_model.dart';
 
 class PostCard extends StatefulWidget {
   const PostCard({super.key, required this.post});
@@ -19,6 +20,8 @@ class PostCard extends StatefulWidget {
 }
 
 class _PostCardState extends State<PostCard> {
+  final PostService _postService = PostService();
+
   bool _isLiked = false;
   bool _isCommented = false;
   bool _isBookmarked = false;
@@ -96,6 +99,7 @@ class _PostCardState extends State<PostCard> {
               ),
               Spacer(),
               _buildEmotionLabel(),
+              SizedBox(width: 10),
             ],
           ),
           SizedBox(height: 10),
@@ -128,12 +132,30 @@ class _PostCardState extends State<PostCard> {
 
           Row(
             children: [
-              LikeButton(
-                isActive: _isLiked,
-                onPressed: () {
-                  setState(() {
-                    _isLiked = !_isLiked;
-                  });
+
+              // Like Button
+              StreamBuilder<bool>(
+                stream: _postService.postLikedByCurrentUserStream(
+                  widget.post.id!,
+                ),
+                builder: (context, snapshot) {
+                  final isLiked = snapshot.data ?? false;
+                  return StreamBuilder<int>(
+                    stream: _postService.getPostLikeCount(widget.post.id!),
+                    builder: (context, snapshot) {
+                      return LikeButton(
+                        isActive: isLiked,
+                        count: snapshot.data ?? 0,
+                        onPressed: () async {
+                          if (isLiked) {
+                            await _postService.unlikePost(widget.post.id!);
+                          } else {
+                            await _postService.likePost(widget.post.id!);
+                          }
+                        },
+                      );
+                    },
+                  );
                 },
               ),
 
@@ -146,12 +168,21 @@ class _PostCardState extends State<PostCard> {
                 },
               ),
 
-              BookmarkButton(
-                isActive: _isBookmarked,
-                onPressed: () {
-                  setState(() {
-                    _isBookmarked = !_isBookmarked;
-                  });
+              // Bookmark Button
+              StreamBuilder<bool>(
+                stream: _postService.postBookmarkedStream(widget.post.id!),
+                builder: (context, snapshot) {
+                  final isBookmarked = snapshot.data ?? false;
+                  return BookmarkButton(
+                    isActive: isBookmarked,
+                    onPressed: () async {
+                      if (isBookmarked) {
+                        await _postService.unbookmarkPost(widget.post.id!);
+                      } else {
+                        await _postService.bookmarkPost(widget.post.id!);
+                      }
+                    },
+                  );
                 },
               ),
             ],
