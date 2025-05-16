@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
-import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:trashtrackr/core/services/user_service.dart';
-import 'package:trashtrackr/core/user_provider.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/settings/backend/profile_picture.dart';
 import 'package:trashtrackr/core/widgets/text_fields/profile_text_field.dart';
@@ -130,8 +126,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           _lasttNameController.text,
                         );
                       }
-
-                      AuthService().getUserProfile();
                     },
                   ),
 

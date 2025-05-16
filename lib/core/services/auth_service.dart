@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_nullable_for_final_variable_declarations
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -164,80 +166,119 @@ class AuthService {
   Future<void> deleteGUser() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
     final AuthService authService = AuthService();
-    try {
-      final googleUser = await googleSignIn.signIn();
-      final googleAuth = await googleUser?.authentication;
+    final User? user = authService.currentUser;
 
-      if (googleUser == null || googleAuth == null) {
-        print('Google reauthentication failed or was cancelled.');
+    if (user == null) {
+      print('No current user found.');
+      return;
+    }
+
+    try {
+      // Option 1: Attempt to re-authenticate if necessary (adjust logic as needed)
+      GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        print('Google sign-in cancelled by user.');
+        return;
+      }
+      GoogleSignInAuthentication? googleAuth = await googleUser.authentication;
+      if (googleAuth.accessToken == null || googleAuth.idToken == null) {
+        print('Failed to obtain Google authentication credentials.');
+        return;
+      }
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth!.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      await user.reauthenticateWithCredential(credential);
+      print('User successfully reauthenticated.');
+
+      // Option 2: If re-signing in isn't needed, you might directly proceed
+      // without the GoogleSignIn part if the user is already authenticated.
+      // In that case, ensure robust error handling for reauthenticateWithCredential.
+
+      try {
+        final String? uid = user.uid;
+        if (uid != null) {
+          // Delete user data from Firestore
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(uid)
+              .delete();
+          print('User document deleted.');
+
+          // Delete associated posts
+          final posts =
+              await FirebaseFirestore.instance
+                  .collection('posts')
+                  .where('uid', isEqualTo: uid)
+                  .get();
+          for (final doc in posts.docs) {
+            await doc.reference.delete();
+          }
+          print('${posts.docs.length} posts deleted.');
+
+          // Delete associated events
+          final events =
+              await FirebaseFirestore.instance
+                  .collection('events')
+                  .where('uid', isEqualTo: uid)
+                  .get();
+          for (final doc in events.docs) {
+            await doc.reference.delete();
+          }
+          print('${events.docs.length} events deleted.');
+        } else {
+          print('Error: User UID is null.');
+          return;
+        }
+      } catch (firestoreError) {
+        print('Error deleting user data from Firestore: $firestoreError');
+        // Consider if you want to stop the process here or try to delete the Auth user anyway.
         return;
       }
 
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+      // Delete the Firebase Auth user
+      await user.delete();
+      print('Firebase Auth user deleted successfully.');
+
+      // Optionally sign out of Google after deletion
+      await googleSignIn.signOut();
+      print('Signed out of Google.');
+    } on FirebaseAuthException catch (authError) {
+      print(
+        'Firebase Auth error during reauthentication or deletion: ${authError.message}',
       );
-
-      final user = authService.currentUser;
-      await user?.reauthenticateWithCredential(credential);
-
-      try {
-        // Delete user data from Firestore
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user?.uid)
-            .delete();
-        final posts =
-            await FirebaseFirestore.instance
-                .collection('posts')
-                .where('uid', isEqualTo: user?.uid)
-                .get();
-        final events =
-            await FirebaseFirestore.instance
-                .collection('events')
-                .where('uid', isEqualTo: user?.uid)
-                .get();
-        final allDocs = [...posts.docs, ...events.docs];
-
-        for (final doc in allDocs) {
-          await doc.reference.delete();
+      // Handle specific Firebase Auth errors (e.g., wrong password, requires recent login)
+    } catch (e) {
+      print('An unexpected error occurred: $e');
+    }
+    //Get user profile (for testin purposes)
+    Future<void> getUserProfile() async {
+      FirebaseAuth.instance.authStateChanges().listen((User? user) {
+        if (user != null) {
+          print(user.uid);
+        } else {
+          print('User is currently signed out!');
         }
+      });
+    }
+
+    //reset Password (when signed in)
+    Future<void> resetPasswordFromCurrentPassword({
+      required String currentPassword,
+      required String newPassword,
+    }) async {
+      try {
+        // Re-authenticate the user before updating the password
+        AuthCredential credential = EmailAuthProvider.credential(
+          email: currentUser!.email!,
+          password: currentPassword,
+        );
+        await currentUser!.reauthenticateWithCredential(credential);
+        await currentUser!.updatePassword(newPassword);
       } catch (e) {
-        print('Error deleting user data: $e');
+        rethrow;
       }
-      await user?.delete();
-      print('User successfully reauthenticated and deleted.');
-    } catch (e) {
-      print('Error during reauthentication or deletion: $e');
     }
-  }
-
-  //reset Password (when signed in)
-  Future<void> resetPasswordFromCurrentPassword({
-    required String currentPassword,
-    required String newPassword,
-  }) async {
-    try {
-      // Re-authenticate the user before updating the password
-      AuthCredential credential = EmailAuthProvider.credential(
-        email: currentUser!.email!,
-        password: currentPassword,
-      );
-      await currentUser!.reauthenticateWithCredential(credential);
-      await currentUser!.updatePassword(newPassword);
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  //Get user profile (for testin purposes)
-  Future<void> getUserProfile() async {
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user != null) {
-        print(user.uid);
-      } else {
-        print('User is currently signed out!');
-      }
-    });
   }
 }

@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trashtrackr/core/models/badge_model.dart';
-import 'package:trashtrackr/core/services/activity_service.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
 
 class BadgeService {
   final AuthService _authService = AuthService();
-  final ActivityService _activityService = ActivityService();
 
   // Initialize all unearned badges
   Future<void> initUserBadges() async {
@@ -84,22 +82,25 @@ class BadgeService {
       }
 
       // Query the activity_log subcollection for documents with activity = 'scan'
-      final activityLog = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .collection('activity_log')
-          .where('activity', isEqualTo: 'scan')
-          .get();
+      final activityLog =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(uid)
+              .collection('activity_log')
+              .where('activity', isEqualTo: 'scan')
+              .get();
 
       // Calculate the new percent
       final double percent =
-      (activityLog.docs.length >= 10) ? 1 : activityLog.docs.length / 10;
+          (activityLog.docs.length >= 10) ? 1 : activityLog.docs.length / 10;
       final bool isEarned = percent >= 1;
 
       // Update the badge with the new percent and earned status
       await badgeRef.update({'is_earned': isEarned, 'percent': percent});
 
-      print('Scanner Rookie badge updated: percent = $percent, isEarned = $isEarned');
+      print(
+        'Scanner Rookie badge updated: percent = $percent, isEarned = $isEarned',
+      );
     } catch (e) {
       print('Error checking Scanner Rookie badge: $e');
     }
@@ -138,12 +139,13 @@ class BadgeService {
       final cutoffDate = DateTime(2025, 7, 1);
 
       // Query the activity_log subcollection for documents before the cutoff date
-      final activityLog = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .collection('activity_log')
-          .where('timestamp', isLessThan: Timestamp.fromDate(cutoffDate))
-          .get();
+      final activityLog =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(uid)
+              .collection('activity_log')
+              .where('timestamp', isLessThan: Timestamp.fromDate(cutoffDate))
+              .get();
 
       // Calculate the new percent
       final double percent = activityLog.docs.isNotEmpty ? 1 : 0;
@@ -152,7 +154,9 @@ class BadgeService {
       // Update the badge with the new percent and earned status
       await badgeRef.update({'is_earned': isEarned, 'percent': percent});
 
-      print('Trash Tracker OG badge updated: percent = $percent, isEarned = $isEarned');
+      print(
+        'Trash Tracker OG badge updated: percent = $percent, isEarned = $isEarned',
+      );
     } catch (e) {
       print('Error checking Trash Tracker OG badge: $e');
     }
@@ -191,18 +195,23 @@ class BadgeService {
       final now = DateTime.now();
       final sevenDaysAgo = now.subtract(Duration(days: 7));
 
-      final activityLog = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .collection('activity_log')
-          .where('timestamp', isGreaterThanOrEqualTo: Timestamp.fromDate(sevenDaysAgo))
-          .orderBy('timestamp', descending: true)
-          .get();
+      final activityLog =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(uid)
+              .collection('activity_log')
+              .where(
+                'timestamp',
+                isGreaterThanOrEqualTo: Timestamp.fromDate(sevenDaysAgo),
+              )
+              .orderBy('timestamp', descending: true)
+              .get();
 
       // Extract the dates of the activities
-      final activityDates = activityLog.docs
-          .map((doc) => (doc['timestamp'] as Timestamp).toDate())
-          .toList();
+      final activityDates =
+          activityLog.docs
+              .map((doc) => (doc['timestamp'] as Timestamp).toDate())
+              .toList();
 
       // Calculate the streak
       int streak = 0;
@@ -229,7 +238,9 @@ class BadgeService {
 
       await badgeRef.update({'is_earned': isEarned, 'percent': percent});
 
-      print('Green Streaker badge updated: percent = $percent, isEarned = $isEarned');
+      print(
+        'Green Streaker badge updated: percent = $percent, isEarned = $isEarned',
+      );
     } catch (e) {
       print('Error checking Green Streaker badge: $e');
     }
@@ -266,26 +277,46 @@ class BadgeService {
 
       // Query the activity_log subcollection for the last 7 days
       final now = DateTime.now();
-      final lastSaturday = now.subtract(Duration(days: now.weekday % 7 + 1)); // Last Saturday
+      final lastSaturday = now.subtract(
+        Duration(days: now.weekday % 7 + 1),
+      ); // Last Saturday
       final lastSunday = lastSaturday.add(Duration(days: 1)); // Last Sunday
 
       // Query for Saturday activities
-      final saturdayActivities = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .collection('activity_log')
-          .where('timestamp', isGreaterThanOrEqualTo: Timestamp.fromDate(lastSaturday))
-          .where('timestamp', isLessThan: Timestamp.fromDate(lastSaturday.add(Duration(days: 1))))
-          .get();
+      final saturdayActivities =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(uid)
+              .collection('activity_log')
+              .where(
+                'timestamp',
+                isGreaterThanOrEqualTo: Timestamp.fromDate(lastSaturday),
+              )
+              .where(
+                'timestamp',
+                isLessThan: Timestamp.fromDate(
+                  lastSaturday.add(Duration(days: 1)),
+                ),
+              )
+              .get();
 
       // Query for Sunday activities
-      final sundayActivities = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .collection('activity_log')
-          .where('timestamp', isGreaterThanOrEqualTo: Timestamp.fromDate(lastSunday))
-          .where('timestamp', isLessThan: Timestamp.fromDate(lastSunday.add(Duration(days: 1))))
-          .get();
+      final sundayActivities =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(uid)
+              .collection('activity_log')
+              .where(
+                'timestamp',
+                isGreaterThanOrEqualTo: Timestamp.fromDate(lastSunday),
+              )
+              .where(
+                'timestamp',
+                isLessThan: Timestamp.fromDate(
+                  lastSunday.add(Duration(days: 1)),
+                ),
+              )
+              .get();
 
       // Check if there are activities on both Saturday and Sunday
       final bool hasSaturdayActivity = saturdayActivities.docs.isNotEmpty;
@@ -296,14 +327,20 @@ class BadgeService {
       final bool isEarned = percent >= 1;
 
       if (isEarned) {
-        print('Weekend Warrior badge unlocked! Activities found on both Saturday and Sunday.');
+        print(
+          'Weekend Warrior badge unlocked! Activities found on both Saturday and Sunday.',
+        );
       } else {
-        print('Weekend Warrior badge not earned. Missing activities on either Saturday or Sunday.');
+        print(
+          'Weekend Warrior badge not earned. Missing activities on either Saturday or Sunday.',
+        );
       }
 
       await badgeRef.update({'is_earned': isEarned, 'percent': percent});
 
-      print('Weekend Warrior badge updated: percent = $percent, isEarned = $isEarned');
+      print(
+        'Weekend Warrior badge updated: percent = $percent, isEarned = $isEarned',
+      );
     } catch (e) {
       print('Error checking Weekend Warrior badge: $e');
     }
@@ -342,18 +379,23 @@ class BadgeService {
       final now = DateTime.now();
       final fiveDaysAgo = now.subtract(Duration(days: 5));
 
-      final activityLog = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .collection('activity_log')
-          .where('timestamp', isGreaterThanOrEqualTo: Timestamp.fromDate(fiveDaysAgo))
-          .orderBy('timestamp', descending: true)
-          .get();
+      final activityLog =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(uid)
+              .collection('activity_log')
+              .where(
+                'timestamp',
+                isGreaterThanOrEqualTo: Timestamp.fromDate(fiveDaysAgo),
+              )
+              .orderBy('timestamp', descending: true)
+              .get();
 
       // Extract the dates of the activities
-      final activityDates = activityLog.docs
-          .map((doc) => (doc['timestamp'] as Timestamp).toDate())
-          .toList();
+      final activityDates =
+          activityLog.docs
+              .map((doc) => (doc['timestamp'] as Timestamp).toDate())
+              .toList();
 
       // Calculate the streak
       int streak = 0;
@@ -380,10 +422,11 @@ class BadgeService {
 
       await badgeRef.update({'is_earned': isEarned, 'percent': percent});
 
-      print('Daily Diligent badge updated: percent = $percent, isEarned = $isEarned');
+      print(
+        'Daily Diligent badge updated: percent = $percent, isEarned = $isEarned',
+      );
     } catch (e) {
       print('Error checking Daily Diligent badge: $e');
     }
   }
-
 }

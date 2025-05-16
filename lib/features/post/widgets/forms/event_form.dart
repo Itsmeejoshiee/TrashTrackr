@@ -1,11 +1,7 @@
-import 'dart:ffi';
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:trashtrackr/core/models/user_model.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/services/image_service.dart';
 import 'package:trashtrackr/core/utils/event_type.dart';
-import 'package:trashtrackr/core/utils/string_utils.dart';
 import 'package:trashtrackr/core/models/event_model.dart';
 import 'package:flutter/services.dart';
 import 'package:trashtrackr/features/post/widgets/event_date_range_picker.dart';
@@ -205,8 +201,6 @@ class _EventFormState extends State<EventForm> {
 
   InputDecoration _customFieldDecoration({
     required String label,
-    bool isDropdown = false,
-    bool isMultiline = false,
     Color borderColor = Colors.grey,
   }) {
     return InputDecoration(

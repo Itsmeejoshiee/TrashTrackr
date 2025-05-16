@@ -32,6 +32,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return BadgeScreen();
       case NavRoute.profile:
         return ProfileScreen();
+      // ignore: unreachable_switch_default
       default:
         return Center(child: Text('Unknown route'));
     }
@@ -43,10 +44,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       body: _routeBuilder(_selectedRoute),
 
-      bottomNavigationBar: (isKeyboardOpen) ? null : MainNavigationBar(
-        activeRoute: _selectedRoute,
-        onSelect: _selectRoute,
-      ),
+      bottomNavigationBar:
+          (isKeyboardOpen)
+              ? null
+              : MainNavigationBar(
+                activeRoute: _selectedRoute,
+                onSelect: _selectRoute,
+              ),
 
       floatingActionButton: (isKeyboardOpen) ? null : MultiActionFab(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

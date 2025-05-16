@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
-import 'package:trashtrackr/core/utils/auth_state.dart';
 import 'package:trashtrackr/features/auth/frontend/welcome_screen.dart';
 import 'package:trashtrackr/features/dashboard/frontend/dashboard_screen.dart';
 

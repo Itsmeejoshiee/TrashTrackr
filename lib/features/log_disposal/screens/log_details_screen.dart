@@ -73,7 +73,7 @@ class _LogDetailsScreenState extends State<LogDetailsScreen> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      entry.title ?? 'Unknown Title',
+                                      entry.title,
                                       style: kTitleLarge.copyWith(
                                         color: kAvocado,
                                         fontWeight: FontWeight.bold,
@@ -108,95 +108,126 @@ class _LogDetailsScreenState extends State<LogDetailsScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 4), // Make materials closer to the title
+                        const SizedBox(
+                          height: 4,
+                        ), // Make materials closer to the title
                         _isEditing
                             ? LogEditableFields(
-                          logEntry: widget.entry,
-                          onDetailsUpdated: (updatedEntry) {
-                            setState(() {
-                              widget.entry.title = updatedEntry.title;
-                              widget.entry.productProperties = updatedEntry.productProperties;
-                              widget.entry.productInfo = updatedEntry.productInfo;
-                              widget.entry.notes = updatedEntry.notes;
-                              widget.entry.quantity = updatedEntry.quantity;
-                              widget.entry.disposalGuideProTip = updatedEntry.disposalGuideProTip;
-                              widget.entry.disposalGuideToDo = updatedEntry.disposalGuideToDo;
-                              widget.entry.disposalGuideNotToDo = updatedEntry.disposalGuideNotToDo;
-                              widget.entry.wasteType = updatedEntry.wasteType;
-                            });
-                            widget.onDetailsUpdated(
-                              updatedEntry.notes ?? '',
-                              updatedEntry.quantity ?? '',
-                            );
-                          },
-                        )
+                              logEntry: widget.entry,
+                              onDetailsUpdated: (updatedEntry) {
+                                setState(() {
+                                  widget.entry.title = updatedEntry.title;
+                                  widget.entry.productProperties =
+                                      updatedEntry.productProperties;
+                                  widget.entry.productInfo =
+                                      updatedEntry.productInfo;
+                                  widget.entry.notes = updatedEntry.notes;
+                                  widget.entry.quantity = updatedEntry.quantity;
+                                  widget.entry.disposalGuideProTip =
+                                      updatedEntry.disposalGuideProTip;
+                                  widget.entry.disposalGuideToDo =
+                                      updatedEntry.disposalGuideToDo;
+                                  widget.entry.disposalGuideNotToDo =
+                                      updatedEntry.disposalGuideNotToDo;
+                                  widget.entry.wasteType =
+                                      updatedEntry.wasteType;
+                                });
+                                widget.onDetailsUpdated(
+                                  updatedEntry.notes ?? '',
+                                  updatedEntry.quantity ?? '',
+                                );
+                              },
+                            )
                             : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Materials (no border)
-
-                            const SizedBox(height: 4),
-                            PropertiesTile(
-                              materials: entry.productProperties
-                                  .where((p) => p.startsWith('Material:'))
-                                  .map((p) => p.replaceFirst('Material: ', ''))
-                                  .toList(),
-                              classification: entry.wasteType,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Materials (no border)
+                                const SizedBox(height: 4),
+                                PropertiesTile(
+                                  materials:
+                                      entry.productProperties
+                                          .where(
+                                            (p) => p.startsWith('Material:'),
+                                          )
+                                          .map(
+                                            (p) => p.replaceFirst(
+                                              'Material: ',
+                                              '',
+                                            ),
+                                          )
+                                          .toList(),
+                                  classification: entry.wasteType,
+                                ),
+                                const SizedBox(height: 16),
+                                // Product Info
+                                Text(
+                                  'Product Info',
+                                  style: kBodyLarge.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  entry.productInfo,
+                                  style: kTitleSmall.copyWith(
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                // Disposal Guide
+                                Text(
+                                  'Recommended Disposal Techniques',
+                                  style: kBodyLarge.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                DisposalGuide(
+                                  material: entry.wasteType,
+                                  guide:
+                                      "Here's how to dispose of ${entry.productProperties} responsibly:",
+                                  toDo: entry.disposalGuideToDo,
+                                  notToDo: entry.disposalGuideNotToDo,
+                                  proTip: entry.disposalGuideProTip,
+                                ),
+                                const SizedBox(height: 20),
+                                // Notes
+                                Text(
+                                  'Notes (optional)',
+                                  style: kBodyLarge.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                (entry.notes != null && entry.notes!.isNotEmpty
+                                    ? Text(
+                                      entry.notes!,
+                                      style: kTitleSmall.copyWith(
+                                        color: Colors.black54,
+                                      ),
+                                    )
+                                    : const Text("No notes available.")),
+                                const SizedBox(height: 20),
+                                // Quantity
+                                Text(
+                                  'Quantity (optional)',
+                                  style: kBodyLarge.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                (entry.quantity != null &&
+                                        entry.quantity!.isNotEmpty
+                                    ? Text(
+                                      entry.quantity!,
+                                      style: kTitleSmall.copyWith(
+                                        color: Colors.black54,
+                                      ),
+                                    )
+                                    : const Text("No quantity specified.")),
+                                const SizedBox(height: 20),
+                              ],
                             ),
-                            const SizedBox(height: 16),
-                            // Product Info
-                            Text(
-                              'Product Info',
-                              style: kBodyLarge.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              entry.productInfo,
-                              style: kTitleSmall.copyWith(color: Colors.black54),
-                            ),
-                            const SizedBox(height: 10),
-                            // Disposal Guide
-                            Text(
-                              'Recommended Disposal Techniques',
-                              style: kBodyLarge.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 10),
-                            DisposalGuide(
-                              material: entry.wasteType,
-                              guide: "Here's how to dispose of ${entry.productProperties} responsibly:",
-                              toDo: entry.disposalGuideToDo,
-                              notToDo: entry.disposalGuideNotToDo,
-                              proTip: entry.disposalGuideProTip,
-                            ),
-                            const SizedBox(height: 20),
-                            // Notes
-                            Text(
-                              'Notes (optional)',
-                              style: kBodyLarge.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 10),
-                            (entry.notes != null && entry.notes!.isNotEmpty
-                                ? Text(
-                              entry.notes!,
-                              style: kTitleSmall.copyWith(color: Colors.black54),
-                            )
-                                : const Text("No notes available.")),
-                            const SizedBox(height: 20),
-                            // Quantity
-                            Text(
-                              'Quantity (optional)',
-                              style: kBodyLarge.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 10),
-                            (entry.quantity != null && entry.quantity!.isNotEmpty
-                                ? Text(
-                              entry.quantity!,
-                              style: kTitleSmall.copyWith(color: Colors.black54),
-                            )
-                                : const Text("No quantity specified.")),
-                            const SizedBox(height: 20),
-                          ],
-                        ),
                         const SizedBox(height: 50),
                       ],
                     ),
@@ -223,6 +254,5 @@ class _LogDetailsScreenState extends State<LogDetailsScreen> {
         ),
       ),
     );
-
   }
 }

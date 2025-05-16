@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:trashtrackr/core/services/post_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/utils/date_utils.dart';
@@ -26,7 +25,6 @@ class PostCard extends StatefulWidget {
 
 class _PostCardState extends State<PostCard> {
   final CommentService _commentService = CommentService();
-  final AuthService _authService = AuthService();
   final PostService _postService = PostService();
 
   // Removed local _isCommented flag since we get live data from Firestore
@@ -67,10 +65,7 @@ class _PostCardState extends State<PostCard> {
       builder: (context) {
         return SizedBox(
           height: MediaQuery.of(context).size.height * 0.9,
-          child: CommentScreen(
-            postId: widget.post.id ?? '',
-            isForEvent: false,
-          ),
+          child: CommentScreen(postId: widget.post.id ?? '', isForEvent: false),
         );
       },
     );
@@ -84,7 +79,6 @@ class _PostCardState extends State<PostCard> {
         .snapshots()
         .map((snapshot) => snapshot.size);
   }
-
 
   Stream<bool> _hasCurrentUserCommented() {
     final user = FirebaseAuth.instance.currentUser;
@@ -110,10 +104,13 @@ class _PostCardState extends State<PostCard> {
           Row(
             children: [
               CircleAvatar(
-                backgroundImage: (widget.post.profilePicture.isNotEmpty)
-                    ? NetworkImage(widget.post.profilePicture)
-                    : const AssetImage('assets/images/placeholder_profile.jpg')
-                as ImageProvider,
+                backgroundImage:
+                    (widget.post.profilePicture.isNotEmpty)
+                        ? NetworkImage(widget.post.profilePicture)
+                        : const AssetImage(
+                              'assets/images/placeholder_profile.jpg',
+                            )
+                            as ImageProvider,
               ),
               const SizedBox(width: 10),
               Wrap(
@@ -167,7 +164,9 @@ class _PostCardState extends State<PostCard> {
             children: [
               // Like Button
               StreamBuilder<bool>(
-                stream: _postService.postLikedByCurrentUserStream(widget.post.id!),
+                stream: _postService.postLikedByCurrentUserStream(
+                  widget.post.id!,
+                ),
                 builder: (context, snapshot) {
                   final isLiked = snapshot.data ?? false;
                   return StreamBuilder<int>(
@@ -191,7 +190,10 @@ class _PostCardState extends State<PostCard> {
 
               // Comment Button
               StreamBuilder<int>(
-                stream: _commentService.getCommentCount(widget.post.id!, isForEvent: false),
+                stream: _commentService.getCommentCount(
+                  widget.post.id!,
+                  isForEvent: false,
+                ),
                 builder: (context, countSnapshot) {
                   final count = countSnapshot.data ?? 0;
                   return StreamBuilder<bool>(
@@ -234,4 +236,3 @@ class _PostCardState extends State<PostCard> {
     );
   }
 }
-

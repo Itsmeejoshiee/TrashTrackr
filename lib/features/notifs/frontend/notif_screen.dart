@@ -19,7 +19,6 @@ class _NotifScreenState extends State<NotifScreen> {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
     final double imageSize = (screenWidth / 3) + 60;
     return Scaffold(
       appBar: AppBar(
@@ -37,9 +36,11 @@ class _NotifScreenState extends State<NotifScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 32),
         child: Column(
           children: [
-
             // Notif Title
-            Image.asset('assets/images/titles/notifs_title.png', width: imageSize),
+            Image.asset(
+              'assets/images/titles/notifs_title.png',
+              width: imageSize,
+            ),
 
             // Offset
             SizedBox(height: 8),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 
 class LogButton extends StatelessWidget {
-  LogButton({
+  const LogButton({
     super.key,
     required this.title,
     required this.onPressed,
@@ -24,10 +24,7 @@ class LogButton extends StatelessWidget {
       backgroundColor: backgroundColor ?? Colors.grey.shade800,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(5)),
-        side: BorderSide(
-          color: borderColor ?? Colors.grey.shade800,
-          width: 2,
-        ),
+        side: BorderSide(color: borderColor ?? Colors.grey.shade800, width: 2),
       ),
     );
 

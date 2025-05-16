@@ -8,7 +8,7 @@ import 'package:trashtrackr/core/widgets/profile/post_card.dart';
 import 'package:trashtrackr/core/widgets/profile/event_card.dart';
 
 class BookmarksView extends StatelessWidget {
-  const BookmarksView({Key? key}) : super(key: key);
+  const BookmarksView({super.key});
 
   Future<List<Map<String, dynamic>>> _fetchBookmarks() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;

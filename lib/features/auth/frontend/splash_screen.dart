@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/auth/backend/auth_manager.dart';
 
 class SplashScreen extends StatefulWidget {

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -49,9 +51,9 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
         // Notify the parent
         widget.onImagePicked(downloadUrl);
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Image upload failed: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Image upload failed: $e')));
       }
     }
   }
@@ -59,9 +61,9 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
   Future<String> uploadImage(String imagePath) async {
     File file = File(imagePath);
 
-    final storageRef = FirebaseStorage.instance
-        .ref()
-        .child('images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+    final storageRef = FirebaseStorage.instance.ref().child(
+      'images/${DateTime.now().millisecondsSinceEpoch}.jpg',
+    );
 
     final uploadTask = await storageRef.putFile(file);
 
@@ -113,10 +115,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
 
     return Stack(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: imageWidget,
-        ),
+        ClipRRect(borderRadius: BorderRadius.circular(10), child: imageWidget),
         Positioned(
           bottom: 10,
           right: 10,

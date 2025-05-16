@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/features/maps/frontend/map_screen.dart';
 
 class DisposalLocationButton extends StatelessWidget {
-
   const DisposalLocationButton({super.key});
-
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,4 @@
 //post_screen.dart for control and logic
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/models/user_model.dart';
 import 'package:trashtrackr/core/services/activity_service.dart';
@@ -8,7 +7,6 @@ import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/utils/emotion.dart';
 import 'package:trashtrackr/core/utils/event_type.dart';
-import 'package:trashtrackr/core/utils/string_utils.dart';
 import 'package:trashtrackr/core/models/event_model.dart';
 import 'package:trashtrackr/core/models/post_model.dart';
 import 'package:trashtrackr/features/post/widgets/forms/event_form.dart'; // <-- Import event form here
@@ -191,8 +189,10 @@ class _PostScreenState extends State<PostScreen> {
                                       // Log post activity
                                       _activityService.logActivity('post');
                                       // Pop loading indicator
+                                      if (!context.mounted) return;
                                       Navigator.pop(context);
                                       // Pop post screen
+                                      if (!context.mounted) return;
                                       Navigator.pop(context);
                                     } else {
                                       ScaffoldMessenger.of(
@@ -233,8 +233,10 @@ class _PostScreenState extends State<PostScreen> {
                                       // Log post activity
                                       _activityService.logActivity('event');
                                       // Pop loading indicator
+                                      if (!context.mounted) return;
                                       Navigator.pop(context);
                                       // Pop post screen
+                                      if (!context.mounted) return;
                                       Navigator.pop(context);
                                     } else {
                                       ScaffoldMessenger.of(
@@ -249,7 +251,9 @@ class _PostScreenState extends State<PostScreen> {
                                   }
                                 },
                                 style: ButtonStyle(
-                                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.zero),
+                                  padding: MaterialStateProperty.all<
+                                    EdgeInsetsGeometry
+                                  >(EdgeInsets.zero),
                                   backgroundColor:
                                       MaterialStateProperty.all<Color>(
                                         kForestGreen,
@@ -324,7 +328,9 @@ class _PostScreenState extends State<PostScreen> {
                                           setState(() {
                                             _eventAddress = address;
                                           });
-                                          print('EVENT ADDRESS: $_eventAddress');
+                                          print(
+                                            'EVENT ADDRESS: $_eventAddress',
+                                          );
                                         },
                                         onDateTimeRangeSelect: (range) {
                                           setState(() {

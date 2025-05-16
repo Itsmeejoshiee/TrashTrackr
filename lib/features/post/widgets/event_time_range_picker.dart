@@ -17,8 +17,6 @@ class EventTimeRangePicker extends StatelessWidget {
 
   InputDecoration _customFieldDecoration({
     required String label,
-    bool isDropdown = false,
-    bool isMultiline = false,
     Color borderColor = Colors.grey,
   }) {
     return InputDecoration(
@@ -53,9 +51,9 @@ class EventTimeRangePicker extends StatelessWidget {
               child: TextFormField(
                 decoration: _customFieldDecoration(
                   label:
-                  (startTime != null)
-                      ? startTime!.format(context)
-                      : 'Select start time',
+                      (startTime != null)
+                          ? startTime!.format(context)
+                          : 'Select start time',
                 ).copyWith(
                   suffixIcon: const Icon(
                     Icons.access_time,
@@ -74,9 +72,9 @@ class EventTimeRangePicker extends StatelessWidget {
               child: TextFormField(
                 decoration: _customFieldDecoration(
                   label:
-                  endTime != null
-                      ? endTime!.format(context)
-                      : 'Select End Time',
+                      endTime != null
+                          ? endTime!.format(context)
+                          : 'Select End Time',
                 ).copyWith(
                   suffixIcon: const Icon(
                     Icons.access_time,
