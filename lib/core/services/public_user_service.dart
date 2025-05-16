@@ -81,7 +81,10 @@ class PublicUserService {
 
   Stream<bool> isFollowing(String publicUid) {
     final currentUid = _authService.currentUser?.uid;
-    if (currentUid == null) return Stream.value(false);
+    if (currentUid == null) {
+      print('CURRENT UID NULL');
+      return Stream.value(false);
+    }
     return FirebaseFirestore.instance
         .collection('users')
         .doc(currentUid)

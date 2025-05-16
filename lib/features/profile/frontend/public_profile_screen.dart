@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/models/user_model.dart';
 import 'package:trashtrackr/core/models/post_model.dart';
 import 'package:trashtrackr/core/models/event_model.dart';
+import 'package:trashtrackr/core/services/activity_service.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
+import 'package:trashtrackr/core/services/badge_service.dart';
 import 'package:trashtrackr/core/services/public_user_service.dart';
 import 'package:trashtrackr/core/services/user_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
@@ -27,6 +29,8 @@ class PublicProfileScreen extends StatefulWidget {
 class _PublicProfileScreenState extends State<PublicProfileScreen> {
   final UserService _userService = UserService();
   final AuthService _authService = AuthService();
+  final ActivityService _activityService = ActivityService();
+  final BadgeService _badgeService = BadgeService();
   final PublicUserService _publicUserService = PublicUserService();
   ProfileSection _selectedSection = ProfileSection.posts;
 
@@ -195,17 +199,63 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
 
                     SizedBox(height: 18),
 
+                    // (_authService.currentUser!.uid != widget.uid)
+                    //     ? RoundedRectangleButton(
+                    //   title: 'Follow',
+                    //   height: 40,
+                    //   onPressed: () {
+                    //     _userService.incrementFollowingCount();
+                    //     _publicUserService.incrementFollowerCount(
+                    //       widget.uid,
+                    //     );
+                    //   },
+                    // )
+                    //     : SizedBox(),
+
                     (_authService.currentUser!.uid != widget.uid)
-                        ? RoundedRectangleButton(
-                          title: 'Follow',
-                          height: 40,
-                          onPressed: () {
-                            _userService.incrementFollowingCount();
-                            _publicUserService.incrementFollowerCount(
-                              widget.uid,
-                            );
-                          },
-                        )
+                        ? StreamBuilder<bool>(
+                      stream: _publicUserService.isFollowing(user.uid),
+                      builder: (context, snapshot) {
+                        final isFollowing = snapshot.data ?? false;
+                        print('IS FOLLOWING: $isFollowing');
+                        if (isFollowing) {
+                          return AnimatedOpacity(
+                            opacity: 0.6,
+                            duration: Duration(milliseconds: 300),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              child: Text(
+                                'Following',
+                                style: TextStyle(
+                                  color: Colors.grey[700],
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          );
+                        } else {
+                          return RoundedRectangleButton(
+                            title: 'Follow',
+                            onPressed: () async {
+                              await _userService.incrementFollowingCount();
+                              await _publicUserService.incrementFollowerCount(
+                                widget.uid,
+                              );
+                              await _activityService.logActivity('follow');
+                              _badgeService.checkTrashTrackrOg();
+                              _badgeService.checkScannerRookie();
+                              _badgeService.checkGreenStreaker();
+                              _badgeService.checkDailyDiligent();
+                              _badgeService.checkWeekendWarrior();
+                            },
+                          );
+                        }
+                      },
+                    )
                         : SizedBox(),
 
                     SizedBox(height: 18),
