@@ -13,7 +13,7 @@
         <!-- CAMERA permission -->
     <uses-permission android:name="android.permission.CAMERA" />
     <application
-        android:label="trashtrackr"
+        android:label="TrashTrackr"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:requestLegacyExternalStorage="true">
