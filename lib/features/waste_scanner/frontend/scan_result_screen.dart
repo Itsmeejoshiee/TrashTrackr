@@ -148,7 +148,9 @@ class _ScanResultScreenState extends State<ScanResultScreen> {
                     style: kTitleLarge.copyWith(
                       color: kAvocado,
                       fontWeight: FontWeight.bold,
+                      overflow: TextOverflow.ellipsis,
                     ),
+                    maxLines: 1,
                   ),
                   SizedBox(width: 8),
                   Image.asset(getIconPath(result.classification), height: 18),
