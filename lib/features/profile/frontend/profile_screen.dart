@@ -17,8 +17,8 @@ import 'package:trashtrackr/core/widgets/profile/event_card.dart';
 import 'package:trashtrackr/core/widgets/profile/streak_calendar.dart';
 import 'package:trashtrackr/core/widgets/profile/badge_grid.dart';
 import 'package:trashtrackr/core/widgets/profile/wastelog_board.dart';
-import 'package:trashtrackr/features/post/models/event_model.dart';
-import 'package:trashtrackr/features/post/models/post_model.dart';
+import 'package:trashtrackr/core/models/event_model.dart';
+import 'package:trashtrackr/core/models/post_model.dart';
 import 'package:trashtrackr/features/settings/frontend/settings_screen.dart';
 import 'package:trashtrackr/features/post/screens/post_screen.dart';
 

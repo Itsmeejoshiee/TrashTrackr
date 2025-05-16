@@ -10,7 +10,7 @@ import 'package:trashtrackr/features/home/frontend/widgets/section_label.dart';
 import 'package:trashtrackr/features/feed/frontend/widgets/recycling_guide_card.dart';
 import 'package:trashtrackr/features/feed/frontend/widgets/recycling_guide_carousel.dart';
 import 'package:trashtrackr/core/widgets/profile/post_card.dart';
-import 'package:trashtrackr/features/post/models/post_model.dart';
+import 'package:trashtrackr/core/models/post_model.dart';
 
 class FeedScreen extends StatefulWidget {
   const FeedScreen({super.key});

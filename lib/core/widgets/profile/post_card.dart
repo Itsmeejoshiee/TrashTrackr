@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:trashtrackr/core/services/auth_service.dart';
+import 'package:trashtrackr/core/services/post_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/utils/date_utils.dart';
 import 'package:trashtrackr/core/utils/string_utils.dart';
@@ -7,9 +9,8 @@ import 'package:trashtrackr/core/widgets/box/neo_box.dart';
 import 'package:trashtrackr/core/widgets/buttons/bookmark_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/comment_button.dart';
 import 'package:trashtrackr/core/widgets/buttons/like_button.dart';
-import 'package:trashtrackr/features/post/models/post_model.dart';
+import 'package:trashtrackr/core/models/post_model.dart';
 import 'package:trashtrackr/features/comment/frontend/comment_screen.dart';
-import 'package:trashtrackr/core/services/auth_service.dart';
 
 class PostCard extends StatefulWidget {
   const PostCard({super.key, required this.post});
@@ -21,11 +22,13 @@ class PostCard extends StatefulWidget {
 }
 
 class _PostCardState extends State<PostCard> {
+
+  final AuthService _authService = AuthService();
+  final PostService _postService = PostService();
+
   bool _isLiked = false;
   bool _isCommented = false;
   bool _isBookmarked = false;
-
-  final _authService = AuthService();
 
   Widget _buildEmotionLabel() {
     final emotionName = widget.post.emotion.name;
@@ -62,7 +65,10 @@ class _PostCardState extends State<PostCard> {
       backgroundColor: Colors.white,
       builder: (context) {
         return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.9,
+          height: MediaQuery
+              .of(context)
+              .size
+              .height * 0.9,
           child: CommentScreen(
             postId: widget.post.id ?? '',
             isForEvent: false,
@@ -119,6 +125,7 @@ class _PostCardState extends State<PostCard> {
               ),
               const Spacer(),
               _buildEmotionLabel(),
+              SizedBox(width: 10),
             ],
           ),
           const SizedBox(height: 10),
@@ -149,10 +156,30 @@ class _PostCardState extends State<PostCard> {
 
           Row(
             children: [
-              LikeButton(
-                isActive: _isLiked,
-                onPressed: () {
-                  setState(() => _isLiked = !_isLiked);
+
+              // Like Button
+              StreamBuilder<bool>(
+                stream: _postService.postLikedByCurrentUserStream(
+                  widget.post.id!,
+                ),
+                builder: (context, snapshot) {
+                  final isLiked = snapshot.data ?? false;
+                  return StreamBuilder<int>(
+                    stream: _postService.getPostLikeCount(widget.post.id!),
+                    builder: (context, snapshot) {
+                      return LikeButton(
+                        isActive: isLiked,
+                        count: snapshot.data ?? 0,
+                        onPressed: () async {
+                          if (isLiked) {
+                            await _postService.unlikePost(widget.post.id!);
+                          } else {
+                            await _postService.likePost(widget.post.id!);
+                          }
+                        },
+                      );
+                    },
+                  );
                 },
               ),
 
@@ -171,10 +198,21 @@ class _PostCardState extends State<PostCard> {
                 },
               ),
 
-              BookmarkButton(
-                isActive: _isBookmarked,
-                onPressed: () {
-                  setState(() => _isBookmarked = !_isBookmarked);
+              // Bookmark Button
+              StreamBuilder<bool>(
+                stream: _postService.postBookmarkedStream(widget.post.id!),
+                builder: (context, snapshot) {
+                  final isBookmarked = snapshot.data ?? false;
+                  return BookmarkButton(
+                    isActive: isBookmarked,
+                    onPressed: () async {
+                      if (isBookmarked) {
+                        await _postService.unbookmarkPost(widget.post.id!);
+                      } else {
+                        await _postService.bookmarkPost(widget.post.id!);
+                      }
+                    },
+                  );
                 },
               ),
             ],

@@ -3,7 +3,7 @@ import 'package:trashtrackr/core/services/post_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/profile/post_card.dart';
 import 'package:trashtrackr/core/widgets/text_fields/dashboard_search_bar.dart';
-import 'package:trashtrackr/features/post/models/post_model.dart';
+import 'package:trashtrackr/core/models/post_model.dart';
 
 class FeedResults extends StatefulWidget {
   final dynamic searchKeyword;

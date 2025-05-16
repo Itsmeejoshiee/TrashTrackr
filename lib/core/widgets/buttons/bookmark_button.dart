@@ -22,7 +22,7 @@ class BookmarkButton extends StatelessWidget {
             'assets/images/icons/bookmark_${isActive ? 'active' : 'inactive'}.png',
             height: 16,
           ),
-          (!isActive) ? Text(
+          Text(
             'Bookmark  ',
             style:
             (!isActive)
@@ -31,7 +31,7 @@ class BookmarkButton extends StatelessWidget {
               color: kAvocado,
               fontWeight: FontWeight.bold,
             ),
-          ) : SizedBox(),
+          ),
         ],
       ),
     );

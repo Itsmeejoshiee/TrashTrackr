@@ -6,8 +6,8 @@ import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:flutter/services.dart';
 import 'package:trashtrackr/core/utils/emotion.dart';
 import 'package:trashtrackr/core/utils/event_type.dart';
-import 'package:trashtrackr/features/post/models/event_model.dart';
-import 'package:trashtrackr/features/post/models/post_model.dart';
+import 'package:trashtrackr/core/models/event_model.dart';
+import 'package:trashtrackr/core/models/post_model.dart';
 
 class PostService {
   final AuthService _authService = AuthService();
@@ -30,7 +30,8 @@ class PostService {
       final lastName = user.lastName;
       final fullName = '$firstName $lastName'.trim();
       final profilePicture = user.profilePicture;
-      final imageUrl = (image == null) ? '' : (await uploadPostImage(image) ?? '');
+      final imageUrl =
+          (image == null) ? '' : (await uploadPostImage(image) ?? '');
 
       final post = PostModel(
         id: docId,
@@ -68,7 +69,8 @@ class PostService {
       final lastName = user.lastName;
       final fullName = '$firstName $lastName'.trim();
       final profilePicture = user.profilePicture;
-      final imageUrl = (image == null) ? '' : (await uploadPostImage(image) ?? '');
+      final imageUrl =
+          (image == null) ? '' : (await uploadPostImage(image) ?? '');
 
       final event = EventModel(
         id: '',
@@ -118,14 +120,15 @@ class PostService {
       return Stream.value([]);
     }
 
-    return FirebaseFirestore.instance.collection('posts').snapshots().map(
-          (snapshot) {
-        print(snapshot.docs);
-        return snapshot.docs.map((doc) {
-          return PostModel.fromMap(doc.data(), id: doc.id); // <-- Pass doc.id here
-        }).toList();
-      },
-    );
+    return FirebaseFirestore.instance.collection('posts').snapshots().map((
+      snapshot,
+    ) {
+      print(snapshot.docs);
+      return snapshot.docs.map((doc) {
+        final post = PostModel.fromMap(doc.data()).copyWith(id: doc.id);
+        return post;
+      }).toList();
+    });
   }
 
   Stream<List<EventModel>> getEventStream() {
@@ -136,14 +139,15 @@ class PostService {
       return Stream.value([]);
     }
 
-    return FirebaseFirestore.instance.collection('events').snapshots().map(
-          (snapshot) {
-        print(snapshot.docs);
-        return snapshot.docs.map((doc) {
-          return EventModel.fromMap(doc.data());
-        }).toList();
-      },
-    );
+    return FirebaseFirestore.instance.collection('events').snapshots().map((
+      snapshot,
+    ) {
+      print(snapshot.docs);
+      return snapshot.docs.map((doc) {
+        final event = EventModel.fromMap(doc.data()).copyWith(id: doc.id);
+        return event;
+      }).toList();
+    });
   }
 
   Stream<List<EventModel>> getUpcomingEventStream() {
@@ -159,11 +163,12 @@ class PostService {
         .where('date_start', isGreaterThan: Timestamp.now())
         .snapshots()
         .map((snapshot) {
-      print(snapshot.docs);
-      return snapshot.docs.map((doc) {
-        return EventModel.fromMap(doc.data());
-      }).toList();
-    });
+          print(snapshot.docs);
+          return snapshot.docs.map((doc) {
+            final event = EventModel.fromMap(doc.data()).copyWith(id: doc.id);
+            return event;
+          }).toList();
+        });
   }
 
   Stream<List<EventModel>> getPastEventStream() {
@@ -179,11 +184,12 @@ class PostService {
         .where('date_start', isLessThan: Timestamp.now())
         .snapshots()
         .map((snapshot) {
-      print(snapshot.docs);
-      return snapshot.docs.map((doc) {
-        return EventModel.fromMap(doc.data());
-      }).toList();
-    });
+          print(snapshot.docs);
+          return snapshot.docs.map((doc) {
+            final event = EventModel.fromMap(doc.data()).copyWith(id: doc.id);
+            return event;
+          }).toList();
+        });
   }
 
   Stream<List<PostModel>> getPostResultStream({required String searchKeyword}) {
@@ -194,10 +200,234 @@ class PostService {
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => PostModel.fromMap(doc.data(), id: doc.id)) // <-- Pass doc.id here
-          .where((post) => post.body.toLowerCase().contains(keywordLower))
-          .toList();
-    });
+          return snapshot.docs
+              .map(
+                (doc) => PostModel.fromMap(doc.data(), id: doc.id),
+              ) // <-- Pass doc.id here
+              .where((post) => post.body.toLowerCase().contains(keywordLower))
+              .toList();
+        });
+  }
+
+  // Post Liking Methods
+  Future<void> likePost(String postId) async {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return;
+    await FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .collection('likes')
+        .doc(uid)
+        .set({'timestamp': FieldValue.serverTimestamp()});
+  }
+
+  Future<void> unlikePost(String postId) async {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return;
+    await FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .collection('likes')
+        .doc(uid)
+        .delete();
+  }
+
+  Future<bool> isPostLikedByUser(String postId) async {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return false;
+    final doc =
+        await FirebaseFirestore.instance
+            .collection('posts')
+            .doc(postId)
+            .collection('likes')
+            .doc(uid)
+            .get();
+    return doc.exists;
+  }
+
+  Stream<int> getPostLikeCount(String postId) {
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .collection('likes')
+        .snapshots()
+        .map((snap) => snap.docs.length);
+  }
+
+  Stream<bool> postLikedByCurrentUserStream(String postId) {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return Stream.value(false);
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .collection('likes')
+        .doc(uid)
+        .snapshots()
+        .map((doc) => doc.exists);
+  }
+
+  // Like Event Methods
+  Future<void> likeEvent(String eventId) async {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return;
+    await FirebaseFirestore.instance
+        .collection('events')
+        .doc(eventId)
+        .collection('likes')
+        .doc(uid)
+        .set({'timestamp': FieldValue.serverTimestamp()});
+  }
+
+  Future<void> unlikeEvent(String eventId) async {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return;
+    await FirebaseFirestore.instance
+        .collection('events')
+        .doc(eventId)
+        .collection('likes')
+        .doc(uid)
+        .delete();
+  }
+
+  Future<bool> isEventLikedByUser(String eventId) async {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return false;
+    final doc =
+        await FirebaseFirestore.instance
+            .collection('events')
+            .doc(eventId)
+            .collection('likes')
+            .doc(uid)
+            .get();
+    return doc.exists;
+  }
+
+  Stream<int> getEventLikeCount(String eventId) {
+    return FirebaseFirestore.instance
+        .collection('events')
+        .doc(eventId)
+        .collection('likes')
+        .snapshots()
+        .map((snap) => snap.docs.length);
+  }
+
+  Stream<bool> eventLikedByCurrentUserStream(String eventId) {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return Stream.value(false);
+    return FirebaseFirestore.instance
+        .collection('events')
+        .doc(eventId)
+        .collection('likes')
+        .doc(uid)
+        .snapshots()
+        .map((doc) => doc.exists);
+  }
+
+  // Bookmark Post
+
+  Future<void> bookmarkPost(String postId) async {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return;
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('bookmarks')
+        .doc('post_$postId')
+        .set({
+          'type': 'post',
+          'postId': postId,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+  }
+
+  Future<void> unbookmarkPost(String postId) async {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return;
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('bookmarks')
+        .doc('post_$postId')
+        .delete();
+  }
+
+  // Bookmark Event
+
+  Future<void> bookmarkEvent(String eventId) async {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return;
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('bookmarks')
+        .doc('event_$eventId')
+        .set({
+          'type': 'event',
+          'eventId': eventId,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+  }
+
+  Future<void> unbookmarkEvent(String eventId) async {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return;
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('bookmarks')
+        .doc('event_$eventId')
+        .delete();
+  }
+
+  // Post & Event Bookmark Check
+
+  Future<bool> isPostBookmarked(String postId) async {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return false;
+    final doc =
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .collection('bookmarks')
+            .doc('post_$postId')
+            .get();
+    return doc.exists;
+  }
+
+  Future<bool> isEventBookmarked(String eventId) async {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return false;
+    final doc =
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .collection('bookmarks')
+            .doc('event_$eventId')
+            .get();
+    return doc.exists;
+  }
+
+  Stream<bool> postBookmarkedStream(String postId) {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return Stream.value(false);
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('bookmarks')
+        .doc('post_$postId')
+        .snapshots()
+        .map((doc) => doc.exists);
+  }
+
+  Stream<bool> eventBookmarkedStream(String eventId) {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return Stream.value(false);
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('bookmarks')
+        .doc('event_$eventId')
+        .snapshots()
+        .map((doc) => doc.exists);
   }
 }

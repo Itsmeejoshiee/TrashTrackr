@@ -6,7 +6,7 @@ import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/services/image_service.dart';
 import 'package:trashtrackr/core/utils/event_type.dart';
 import 'package:trashtrackr/core/utils/string_utils.dart';
-import 'package:trashtrackr/features/post/models/event_model.dart';
+import 'package:trashtrackr/core/models/event_model.dart';
 import 'package:flutter/services.dart';
 import 'package:trashtrackr/features/post/widgets/event_date_range_picker.dart';
 import 'package:trashtrackr/features/post/widgets/event_image_picker.dart';

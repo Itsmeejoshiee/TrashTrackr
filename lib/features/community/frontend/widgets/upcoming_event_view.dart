@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/services/post_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/profile/event_card.dart';
-import 'package:trashtrackr/features/post/models/event_model.dart';
+import 'package:trashtrackr/core/models/event_model.dart';
 
 class UpcomingEventView extends StatefulWidget {
   const UpcomingEventView({super.key});

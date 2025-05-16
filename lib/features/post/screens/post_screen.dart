@@ -9,8 +9,8 @@ import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/utils/emotion.dart';
 import 'package:trashtrackr/core/utils/event_type.dart';
 import 'package:trashtrackr/core/utils/string_utils.dart';
-import 'package:trashtrackr/features/post/models/event_model.dart';
-import 'package:trashtrackr/features/post/models/post_model.dart';
+import 'package:trashtrackr/core/models/event_model.dart';
+import 'package:trashtrackr/core/models/post_model.dart';
 import 'package:trashtrackr/features/post/widgets/forms/event_form.dart'; // <-- Import event form here
 import 'package:trashtrackr/features/post/widgets/forms/post_form.dart'; // new import
 import 'package:flutter/services.dart';
