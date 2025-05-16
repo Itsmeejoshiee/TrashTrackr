@@ -104,7 +104,9 @@ class BookmarksView extends StatelessWidget {
             future: _fetchBookmarkedCards(snapshot.data!),
             builder: (context, cardSnapshot) {
               if (cardSnapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(
+                  child: CircularProgressIndicator(color: kAvocado),
+                );
               }
               if (!cardSnapshot.hasData || cardSnapshot.data!.isEmpty) {
                 return const Center(child: Text('No bookmarks yet.'));
