@@ -4,10 +4,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trashtrackr/core/models/user_model.dart';
 import 'package:trashtrackr/core/services/auth_service.dart';
 import 'package:flutter/services.dart';
+import 'package:trashtrackr/core/services/notif_service.dart';
 import 'package:trashtrackr/core/utils/emotion.dart';
 import 'package:trashtrackr/core/utils/event_type.dart';
 import 'package:trashtrackr/core/models/event_model.dart';
 import 'package:trashtrackr/core/models/post_model.dart';
+
+import '../models/notif_model.dart';
 
 class PostService {
   final AuthService _authService = AuthService();
@@ -263,6 +266,8 @@ class PostService {
 
     final firstName = userDoc.data()?['first_name'] ?? '';
     final lastName = userDoc.data()?['last_name'] ?? '';
+    final fullName = '$firstName $lastName'.trim();
+    final profilePicture = userDoc.data()?['profile_picture'] ?? '';
 
     await FirebaseFirestore.instance
         .collection('posts')
@@ -271,9 +276,15 @@ class PostService {
         .doc(uid)
         .set({
       'timestamp': FieldValue.serverTimestamp(),
-      'first_name': firstName,
-      'last_name': lastName,
+      'fullName': fullName,
+      'profilePicture': profilePicture,
+      'isForLike': true,
+      'uid': uid
     });
+
+    // Add this line to notify post owner
+    await NotifService().addLikeNotificationToPostOwner(postId: postId, likerUid: uid);
+
   }
 
   Future<void> unlikePost(String postId) async {
@@ -335,6 +346,8 @@ class PostService {
 
     final firstName = userDoc.data()?['first_name'] ?? '';
     final lastName = userDoc.data()?['last_name'] ?? '';
+    final fullName = '$firstName $lastName'.trim();;
+    final profilePicture = userDoc.data()?['profile_picture'] ?? '';
 
     await FirebaseFirestore.instance
         .collection('events')
@@ -343,9 +356,13 @@ class PostService {
         .doc(uid)
         .set({
       'timestamp': FieldValue.serverTimestamp(),
-      'first_name': firstName,
-      'last_name': lastName,
+      'fullName': fullName,
+      'profilePicture': profilePicture,
+      'isForLike': true,
+      'uid': uid
     });
+
+    await NotifService().addLikeNotificationToEventOwner(eventId: eventId, likerUid: uid);
   }
 
   Future<void> unlikeEvent(String eventId) async {
@@ -500,4 +517,5 @@ class PostService {
         .snapshots()
         .map((doc) => doc.exists);
   }
+
 }

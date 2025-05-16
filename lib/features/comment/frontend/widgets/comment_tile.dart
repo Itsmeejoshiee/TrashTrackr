@@ -16,7 +16,7 @@ class CommentTile extends StatelessWidget {
   final DateTime timestamp;
   final String comment;
 
-  /// Formats the timestamp into a "time ago" string.
+  // Formats the timestamp into a "time ago" string.
   String _formatTimestamp(DateTime time) {
     final now = DateTime.now();
     final difference = now.difference(time);
@@ -48,11 +48,14 @@ class CommentTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Profile picture
-          CircleAvatar(
-            backgroundImage: profilePicture.isNotEmpty
-                ? NetworkImage(profilePicture)
-                : AssetImage('assets/images/placeholder_profile.jpg') as ImageProvider,
-            radius: 20,
+          GestureDetector(
+            onTap: () {},
+            child: CircleAvatar(
+              backgroundImage: profilePicture.isNotEmpty
+                  ? NetworkImage(profilePicture)
+                  : AssetImage('assets/images/placeholder_profile.jpg') as ImageProvider,
+              radius: 20,
+            ),
           ),
 
           SizedBox(width: 10),
