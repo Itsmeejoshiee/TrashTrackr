@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/services/post_service.dart';
-import 'package:trashtrackr/core/services/search_service.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
 import 'package:trashtrackr/core/widgets/profile/post_card.dart';
 import 'package:trashtrackr/core/widgets/text_fields/dashboard_search_bar.dart';
@@ -18,26 +17,14 @@ class FeedResults extends StatefulWidget {
 class _FeedResultsState extends State<FeedResults> {
   final TextEditingController _searchController = TextEditingController();
   final PostService _postService = PostService();
-  final SearchService _searchService = SearchService();
 
   late String _searchKeyword;
-  late Future<List<PostModel>> _postFuture;
 
   @override
   void initState() {
     super.initState();
     _searchKeyword = widget.searchKeyword.toString();
     _searchController.text = _searchKeyword;
-    _postFuture = _searchService.getPostResults(searchKeyword: _searchKeyword);
-  }
-
-  void _updateSearch(String value) {
-    setState(() {
-      _searchKeyword = value.trim();
-      _postFuture = _searchService.getPostResults(
-        searchKeyword: _searchKeyword,
-      );
-    });
   }
 
   List<Widget> _postBuilder(List<PostModel> posts) {
@@ -61,11 +48,7 @@ class _FeedResultsState extends State<FeedResults> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          onPressed: () async {
-            if (mounted) {
-              Navigator.pop(context);
-            }
-          },
+          onPressed: () => Navigator.pop(context),
           icon: const Icon(Icons.arrow_back_ios),
         ),
         title: Text(
@@ -88,8 +71,21 @@ class _FeedResultsState extends State<FeedResults> {
                   DashboardSearchBar(
                     controller: _searchController,
                     onFilterTap: () {},
-                    onSubmit: (value) => _updateSearch(value),
-                    onSearch: () => _updateSearch(_searchController.text),
+                    onSubmit: (value) {
+                      setState(() {
+                        _searchKeyword = value.trim();
+                      });
+                    },
+                    onSearch: () {
+                      setState(() {
+                        _searchKeyword = _searchController.text.trim();
+                      });
+                    },
+                    onChanged: (value) {
+                      setState(() {
+                        _searchKeyword = value.trim();
+                      });
+                    },
                   ),
                   const SizedBox(height: 17),
                 ],
@@ -105,8 +101,10 @@ class _FeedResultsState extends State<FeedResults> {
                     style: kTitleLarge.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 13),
-                  FutureBuilder<List<PostModel>>(
-                    future: _postFuture,
+                  StreamBuilder<List<PostModel>>(
+                    stream: _postService.getPostResultStream(
+                      searchKeyword: _searchKeyword,
+                    ),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
