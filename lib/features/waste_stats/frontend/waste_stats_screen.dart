@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trashtrackr/core/utils/constants.dart';
-import 'package:trashtrackr/features/dashboard/frontend/dashboard_screen.dart';
 import 'package:trashtrackr/features/waste_stats/frontend/views/log_history_view.dart';
 import 'package:trashtrackr/features/waste_stats/frontend/views/summary_view.dart';
 import '../../../core/widgets/list_tiles/view_switch_tile.dart';
@@ -73,14 +72,14 @@ class _WasteStatsScreenState extends State<WasteStatsScreen> {
             // Waste Stats Content
             (_updateView)
                 ? Expanded(
-              child: SummaryView(
-                updateView: _updateGraph,
-                firstViewTitle: "Weekly",
-                secondViewTitle: "Monthly",
-                onFirstView: () => setState(() => _updateGraph = true),
-                onSecondView: () => setState(() => _updateGraph = false),
-              ),
-            )
+                  child: SummaryView(
+                    updateView: _updateGraph,
+                    firstViewTitle: "Weekly",
+                    secondViewTitle: "Monthly",
+                    onFirstView: () => setState(() => _updateGraph = true),
+                    onSecondView: () => setState(() => _updateGraph = false),
+                  ),
+                )
                 : const Expanded(child: LogHistoryView()),
           ],
         ),

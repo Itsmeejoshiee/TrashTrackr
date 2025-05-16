@@ -22,6 +22,7 @@ class PropertiesTile extends StatelessWidget {
           style: kTitleMedium.copyWith(
             color: kAvocado,
             fontWeight: FontWeight.bold,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       );
@@ -65,6 +66,7 @@ class PropertiesTile extends StatelessWidget {
                 style: kTitleMedium.copyWith(
                   color: kAvocado,
                   fontWeight: FontWeight.bold,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],

@@ -185,7 +185,7 @@ class AuthService {
         return;
       }
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth!.accessToken,
+        accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
       await user.reauthenticateWithCredential(credential);
